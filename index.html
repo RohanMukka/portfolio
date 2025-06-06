@@ -12,13 +12,28 @@
         html {
             scroll-behavior: smooth;
         }
+        :root {
+            --text-color: #E0E0E0;
+            --gradient-from: #2b1452;
+            --gradient-to: #1e1e3f;
+        }
         body {
             /* Text styling */
-            color: #E0E0E0; /* Base text color */
+            color: var(--text-color);
             font-family: 'Inter', sans-serif; /* Default font */
-            background: radial-gradient(circle at center, #2b1452, #1e1e3f);
+            background: radial-gradient(circle at center, var(--gradient-from), var(--gradient-to));
             background-size: 400% 400%;
             animation: gradient-bg 15s ease infinite;
+        }
+        body.light {
+            --text-color: #1f2937;
+            --gradient-from: #ffffff;
+            --gradient-to: #d8d8d8;
+        }
+        body.dark {
+            --text-color: #E0E0E0;
+            --gradient-from: #2b1452;
+            --gradient-to: #1e1e3f;
         }
         /* Custom scrollbar for Webkit browsers */
         body::-webkit-scrollbar {
