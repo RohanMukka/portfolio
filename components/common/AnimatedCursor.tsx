@@ -59,7 +59,7 @@ const AnimatedCursor: React.FC = () => {
           height: 36,
           backgroundColor: 'rgba(236, 72, 153, 0.2)',
           border: '2px solid #EC4899',
-          mixBlendMode: 'difference',
+          mixBlendMode: 'difference' as const,
         };
       default:
         return {
@@ -81,8 +81,6 @@ const AnimatedCursor: React.FC = () => {
         position: 'fixed',
         borderRadius: '50%',
         transform: 'translate(-50%, -50%)',
-      }}
-      animate={{
         x: springX,
         y: springY,
       }}

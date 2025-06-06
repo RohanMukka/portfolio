@@ -7,7 +7,7 @@ import { NavbarProps } from '../../types';
 const NAV_ITEMS = ["Home", "About", "Skills", "Projects", "Experience", "Contact"];
 
 
-const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, personalData, scrollToSection, toggleTheme, isDark }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection, toggleTheme, isDark }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
