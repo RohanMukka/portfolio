@@ -60,10 +60,10 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
             initial="hidden"
             whileInView="visible"
             viewport={{ amount: 0.5 }}
-            className="flex items-center p-5 md:p-6 bg-gray-800/50 backdrop-blur-md rounded-xl shadow-xl border border-gray-700/70 hover:border-purple-500/80 hover:bg-gray-700/60 transition-all duration-300 group"
+            className="flex items-center p-5 md:p-6 bg-white/60 dark:bg-gray-800/50 backdrop-blur-md rounded-xl shadow-xl border border-gray-700/70 hover:border-purple-500/80 hover:bg-gray-700/60 transition-all duration-300 group"
             data-cursor-hover-link
           >
-            <div className="mr-5 p-3 bg-gray-700/50 rounded-lg shadow-md group-hover:bg-purple-600/50 transition-colors duration-300">
+            <div className="mr-5 p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg shadow-md group-hover:bg-purple-600/50 transition-colors duration-300">
               {method.icon}
             </div>
             <div>

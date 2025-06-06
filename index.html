@@ -13,9 +13,9 @@
             scroll-behavior: smooth;
         }
         :root {
-            --text-color: #E0E0E0;
-            --gradient-from: #1a1a1a;
-            --gradient-to: #0f0f0f;
+            --text-color: #1f2937;
+            --gradient-from: #f8fafc;
+            --gradient-to: #e2e8f0;
         }
         body {
             /* Text styling */
@@ -27,8 +27,8 @@
         }
         body.light {
             --text-color: #1f2937;
-            --gradient-from: #ffffff;
-            --gradient-to: #d8d8d8;
+            --gradient-from: #f8fafc;
+            --gradient-to: #e2e8f0;
         }
         body.dark {
             --text-color: #E0E0E0;
@@ -40,12 +40,12 @@
             width: 8px;
         }
         body::-webkit-scrollbar-track {
-            background: #121224; /* Darker track for contrast */
+            background: #e0e0e0; /* Light track */
         }
         body::-webkit-scrollbar-thumb {
-            background-color: #4B5563; /* Standard dark thumb */
+            background-color: #a0aec0; /* Light thumb */
             border-radius: 10px;
-            border: 2px solid #121224; /* Border matching track */
+            border: 2px solid #e0e0e0;
         }
         /* Fallback for non-Webkit if needed, though Tailwind provides utilities for most things */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');

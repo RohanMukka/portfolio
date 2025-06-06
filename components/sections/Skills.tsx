@@ -72,7 +72,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
           <motion.div 
             key={category} 
             variants={categoryCardVariants}
-            className="p-6 md:p-8 bg-gray-800/30 backdrop-blur-md rounded-xl shadow-2xl border border-gray-700/50"
+            className="p-6 md:p-8 bg-white/50 dark:bg-gray-800/30 backdrop-blur-md rounded-xl shadow-2xl border border-gray-700/50"
           >
             <motion.h3 
               className="text-2xl md:text-3xl font-semibold text-purple-400 mb-6 md:mb-8 flex items-center" 
@@ -89,7 +89,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
               {skillsList.map((skill, index) => (
                 <motion.div 
                   key={skill.name} 
-                  className="group relative flex flex-col items-center p-4 bg-gray-700/50 rounded-lg shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1 border border-gray-600/50 hover:border-purple-500" 
+                  className="group relative flex flex-col items-center p-4 bg-white/60 dark:bg-gray-700/50 rounded-lg shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1 border border-gray-600/50 hover:border-purple-500"
                   variants={skillItemVariants} 
                   data-cursor-hover-link
                 >
