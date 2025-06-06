@@ -12,7 +12,7 @@ const Footer: React.FC<FooterProps> = ({ personalData }) => {
             href={personalData.github} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-amber-400 transition-colors"
+            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black transition-colors"
             data-cursor-hover-link
             aria-label={`${personalData.name} GitHub Profile`}
           >
@@ -22,7 +22,7 @@ const Footer: React.FC<FooterProps> = ({ personalData }) => {
             href={personalData.linkedin} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-amber-400 transition-colors"
+            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black transition-colors"
             data-cursor-hover-link
             aria-label={`${personalData.name} LinkedIn Profile`}
           >
@@ -30,7 +30,7 @@ const Footer: React.FC<FooterProps> = ({ personalData }) => {
           </a>
           <a 
             href={`mailto:${personalData.email}`} 
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-amber-400 transition-colors"
+            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black transition-colors"
             data-cursor-hover-link
             aria-label={`Email ${personalData.name}`}
           >

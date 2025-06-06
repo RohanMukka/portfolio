@@ -29,7 +29,7 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
         variants={sectionTitleVariants}
       >
         <h2
-          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-black to-red-500"
+          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-400 via-gray-600 to-gray-200"
           data-cursor-hover-text
         >
           My Journey & Milestones
@@ -58,9 +58,9 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
                         ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`} // Alternating sides on desktop
           >
             {/* Icon Circle - positioned absolutely relative to this item, then adjusted by margin/padding of content */}
-            <div className={`z-10 absolute left-4 md:left-1/2 top-1 transform -translate-x-1/2 
-                            ${index % 2 === 0 ? 'md:translate-x-[-50%]' : 'md:translate-x-[-50%]'} 
-                            p-3 bg-amber-600 rounded-full shadow-xl border-2 border-black flex items-center justify-center`}
+            <div className={`z-10 absolute left-4 md:left-1/2 top-1 transform -translate-x-1/2
+                            ${index % 2 === 0 ? 'md:translate-x-[-50%]' : 'md:translate-x-[-50%]'}
+                            p-3 bg-gray-700 rounded-full shadow-xl border-2 border-black flex items-center justify-center`}
             >
               {exp.icon ? React.cloneElement(exp.icon, { size:22, className: `text-white ${exp.icon.props.className || ''}`}) : <Briefcase size={22} className="text-white"/>}
             </div>
@@ -73,7 +73,7 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
             <div className={`w-full md:w-[calc(50%-2rem)] ${index % 2 === 0 ? 'ml-12 md:ml-8' : 'ml-12 md:mr-8 md:ml-0'} `}>
               <div className="p-6 bg-white/60 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl border border-gray-700 hover:border-black/70 transition-colors duration-300">
                 <h3 className="text-xl md:text-2xl font-semibold text-black mb-1" data-cursor-hover-text>{exp.role}</h3>
-                <p className="text-md text-amber-300 mb-2" data-cursor-hover-text>{exp.company}</p>
+                <p className="text-md text-gray-300 mb-2" data-cursor-hover-text>{exp.company}</p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 flex items-center" data-cursor-hover-text>
                   <CalendarDays size={14} className="mr-2 text-gray-500"/> {exp.duration}
                 </p>

@@ -43,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({
       <div className="absolute inset-0 overflow-hidden z-0">
         {/* Using Tailwind arbitrary values for positioning percentages */}
         <motion.div
-          className="absolute w-[50vw] h-[50vw] max-w-xl max-h-xl bg-amber-600/20 rounded-full filter blur-3xl opacity-60 top-[5%] left-[10%]"
+          className="absolute w-[50vw] h-[50vw] max-w-xl max-h-xl bg-black/20 rounded-full filter blur-3xl opacity-60 top-[5%] left-[10%]"
           animate={{
             x: ["-10%", "10%", "-10%"],
             y: ["-10%", "0%", "-10%"],
@@ -66,7 +66,7 @@ const Hero: React.FC<HeroProps> = ({
           }}
         />
         <motion.div
-          className="absolute w-[30vw] h-[30vw] max-w-md max-h-md bg-amber-500/15 rounded-full filter blur-2xl opacity-40 top-1/2 left-[45%] -translate-x-1/2 -translate-y-1/2"
+          className="absolute w-[30vw] h-[30vw] max-w-md max-h-md bg-black/10 rounded-full filter blur-2xl opacity-40 top-1/2 left-[45%] -translate-x-1/2 -translate-y-1/2"
           animate={{
             x: ["0%", "5%", "-5%", "0%"],
             y: ["-5%", "10%", "0%", "-5%"],
@@ -132,7 +132,7 @@ const Hero: React.FC<HeroProps> = ({
           <motion.button
             onClick={() => scrollToSection("projects")}
             className="px-8 py-3.5 bg-gradient-to-r from-black to-gray-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
-            whileHover={{ boxShadow: "0px 0px 25px rgba(251, 146, 60, 0.6)" }}
+            whileHover={{ boxShadow: "0px 0px 25px rgba(0, 0, 0, 0.6)" }}
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
           >

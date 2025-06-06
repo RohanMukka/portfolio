@@ -35,7 +35,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
 
   const getProficiencyColor = (level: number): string => {
     if (level >= 90) return "bg-green-500";
-    if (level >= 75) return "bg-amber-500";
+    if (level >= 75) return "bg-gray-500";
     if (level >= 60) return "bg-yellow-500";
     return "bg-red-500";
   };
@@ -94,7 +94,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
                   data-cursor-hover-link
                 >
                   {skill.icon && React.cloneElement(skill.icon, { size: 40, className: `mb-3 group-hover:scale-110 transition-transform duration-300 ${skill.icon.props.className || ''}` })}
-                  <span className="text-md md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-black dark:group-hover:text-amber-300 transition-colors duration-300 text-center">{skill.name}</span>
+                  <span className="text-md md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-black dark:group-hover:text-gray-300 transition-colors duration-300 text-center">{skill.name}</span>
                   {skill.proficiency && (
                     <div className="w-full h-2.5 bg-gray-600 rounded-full mt-3 overflow-hidden">
                       <motion.div 
