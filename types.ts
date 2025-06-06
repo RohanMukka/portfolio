@@ -67,7 +67,7 @@ export interface SectionProps {
   id: string;
   className?: string;
   fullHeight?: boolean;
-  refProp?: React.RefObject<HTMLElement>;
+  refProp?: React.RefObject<HTMLElement | null>;
 }
 
 export interface LottieAnimationProps {
@@ -77,7 +77,6 @@ export interface LottieAnimationProps {
 }
 
 export interface NavbarProps {
-  setActiveSection: (section: string) => void;
   currentSection: string;
   personalData: Pick<PersonalData, 'name' | 'resumeUrl'>;
   scrollToSection: (id: string) => void;
@@ -85,19 +84,19 @@ export interface NavbarProps {
 
 export interface HeroProps {
   scrollToSection: (id: string) => void;
-  refProp: React.RefObject<HTMLElement>;
+  refProp: React.RefObject<HTMLElement | null>;
   personalData: Pick<PersonalData, 'name' | 'title' | 'resumeUrl'>;
   typewriterWords: string[];
   placeholderLottieData: any;
 }
 
 export interface AboutProps {
-  refProp: React.RefObject<HTMLElement>;
+  refProp: React.RefObject<HTMLElement | null>;
   personalData: Pick<PersonalData, 'name' | 'about' | 'resumeUrl'>;
 }
 
 export interface SkillsProps {
-  refProp: React.RefObject<HTMLElement>;
+  refProp: React.RefObject<HTMLElement | null>;
   skills: Skill[];
 }
 
@@ -106,17 +105,17 @@ export interface ProjectCardProps {
 }
 
 export interface ProjectsProps {
-  refProp: React.RefObject<HTMLElement>;
+  refProp: React.RefObject<HTMLElement | null>;
   projects: Project[];
 }
 
 export interface ExperienceProps {
-  refProp: React.RefObject<HTMLElement>;
+  refProp: React.RefObject<HTMLElement | null>;
   experience: ExperienceItem[];
 }
 
 export interface ContactProps {
-  refProp: React.RefObject<HTMLElement>;
+  refProp: React.RefObject<HTMLElement | null>;
   personalData: Pick<PersonalData, 'email' | 'linkedin' | 'github' | 'leetcode' | 'contact'>;
 }
 
