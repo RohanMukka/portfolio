@@ -52,7 +52,7 @@ const Hero: React.FC<HeroProps> = ({
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute w-[40vw] h-[40vw] max-w-lg max-h-lg bg-orange-500/20 rounded-full filter blur-3xl opacity-50 bottom-[10%] right-[15%]"
+          className="absolute w-[40vw] h-[40vw] max-w-lg max-h-lg bg-black/20 rounded-full filter blur-3xl opacity-50 bottom-[10%] right-[15%]"
           animate={{
             x: ["10%", "-5%", "10%"],
             y: ["15%", "5%", "15%"],
@@ -100,7 +100,7 @@ const Hero: React.FC<HeroProps> = ({
           data-cursor-hover-text
         >
           Hi, I'm{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-600 to-white">
             {personalData.name.split(" ")[0]}
           </span>
           <span
@@ -131,7 +131,7 @@ const Hero: React.FC<HeroProps> = ({
         >
           <motion.button
             onClick={() => scrollToSection("projects")}
-            className="px-8 py-3.5 bg-gradient-to-r from-orange-600 to-amber-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
+            className="px-8 py-3.5 bg-gradient-to-r from-black to-gray-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
             whileHover={{ boxShadow: "0px 0px 25px rgba(251, 146, 60, 0.6)" }}
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
@@ -141,10 +141,10 @@ const Hero: React.FC<HeroProps> = ({
           <motion.a
             href={personalData.resumeUrl}
             download
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-accent-orange text-accent-orange font-semibold rounded-xl hover:bg-accent-orange hover:text-white transition-colors duration-300 text-md md:text-lg"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-black text-black font-semibold rounded-xl hover:bg-black hover:text-white transition-colors duration-300 text-md md:text-lg"
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 0px 15px rgba(255, 107, 53, 0.4)",
+              boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.4)",
             }}
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link

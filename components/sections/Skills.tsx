@@ -41,13 +41,13 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
   };
 
   const categoryIcons: Record<string, React.ReactElement> = {
-    "Languages": <Code size={28} className="mr-3 text-accent-orange"/>,
-    "Frameworks & Libraries": <Settings2 size={28} className="mr-3 text-accent-orange"/>,
-    "AI/ML": <BrainCircuit size={28} className="mr-3 text-accent-orange"/>,
-    "Databases": <Database size={28} className="mr-3 text-accent-orange"/>,
-    "Frontend": <Palette size={28} className="mr-3 text-accent-orange"/>,
-    "Backend & Cloud": <Cloud size={28} className="mr-3 text-accent-orange"/>,
-    "Tools": <BriefcaseIcon size={28} className="mr-3 text-accent-orange"/>, // Use renamed import
+    "Languages": <Code size={28} className="mr-3 text-black"/>,
+    "Frameworks & Libraries": <Settings2 size={28} className="mr-3 text-black"/>,
+    "AI/ML": <BrainCircuit size={28} className="mr-3 text-black"/>,
+    "Databases": <Database size={28} className="mr-3 text-black"/>,
+    "Frontend": <Palette size={28} className="mr-3 text-black"/>,
+    "Backend & Cloud": <Cloud size={28} className="mr-3 text-black"/>,
+    "Tools": <BriefcaseIcon size={28} className="mr-3 text-black"/>, // Use renamed import
   };
 
   return (
@@ -59,7 +59,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
         viewport={{ once: true, amount: 0.3 }} 
         variants={sectionTitleVariants}
       >
-        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500" data-cursor-hover-text>
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-600 to-white" data-cursor-hover-text>
           My Technical Arsenal
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
@@ -75,11 +75,11 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
             className="p-6 md:p-8 bg-white/50 dark:bg-gray-800/30 backdrop-blur-md rounded-xl shadow-2xl border border-gray-700/50"
           >
             <motion.h3 
-              className="text-2xl md:text-3xl font-semibold text-accent-orange mb-6 md:mb-8 flex items-center"
+              className="text-2xl md:text-3xl font-semibold text-black mb-6 md:mb-8 flex items-center"
               variants={skillItemVariants} // Animate title as well
               data-cursor-hover-text
             >
-              {categoryIcons[category] || <BriefcaseIcon size={28} className="mr-3 text-accent-orange"/>}
+              {categoryIcons[category] || <BriefcaseIcon size={28} className="mr-3 text-black"/>}
               {category}
             </motion.h3>
             <motion.div 
@@ -89,12 +89,12 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
               {skillsList.map((skill, index) => (
                 <motion.div 
                   key={skill.name} 
-                  className="group relative flex flex-col items-center p-4 bg-white/60 dark:bg-gray-700/50 rounded-lg shadow-lg hover:shadow-amber-500/30 transition-all duration-300 transform hover:-translate-y-1 border border-gray-600/50 hover:border-accent-orange"
+                  className="group relative flex flex-col items-center p-4 bg-white/60 dark:bg-gray-700/50 rounded-lg shadow-lg hover:shadow-gray-500/30 transition-all duration-300 transform hover:-translate-y-1 border border-gray-600/50 hover:border-black"
                   variants={skillItemVariants} 
                   data-cursor-hover-link
                 >
                   {skill.icon && React.cloneElement(skill.icon, { size: 40, className: `mb-3 group-hover:scale-110 transition-transform duration-300 ${skill.icon.props.className || ''}` })}
-                  <span className="text-md md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-accent-orange dark:group-hover:text-amber-300 transition-colors duration-300 text-center">{skill.name}</span>
+                  <span className="text-md md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-black dark:group-hover:text-amber-300 transition-colors duration-300 text-center">{skill.name}</span>
                   {skill.proficiency && (
                     <div className="w-full h-2.5 bg-gray-600 rounded-full mt-3 overflow-hidden">
                       <motion.div 
