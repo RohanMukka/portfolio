@@ -17,14 +17,14 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isDark, setIsDark] = useState(true);
 
-  const homeRef = useRef<HTMLElement>(null);
-  const aboutRef = useRef<HTMLElement>(null);
-  const skillsRef = useRef<HTMLElement>(null);
-  const projectsRef = useRef<HTMLElement>(null);
-  const experienceRef = useRef<HTMLElement>(null);
-  const contactRef = useRef<HTMLElement>(null);
+  const homeRef = useRef<HTMLElement | null>(null);
+  const aboutRef = useRef<HTMLElement | null>(null);
+  const skillsRef = useRef<HTMLElement | null>(null);
+  const projectsRef = useRef<HTMLElement | null>(null);
+  const experienceRef = useRef<HTMLElement | null>(null);
+  const contactRef = useRef<HTMLElement | null>(null);
 
-  const sectionRefs: Record<string, React.RefObject<HTMLElement>> = {
+  const sectionRefs: Record<string, React.RefObject<HTMLElement | null>> = {
     home: homeRef,
     about: aboutRef,
     skills: skillsRef,
@@ -115,6 +115,7 @@ const App: React.FC = () => {
       <Navbar
         setActiveSection={setActiveSection}
         currentSection={activeSection}
+
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}
         scrollToSection={scrollToSection}
         toggleTheme={toggleTheme}
