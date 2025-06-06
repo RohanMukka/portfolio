@@ -4,7 +4,7 @@ import { Briefcase, Lightbulb, Code, Server, BrainCircuit, Award, BookOpen, Tren
 
 export const personalData: PersonalData = {
   name: "Rohan Mukka",
-  title: "MS Computer Science Student | ML Engineer",
+  title: "MS Computer Science Student",
   email: "rohan.mukka-1@ou.edu",
   phone: "+1 (405) 501-5699",
   location: "Oklahoma, United States",
