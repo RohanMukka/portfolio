@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { HeroProps } from "../../types";
 import Section from "../common/Section";
 import LottieAnimation from "../common/LottieAnimation";
@@ -34,17 +34,6 @@ const Hero: React.FC<HeroProps> = ({
       opacity: 1,
       scale: 1,
       transition: { type: "spring", stiffness: 80, damping: 10, delay: 1 },
-    },
-  };
-  const arrowVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: [0, -10, 0],
-      transition: {
-        y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-        opacity: { duration: 0.6, delay: 1.5 },
-      },
     },
   };
 
@@ -169,24 +158,6 @@ const Hero: React.FC<HeroProps> = ({
           </motion.a>
         </motion.div>
       </motion.div>
-
-      {/* Moved ArrowDown to be a direct child of Section for correct absolute positioning */}
-      <motion.div
-        variants={arrowVariants}
-        initial="hidden"
-        animate="visible"
-        className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 cursor-pointer z-10"
-        onClick={() => scrollToSection("about")}
-        whileHover={{ y: -5, scale: 1.1 }}
-        data-cursor-hover-link
-        aria-label="Scroll to about section"
-      >
-        <ArrowDown
-          size={36}
-          className="text-gray-400 hover:text-purple-400 transition-colors"
-        />
-      </motion.div>
-
       {/* Wave animation style tag - Tailwind doesn't directly support keyframes without config */}
       <style>{`
         .wave-emoji { 
