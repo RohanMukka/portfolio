@@ -21,12 +21,12 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
   const contactMethods = [
     { icon: <Mail size={28} className="text-pink-400"/>, label: "Email Me", value: personalData.email, href: `mailto:${personalData.email}` },
     { icon: <Linkedin size={28} className="text-blue-400"/>, label: "Connect on LinkedIn", value: personalData.linkedin.split('/').pop() || personalData.linkedin, href: personalData.linkedin, target: "_blank" },
-    { icon: <Github size={28} className="text-gray-300"/>, label: "View My GitHub", value: personalData.github.split('/').pop() || personalData.github, href: personalData.github, target: "_blank" },
+    { icon: <Github size={28} className="text-gray-500 dark:text-gray-300"/>, label: "View My GitHub", value: personalData.github.split('/').pop() || personalData.github, href: personalData.github, target: "_blank" },
     { icon: <ListChecks size={28} className="text-orange-400"/>, label: "My LeetCode", value: personalData.leetcode.split('/').pop() || personalData.leetcode, href: personalData.leetcode, target: "_blank" },
   ];
   
   return (
-    <Section id="contact" className="text-white" refProp={refProp} fullHeight>
+    <Section id="contact" refProp={refProp} fullHeight>
       <motion.div
         className="text-center mb-12 md:mb-16"
         initial="hidden"
@@ -41,7 +41,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
           Let's Get In Touch
         </h2>
         <p
-          className="text-lg text-gray-400 max-w-xl mx-auto mb-6"
+          className="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-6"
           data-cursor-hover-text
         >
           {personalData.contact.intro}
@@ -67,15 +67,15 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
               {method.icon}
             </div>
             <div>
-              <h4 className="text-lg md:text-xl font-semibold text-gray-200 group-hover:text-purple-300 transition-colors duration-300">{method.label}</h4>
-              <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300 break-all">{method.value}</p>
+              <h4 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200 group-hover:text-purple-500 dark:group-hover:text-purple-300 transition-colors duration-300">{method.label}</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-300 break-all">{method.value}</p>
             </div>
             <Send size={22} className="ml-auto text-gray-500 group-hover:text-purple-400 transition-all duration-300 transform group-hover:translate-x-1"/>
           </motion.a>
         ))}
       </div>
-       <motion.p 
-        className="text-center text-xl md:text-2xl text-gray-300 mt-16 md:mt-20 font-semibold"
+       <motion.p
+        className="text-center text-xl md:text-2xl text-gray-700 dark:text-gray-300 mt-16 md:mt-20 font-semibold"
         custom={contactMethods.length}
         variants={itemVariants}
         initial="hidden"

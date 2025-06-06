@@ -24,8 +24,8 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, perso
     setIsOpen(false); // Close mobile menu on item click
   };
 
-  const navLinkClasses = (item: string) => 
-    `text-gray-300 hover:text-purple-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-purple-400 font-semibold' : ''}`;
+  const navLinkClasses = (item: string) =>
+    `text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-purple-600 dark:text-purple-400 font-semibold' : ''}`;
   
   const activeIndicator = (item: string) => 
     currentSection === item.toLowerCase() && (
@@ -45,8 +45,8 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, perso
       transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-        <motion.div 
-          className="text-3xl font-bold text-white cursor-pointer" 
+        <motion.div
+          className="text-3xl font-bold text-gray-900 dark:text-white cursor-pointer"
           onClick={() => handleNavClick('home')}
           whileHover={{ scale: 1.05, color: '#A78BFA' }} // purple-400
           data-cursor-hover-link
@@ -79,7 +79,7 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, perso
           </motion.a>
           <button
             onClick={toggleTheme}
-            className="text-gray-300 hover:text-yellow-400 transition-colors"
+            className="text-gray-700 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors"
             aria-label="Toggle theme"
             data-cursor-hover-link
           >
@@ -88,9 +88,9 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, perso
         </div>
 
         <div className="md:hidden">
-          <button 
-            onClick={() => setIsOpen(!isOpen)} 
-            className="text-white focus:outline-none z-50" 
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-gray-900 dark:text-white focus:outline-none z-50"
             data-cursor-hover-link
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
@@ -129,7 +129,7 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, perso
               </motion.a>
               <button
                 onClick={toggleTheme}
-                className="text-gray-300 hover:text-yellow-400 transition-colors"
+                className="text-gray-700 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors"
                 aria-label="Toggle theme"
                 data-cursor-hover-link
               >

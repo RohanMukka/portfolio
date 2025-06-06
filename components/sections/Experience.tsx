@@ -20,7 +20,7 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
   };
 
   return (
-    <Section id="experience" className="text-white" refProp={refProp}>
+    <Section id="experience" refProp={refProp}>
       <motion.div
         className="text-center mb-16 md:mb-20"
         initial="hidden"
@@ -35,7 +35,7 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
           My Journey & Milestones
         </h2>
         <p
-          className="text-lg text-gray-400 max-w-2xl mx-auto"
+          className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
           data-cursor-hover-text
         >
           A timeline of my educational background and professional experiences.
@@ -74,10 +74,10 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
               <div className="p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl border border-gray-700 hover:border-purple-500/70 transition-colors duration-300">
                 <h3 className="text-xl md:text-2xl font-semibold text-purple-300 mb-1" data-cursor-hover-text>{exp.role}</h3>
                 <p className="text-md text-sky-300 mb-2" data-cursor-hover-text>{exp.company}</p>
-                <p className="text-xs text-gray-400 mb-3 flex items-center" data-cursor-hover-text>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 flex items-center" data-cursor-hover-text>
                   <CalendarDays size={14} className="mr-2 text-gray-500"/> {exp.duration}
                 </p>
-                <p className="text-gray-300 text-sm leading-relaxed" data-cursor-hover-text>{exp.description}</p>
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed" data-cursor-hover-text>{exp.description}</p>
               </div>
             </div>
           </motion.div>

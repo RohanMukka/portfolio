@@ -51,7 +51,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
   };
 
   return (
-    <Section id="skills" className="text-white" refProp={refProp}>
+    <Section id="skills" refProp={refProp}>
       <motion.div 
         className="text-center mb-16 md:mb-20" 
         initial="hidden" 
@@ -62,7 +62,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
         <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-emerald-400 to-teal-500" data-cursor-hover-text>
           My Technical Arsenal
         </h2>
-        <p className="text-lg text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
           A collection of technologies and tools I excel in and use to build innovative solutions.
         </p>
       </motion.div>
@@ -94,7 +94,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
                   data-cursor-hover-link
                 >
                   {skill.icon && React.cloneElement(skill.icon, { size: 40, className: `mb-3 group-hover:scale-110 transition-transform duration-300 ${skill.icon.props.className || ''}` })}
-                  <span className="text-md md:text-lg font-medium text-gray-200 group-hover:text-purple-300 transition-colors duration-300 text-center">{skill.name}</span>
+                  <span className="text-md md:text-lg font-medium text-gray-800 dark:text-gray-200 group-hover:text-purple-500 dark:group-hover:text-purple-300 transition-colors duration-300 text-center">{skill.name}</span>
                   {skill.proficiency && (
                     <div className="w-full h-2.5 bg-gray-600 rounded-full mt-3 overflow-hidden">
                       <motion.div 
