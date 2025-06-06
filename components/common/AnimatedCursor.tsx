@@ -1,82 +1,91 @@
-
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useSpring } from 'framer-motion';
 
 const AnimatedCursor: React.FC = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHoveringLink, setIsHoveringLink] = useState(false);
-  const [isHoveringText, setIsHoveringText] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [cursorVariant, setCursorVariant] = useState<'default' | 'link' | 'text'>('default');
+
+  // Smooth trailing using useSpring
+  const springX = useSpring(mousePosition.x, { stiffness: 300, damping: 30 });
+  const springY = useSpring(mousePosition.y, { stiffness: 300, damping: 30 });
 
   useEffect(() => {
-    const updatePosition = (e: MouseEvent) => setPosition({ x: e.clientX, y: e.clientY });
-    
-    const handleMouseEnterLink = () => setIsHoveringLink(true);
-    const handleMouseLeaveLink = () => setIsHoveringLink(false);
-    const handleMouseEnterText = () => setIsHoveringText(true);
-    const handleMouseLeaveText = () => setIsHoveringText(false);
+    const move = (e: MouseEvent) => setMousePosition({ x: e.clientX, y: e.clientY });
 
-    window.addEventListener('mousemove', updatePosition);
+    const onEnterLink = () => setCursorVariant('link');
+    const onLeaveLink = () => setCursorVariant('default');
+    const onEnterText = () => setCursorVariant('text');
+    const onLeaveText = () => setCursorVariant('default');
 
-    // Query for elements after component mounts and DOM is ready
-    const linkElements = document.querySelectorAll('a, button, [data-cursor-hover-link]');
-    const textElements = document.querySelectorAll('h1, h2, h3, p, span, [data-cursor-hover-text]');
+    window.addEventListener('mousemove', move);
 
-    linkElements.forEach(el => { 
-      el.addEventListener('mouseenter', handleMouseEnterLink); 
-      el.addEventListener('mouseleave', handleMouseLeaveLink); 
+    const links = document.querySelectorAll('a, button, [data-cursor-hover-link]');
+    const texts = document.querySelectorAll('h1, h2, h3, p, span, [data-cursor-hover-text]');
+
+    links.forEach(el => {
+      el.addEventListener('mouseenter', onEnterLink);
+      el.addEventListener('mouseleave', onLeaveLink);
     });
-    textElements.forEach(el => { 
-      el.addEventListener('mouseenter', handleMouseEnterText); 
-      el.addEventListener('mouseleave', handleMouseLeaveText); 
+    texts.forEach(el => {
+      el.addEventListener('mouseenter', onEnterText);
+      el.addEventListener('mouseleave', onLeaveText);
     });
 
     return () => {
-      window.removeEventListener('mousemove', updatePosition);
-      linkElements.forEach(el => { 
-        el.removeEventListener('mouseenter', handleMouseEnterLink); 
-        el.removeEventListener('mouseleave', handleMouseLeaveLink); 
+      window.removeEventListener('mousemove', move);
+      links.forEach(el => {
+        el.removeEventListener('mouseenter', onEnterLink);
+        el.removeEventListener('mouseleave', onLeaveLink);
       });
-      textElements.forEach(el => { 
-        el.removeEventListener('mouseenter', handleMouseEnterText); 
-        el.removeEventListener('mouseleave', handleMouseLeaveText); 
+      texts.forEach(el => {
+        el.removeEventListener('mouseenter', onEnterText);
+        el.removeEventListener('mouseleave', onLeaveText);
       });
     };
-  }, []); // Empty dependency array ensures this runs once on mount and cleans up on unmount
+  }, []);
 
-  const cursorVariants = {
-    default: { 
-      width: 24, height: 24, 
-      border: '2px solid #A78BFA', // purple-400
-      backgroundColor: 'rgba(167, 139, 250, 0.1)', 
-      x: position.x - 12, y: position.y - 12, 
-      transition: { type: 'spring', stiffness: 700, damping: 30 } 
-    },
-    linkHover: { 
-      width: 48, height: 48, 
-      border: '2px solid #38BDF8', // sky-500
-      backgroundColor: 'rgba(56, 189, 248, 0.2)', 
-      x: position.x - 24, y: position.y - 24, 
-      transition: { type: 'spring', stiffness: 500, damping: 20 } 
-    },
-    textHover: { 
-      width: 36, height: 36, 
-      border: '2px solid #EC4899', // pink-500
-      backgroundColor: 'rgba(236, 72, 153, 0.1)', 
-      x: position.x - 18, y: position.y - 18, 
-      mixBlendMode: 'difference' as const, // Ensure string literal type
-      transition: { type: 'spring', stiffness: 600, damping: 25 } 
+  const getStyle = () => {
+    switch (cursorVariant) {
+      case 'link':
+        return {
+          width: 48,
+          height: 48,
+          backgroundColor: 'rgba(56, 189, 248, 0.3)',
+          border: '2px solid #38BDF8',
+        };
+      case 'text':
+        return {
+          width: 36,
+          height: 36,
+          backgroundColor: 'rgba(236, 72, 153, 0.2)',
+          border: '2px solid #EC4899',
+          mixBlendMode: 'difference',
+        };
+      default:
+        return {
+          width: 24,
+          height: 24,
+          backgroundColor: 'rgba(167, 139, 250, 0.1)',
+          border: '2px solid #A78BFA',
+        };
     }
   };
 
-  let currentVariant = "default";
-  if (isHoveringLink) currentVariant = "linkHover";
-  else if (isHoveringText) currentVariant = "textHover";
+  const style = getStyle();
 
   return (
-    <motion.div 
-      className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] hidden md:block" 
-      variants={cursorVariants} 
-      animate={currentVariant} 
+    <motion.div
+      className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] hidden md:block"
+      style={{
+        ...style,
+        position: 'fixed',
+        borderRadius: '50%',
+        transform: 'translate(-50%, -50%)',
+      }}
+      animate={{
+        x: springX,
+        y: springY,
+      }}
     />
   );
 };
