@@ -95,7 +95,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
           ))}
           {strengths && strengths.length > 0 && (
             <motion.div className="mt-8 pt-6 border-t border-gray-700/50" variants={paragraphVariants}>
-              <h4 className="text-xl font-semibold text-amber-300 mb-4" data-cursor-hover-text>Core Strengths:</h4>
+              <h4 className="text-xl font-semibold text-gray-300 mb-4" data-cursor-hover-text>Core Strengths:</h4>
               <motion.ul className="space-y-3" variants={contentContainerVariants}> {/* Stagger children for list items */}
                 {strengths.map((strength, index) => (
                   <motion.li 

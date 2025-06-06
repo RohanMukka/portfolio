@@ -27,7 +27,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
       )}
     </div>
     <div className="p-6 flex flex-col flex-grow">
-      <h3 className="text-xl md:text-2xl font-semibold text-black mb-2 group-hover:text-amber-300 transition-colors" data-cursor-hover-text>
+      <h3 className="text-xl md:text-2xl font-semibold text-black mb-2 group-hover:text-gray-300 transition-colors" data-cursor-hover-text>
         {project.title}
       </h3>
       <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed mb-4 flex-grow" data-cursor-hover-text>
@@ -39,10 +39,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
         </p>
       )}
       <div className="mb-4">
-        <p className="text-xs text-amber-300 mb-1 font-medium">Technologies Used:</p>
+        <p className="text-xs text-gray-300 mb-1 font-medium">Technologies Used:</p>
         <div className="flex flex-wrap gap-2">
           {project.tags.map(tag => (
-            <span key={tag} className="px-2.5 py-1 text-xs bg-amber-700/50 text-amber-200 rounded-full shadow-sm">
+            <span key={tag} className="px-2.5 py-1 text-xs bg-gray-700/50 text-gray-200 rounded-full shadow-sm">
               {tag}
             </span>
           ))}
@@ -54,7 +54,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
             href={project.githubUrl} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-amber-400 transition-colors duration-200"
+            className="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-black transition-colors duration-200"
             whileHover={{ scale: 1.05 }} 
             data-cursor-hover-link
           >

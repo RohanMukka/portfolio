@@ -25,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
   };
 
   const navLinkClasses = (item: string) =>
-    `text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-amber-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-black dark:text-amber-400 font-semibold' : ''}`;
+    `text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-black transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-black dark:text-black font-semibold' : ''}`;
   
   const activeIndicator = (item: string) => 
     currentSection === item.toLowerCase() && (
