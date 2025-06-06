@@ -13,6 +13,7 @@ export const personalData: PersonalData = {
   location: "Oklahoma, United States",
   linkedin: "https://linkedin.com/in/rohanmukka",
   github: "https://github.com/rohanmukka",
+  leetcode: "https://leetcode.com/u/rohan_mukka",
   resumeUrl: "/rohan_resume.pdf", // Changed to absolute path from domain root
   about: {
     greeting: "Hello! I'm Rohan Mukka.",

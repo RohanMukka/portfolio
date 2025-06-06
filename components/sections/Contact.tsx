@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Linkedin, Github, Send } from 'lucide-react';
+import { Mail, Linkedin, Github, ListChecks, Send } from 'lucide-react';
 import { ContactProps } from '../../types';
 import Section from '../common/Section';
 
@@ -22,6 +22,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
     { icon: <Mail size={28} className="text-pink-400"/>, label: "Email Me", value: personalData.email, href: `mailto:${personalData.email}` },
     { icon: <Linkedin size={28} className="text-blue-400"/>, label: "Connect on LinkedIn", value: personalData.linkedin.split('/').pop() || personalData.linkedin, href: personalData.linkedin, target: "_blank" },
     { icon: <Github size={28} className="text-gray-300"/>, label: "View My GitHub", value: personalData.github.split('/').pop() || personalData.github, href: personalData.github, target: "_blank" },
+    { icon: <ListChecks size={28} className="text-orange-400"/>, label: "My LeetCode", value: personalData.leetcode.split('/').pop() || personalData.leetcode, href: personalData.leetcode, target: "_blank" },
   ];
   
   return (

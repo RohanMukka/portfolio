@@ -52,6 +52,7 @@ export interface PersonalData {
   location: string;
   linkedin: string;
   github: string;
+  leetcode: string;
   resumeUrl: string;
   about: AboutData;
   experience: ExperienceItem[];
@@ -116,7 +117,7 @@ export interface ExperienceProps {
 
 export interface ContactProps {
   refProp: React.RefObject<HTMLElement>;
-  personalData: Pick<PersonalData, 'email' | 'linkedin' | 'github' | 'contact'>;
+  personalData: Pick<PersonalData, 'email' | 'linkedin' | 'github' | 'leetcode' | 'contact'>;
 }
 
 export interface PreloaderProps {
