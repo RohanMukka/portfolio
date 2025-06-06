@@ -40,11 +40,11 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
             animate={{ scale: 1, rotateY: 0 }}
             transition={{ duration: 1, type: 'spring', stiffness: 120, delay: 0.2 }}
           >
-            <Layers size={80} className="text-purple-500 filter drop-shadow-[0_0_15px_rgba(168,85,247,0.6)]" />
+            <Layers size={80} className="text-accent-orange filter drop-shadow-[0_0_15px_rgba(255,107,53,0.6)]" />
           </motion.div>
           <div className="w-72 h-2.5 bg-gray-700 rounded-full overflow-hidden shadow-inner">
             <motion.div 
-              className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full"
+              className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.1, ease: "linear" }} // Faster bar update

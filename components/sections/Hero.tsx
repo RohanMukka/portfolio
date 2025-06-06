@@ -43,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({
       <div className="absolute inset-0 overflow-hidden z-0">
         {/* Using Tailwind arbitrary values for positioning percentages */}
         <motion.div
-          className="absolute w-[50vw] h-[50vw] max-w-xl max-h-xl bg-purple-600/20 rounded-full filter blur-3xl opacity-60 top-[5%] left-[10%]"
+          className="absolute w-[50vw] h-[50vw] max-w-xl max-h-xl bg-amber-600/20 rounded-full filter blur-3xl opacity-60 top-[5%] left-[10%]"
           animate={{
             x: ["-10%", "10%", "-10%"],
             y: ["-10%", "0%", "-10%"],
@@ -52,7 +52,7 @@ const Hero: React.FC<HeroProps> = ({
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute w-[40vw] h-[40vw] max-w-lg max-h-lg bg-pink-500/20 rounded-full filter blur-3xl opacity-50 bottom-[10%] right-[15%]"
+          className="absolute w-[40vw] h-[40vw] max-w-lg max-h-lg bg-orange-500/20 rounded-full filter blur-3xl opacity-50 bottom-[10%] right-[15%]"
           animate={{
             x: ["10%", "-5%", "10%"],
             y: ["15%", "5%", "15%"],
@@ -66,7 +66,7 @@ const Hero: React.FC<HeroProps> = ({
           }}
         />
         <motion.div
-          className="absolute w-[30vw] h-[30vw] max-w-md max-h-md bg-sky-500/15 rounded-full filter blur-2xl opacity-40 top-1/2 left-[45%] -translate-x-1/2 -translate-y-1/2"
+          className="absolute w-[30vw] h-[30vw] max-w-md max-h-md bg-amber-500/15 rounded-full filter blur-2xl opacity-40 top-1/2 left-[45%] -translate-x-1/2 -translate-y-1/2"
           animate={{
             x: ["0%", "5%", "-5%", "0%"],
             y: ["-5%", "10%", "0%", "-5%"],
@@ -100,7 +100,7 @@ const Hero: React.FC<HeroProps> = ({
           data-cursor-hover-text
         >
           Hi, I'm{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500">
             {personalData.name.split(" ")[0]}
           </span>
           <span
@@ -131,8 +131,8 @@ const Hero: React.FC<HeroProps> = ({
         >
           <motion.button
             onClick={() => scrollToSection("projects")}
-            className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
-            whileHover={{ boxShadow: "0px 0px 25px rgba(236, 72, 153, 0.6)" }}
+            className="px-8 py-3.5 bg-gradient-to-r from-orange-600 to-amber-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
+            whileHover={{ boxShadow: "0px 0px 25px rgba(251, 146, 60, 0.6)" }}
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
           >
@@ -141,10 +141,10 @@ const Hero: React.FC<HeroProps> = ({
           <motion.a
             href={personalData.resumeUrl}
             download
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-purple-400 text-purple-400 font-semibold rounded-xl hover:bg-purple-400 hover:text-white transition-colors duration-300 text-md md:text-lg"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-accent-orange text-accent-orange font-semibold rounded-xl hover:bg-accent-orange hover:text-white transition-colors duration-300 text-md md:text-lg"
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 0px 15px rgba(168, 85, 247, 0.4)",
+              boxShadow: "0px 0px 15px rgba(255, 107, 53, 0.4)",
             }}
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
