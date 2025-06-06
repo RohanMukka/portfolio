@@ -15,7 +15,6 @@ import Footer from './components/common/Footer';
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
-  const [isDark, setIsDark] = useState(true); // Default to dark mode
 
   const homeRef = useRef<HTMLElement | null>(null);
   const aboutRef = useRef<HTMLElement | null>(null);
@@ -77,17 +76,13 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]); // Re-run when isLoading changes to attach observer after preloader
 
+  // Force dark theme on mount
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      if (isDark) {
-        document.body.classList.add('dark');
-        document.body.classList.remove('light');
-      } else {
-        document.body.classList.add('light');
-        document.body.classList.remove('dark');
-      }
+      document.body.classList.add('dark');
+      document.body.classList.remove('light');
     }
-  }, [isDark]);
+  }, []);
 
   const scrollToSection = (id: string) => {
     const sectionRef = sectionRefs[id];
@@ -106,7 +101,6 @@ const App: React.FC = () => {
     }
   };
 
-  const toggleTheme = () => setIsDark(prev => !prev);
 
   if (isLoading && typeof window !== 'undefined') { // Ensure window check for SSR safety, though not strictly needed for CSR
     return <Preloader onLoaded={handlePreloaderLoaded} />;
@@ -116,11 +110,8 @@ const App: React.FC = () => {
     <div className="min-h-screen text-inherit selection:bg-purple-500 selection:text-white">
       <Navbar
         currentSection={activeSection}
-
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}
         scrollToSection={scrollToSection}
-        toggleTheme={toggleTheme}
-        isDark={isDark}
       />
       
       <main>
