@@ -93,11 +93,13 @@ const App: React.FC = () => {
     const sectionRef = sectionRefs[id];
     if (sectionRef && sectionRef.current) {
       sectionRef.current.scrollIntoView({ behavior: 'smooth' });
+      setActiveSection(id); // Immediately highlight the target nav item
     } else {
       // Fallback for safety, though ref method should be primary
       const sectionElement = document.getElementById(id);
       if (sectionElement) {
         sectionElement.scrollIntoView({ behavior: 'smooth'});
+        setActiveSection(id); // Ensure state updates even with fallback
       } else {
         console.warn(`scrollToSection: Element or Ref for ID '${id}' not found.`);
       }
