@@ -16,9 +16,20 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
     hidden: { opacity: 0, y: 50 }, 
     visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 12 } } 
   };
-  const lottieItemVariants = { 
-    hidden: { opacity: 0, scale: 0.5 }, 
-    visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 80, damping: 10, delay: 1 } } 
+  const lottieItemVariants = {
+    hidden: { opacity: 0, scale: 0.5 },
+    visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 80, damping: 10, delay: 1 } }
+  };
+  const arrowVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: [0, -10, 0],
+      transition: {
+        y: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+        opacity: { duration: 0.6, delay: 1.5 }
+      }
+    }
   };
   
   const typedText = useTypewriter(typewriterWords);
@@ -54,7 +65,12 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
         initial="hidden" 
         animate="visible"
       >
-        <motion.div variants={lottieItemVariants} className="w-56 h-56 md:w-72 md:h-72 mb-6 md:mb-8">
+        <motion.div
+          variants={lottieItemVariants}
+          animate={{ y: [0, -15, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-56 h-56 md:w-72 md:h-72 mb-6 md:mb-8"
+        >
            <LottieAnimation animationData={placeholderLottieData} loop={true} className="filter drop-shadow-2xl w-full h-full" />
         </motion.div>
         <motion.h1
@@ -67,13 +83,13 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
         </motion.h1>
         <motion.p
           variants={itemVariants}
-          className="text-sm sm:text-base text-gray-400 font-mono mb-2 sm:mb-3"
+          className="text-sm sm:text-base text-gray-400 font-mono mb-2 sm:mb-3 text-center"
         >
           {personalData.title}
         </motion.p>
         <motion.div
           variants={itemVariants}
-          className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-16 md:h-auto min-h-[4rem] md:min-h-[auto]"
+          className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-16 md:h-auto min-h-[4rem] md:min-h-[auto] text-center"
           data-cursor-hover-text
         >
           <span>{typedText}</span><span className="animate-pulse">_</span> 
@@ -102,18 +118,13 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
       </motion.div>
       
       {/* Moved ArrowDown to be a direct child of Section for correct absolute positioning */}
-      <motion.div 
-        variants={itemVariants} 
+      <motion.div
+        variants={arrowVariants}
         initial="hidden"
         animate="visible"
-        transition={{
-            type: 'spring', stiffness: 100, damping: 12, // Inherit spring from itemVariants
-            delay: 1.5 // Delay its appearance slightly after main content
-        }}
-        className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 cursor-pointer z-10" 
-        onClick={() => scrollToSection('about')} 
-        whileHover={{ y: -5, scale: 1.1 }} 
-        // Removed redundant transition prop from here as it's handled by animate or whileHover
+        className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 cursor-pointer z-10"
+        onClick={() => scrollToSection('about')}
+        whileHover={{ y: -5, scale: 1.1 }}
         data-cursor-hover-link
         aria-label="Scroll to about section"
       >

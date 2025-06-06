@@ -14,7 +14,10 @@
         body {
             /* Text styling */
             color: #E0E0E0; /* Base text color */
-            font-family: 'Inter', sans-serif; /* A common sans-serif font, ensure it's loaded or fallback */
+            font-family: 'Inter', sans-serif; /* Default font */
+            background: linear-gradient(130deg,#1a1a2e,#0f0c29,#302b63,#24243e);
+            background-size: 400% 400%;
+            animation: gradient-bg 20s ease infinite;
         }
         /* Custom scrollbar for Webkit browsers */
         body::-webkit-scrollbar {
@@ -29,12 +32,17 @@
             border: 2px solid #121224; /* Border matching track */
         }
         /* Fallback for non-Webkit if needed, though Tailwind provides utilities for most things */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
         body {
              font-family: 'Inter', sans-serif;
         }
-        .font-mono { /* Ensure Tailwind's font-mono uses Roboto Mono or a similar choice */
-            font-family: 'Roboto Mono', monospace;
+        .font-mono { /* Use Fira Code for monospaced text */
+            font-family: 'Fira Code', monospace;
+        }
+        @keyframes gradient-bg {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
         }
     </style>
     <script>
@@ -43,7 +51,7 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['Roboto Mono', 'monospace'],
+                        mono: ['Fira Code', 'monospace'],
                     },
                     colors: {
                         // You can define custom colors here if needed, matching your palette
@@ -67,7 +75,7 @@
 }
 </script>
 </head>
-<body class="min-h-screen bg-gradient-to-b from-purple-950 via-[#0A0A14] to-black">
+<body class="min-h-screen">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>
