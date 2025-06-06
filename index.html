@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rohan Mukka - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: #0A0A14; /* Base background color */
+            color: #E0E0E0; /* Base text color */
+            font-family: 'Inter', sans-serif; /* A common sans-serif font, ensure it's loaded or fallback */
+        }
+        /* Custom scrollbar for Webkit browsers */
+        body::-webkit-scrollbar {
+            width: 8px;
+        }
+        body::-webkit-scrollbar-track {
+            background: #121224; /* Darker track for contrast */
+        }
+        body::-webkit-scrollbar-thumb {
+            background-color: #8A2BE2; /* Purple accent for thumb */
+            border-radius: 10px;
+            border: 2px solid #121224; /* Border matching track */
+        }
+        /* Fallback for non-Webkit if needed, though Tailwind provides utilities for most things */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap');
+        body {
+             font-family: 'Inter', sans-serif;
+        }
+        .font-mono { /* Ensure Tailwind's font-mono uses Roboto Mono or a similar choice */
+            font-family: 'Roboto Mono', monospace;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    },
+                    colors: {
+                        // You can define custom colors here if needed, matching your palette
+                        // Example:
+                        // 'primary-purple': '#8A2BE2',
+                        // 'dark-bg': '#0A0A14',
+                    }
+                }
+            }
+        }
+    </script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.513.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.16.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
