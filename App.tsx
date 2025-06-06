@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { personalData, placeholderLottieData, typewriterWords } from './data';
 
 import Navbar from './components/common/Navbar';
-import AnimatedCursor from './components/common/AnimatedCursor';
 import Preloader from './components/common/Preloader';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
@@ -98,7 +97,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen text-gray-100 selection:bg-purple-500 selection:text-white">
-      <AnimatedCursor />
       <Navbar 
         currentSection={activeSection} 
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}
