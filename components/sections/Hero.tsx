@@ -95,24 +95,24 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
           <span>{typedText}</span><span className="animate-pulse">_</span> 
         </motion.div>
         <motion.div variants={itemVariants} className="flex flex-row flex-wrap items-center justify-center gap-4 md:gap-6">
-          <motion.button 
-            onClick={() => scrollToSection('projects')} 
-            className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg" 
+          <motion.button
+            onClick={() => scrollToSection('projects')}
+            className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
             whileHover={{ boxShadow: "0px 0px 25px rgba(236, 72, 153, 0.6)" }} 
             whileTap={{ scale: 0.95 }} 
             data-cursor-hover-link
           >
             View My Work
           </motion.button>
-          <motion.a 
-            href={personalData.resumeUrl} 
-            download 
-            className="px-8 py-3.5 border-2 border-purple-400 text-purple-400 font-semibold rounded-xl hover:bg-purple-400 hover:text-white transition-colors duration-300 text-md md:text-lg flex items-center justify-center" 
-            whileHover={{ scale: 1.05, boxShadow: "0px 0px 15px rgba(168, 85, 247, 0.4)" }} 
-            whileTap={{ scale: 0.95 }} 
+          <motion.a
+            href={personalData.resumeUrl}
+            download
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-purple-400 text-purple-400 font-semibold rounded-xl hover:bg-purple-400 hover:text-white transition-colors duration-300 text-md md:text-lg"
+            whileHover={{ scale: 1.05, boxShadow: "0px 0px 15px rgba(168, 85, 247, 0.4)" }}
+            whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
           >
-            Download CV <Download size={20} className="inline ml-2.5" />
+            Download CV <Download size={20} />
           </motion.a>
         </motion.div>
       </motion.div>
