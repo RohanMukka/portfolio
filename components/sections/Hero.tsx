@@ -40,7 +40,7 @@ const Hero: React.FC<HeroProps> = ({
   const typedText = useTypewriter(typewriterWords);
 
   return (
-    <Section id="home" className="text-white" fullHeight refProp={refProp}>
+    <Section id="home" fullHeight refProp={refProp}>
       <div className="absolute inset-0 overflow-hidden z-0">
         {/* Using Tailwind arbitrary values for positioning percentages */}
         <motion.div
@@ -118,13 +118,13 @@ const Hero: React.FC<HeroProps> = ({
         </motion.h1>
         <motion.p
           variants={itemVariants}
-          className="text-sm sm:text-base text-gray-400 font-mono mb-2 sm:mb-3 text-center"
+          className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-mono mb-2 sm:mb-3 text-center"
         >
           {personalData.title}
         </motion.p>
         <motion.div
           variants={itemVariants}
-          className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-16 md:h-auto min-h-[4rem] md:min-h-[auto] text-center"
+          className="text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-16 md:h-auto min-h-[4rem] md:min-h-[auto] text-center"
           data-cursor-hover-text
         >
           <span>{typedText}</span>

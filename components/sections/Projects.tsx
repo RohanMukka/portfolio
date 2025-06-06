@@ -30,11 +30,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
       <h3 className="text-xl md:text-2xl font-semibold text-purple-300 mb-2 group-hover:text-purple-200 transition-colors" data-cursor-hover-text>
         {project.title}
       </h3>
-      <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-4 flex-grow" data-cursor-hover-text>
+      <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed mb-4 flex-grow" data-cursor-hover-text>
         {project.description}
       </p>
       {project.duration && (
-        <p className="text-xs text-gray-500 mb-3" data-cursor-hover-text>
+        <p className="text-xs text-gray-600 dark:text-gray-500 mb-3" data-cursor-hover-text>
             Timeline: {project.duration}
         </p>
       )}
@@ -54,7 +54,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
             href={project.githubUrl} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="inline-flex items-center text-gray-300 hover:text-purple-400 transition-colors duration-200" 
+            className="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }} 
             data-cursor-hover-link
           >
@@ -66,7 +66,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
             href={project.liveUrl} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="inline-flex items-center text-gray-300 hover:text-green-400 transition-colors duration-200" 
+            className="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-green-500 dark:hover:text-green-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }} 
             data-cursor-hover-link
           >
@@ -95,7 +95,7 @@ const Projects: React.FC<ProjectsProps> = ({ refProp, projects }) => {
   };
 
   return (
-    <Section id="projects" className="text-white" refProp={refProp}>
+    <Section id="projects" refProp={refProp}>
       <motion.div 
         className="text-center mb-16 md:mb-20" 
         initial="hidden" 
@@ -106,7 +106,7 @@ const Projects: React.FC<ProjectsProps> = ({ refProp, projects }) => {
         <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-orange-500" data-cursor-hover-text>
           My Featured Creations
         </h2>
-        <p className="text-lg text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
           Here's a selection of projects that showcase my skills and passion for building.
         </p>
       </motion.div>

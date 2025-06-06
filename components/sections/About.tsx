@@ -34,7 +34,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
   };
 
   return (
-    <Section id="about" className="text-white" refProp={refProp}>
+    <Section id="about" refProp={refProp}>
       <motion.div 
         className="text-center mb-16 md:mb-20" 
         initial="hidden" 
@@ -48,7 +48,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
         >
           Discover More About Me
         </h2>
-        <p className="text-lg text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
           A brief look into my journey, skills, and what drives my passion for technology.
         </p>
       </motion.div>
@@ -76,8 +76,8 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
         </motion.div>
         
         <motion.div className="space-y-6" variants={textContentVariants}>
-          <motion.h3 
-            className="text-3xl md:text-4xl font-semibold text-gray-100 leading-tight" 
+          <motion.h3
+            className="text-3xl md:text-4xl font-semibold text-gray-800 dark:text-gray-100 leading-tight"
             variants={paragraphVariants} 
             data-cursor-hover-text
           >
@@ -86,7 +86,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
           {bio.map((paragraph, index) => (
             <motion.p 
               key={index} 
-              className="text-gray-300 leading-relaxed text-md md:text-lg" 
+              className="text-gray-700 dark:text-gray-300 leading-relaxed text-md md:text-lg"
               variants={paragraphVariants} 
               data-cursor-hover-text
             >
@@ -100,7 +100,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
                 {strengths.map((strength, index) => (
                   <motion.li 
                     key={index} 
-                    className="flex items-center text-gray-300" 
+                    className="flex items-center text-gray-700 dark:text-gray-300"
                     variants={strengthItemVariants} 
                     data-cursor-hover-text
                   >

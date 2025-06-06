@@ -50,8 +50,8 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
               transition={{ duration: 0.1, ease: "linear" }} // Faster bar update
             />
           </div>
-          <motion.p 
-            className="text-white mt-5 text-lg font-mono tracking-wider"
+          <motion.p
+            className="text-gray-900 dark:text-white mt-5 text-lg font-mono tracking-wider"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
