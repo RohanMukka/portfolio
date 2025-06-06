@@ -44,3 +44,7 @@ This repository contains the source code for my personal portfolio website. It i
 Feel free to fork this repository or use it as inspiration for your own portfolio.
 
 
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
