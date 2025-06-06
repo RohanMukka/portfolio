@@ -25,13 +25,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
   };
 
   const navLinkClasses = (item: string) =>
-    `text-gray-800 dark:text-gray-300 hover:text-accent-orange dark:hover:text-amber-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-accent-orange dark:text-amber-400 font-semibold' : ''}`;
+    `text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-amber-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-black dark:text-amber-400 font-semibold' : ''}`;
   
   const activeIndicator = (item: string) => 
     currentSection === item.toLowerCase() && (
       <motion.div 
         layoutId="activePill" 
-        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent-orange"
+        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black"
         initial={false} 
         transition={{ type: "spring", stiffness: 350, damping: 30 }} 
       />
@@ -48,10 +48,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
         <motion.div
           className="text-3xl font-bold text-gray-900 dark:text-white cursor-pointer"
           onClick={() => handleNavClick('home')}
-          whileHover={{ scale: 1.05, color: '#FF6B35' }}
+          whileHover={{ scale: 1.05, color: '#000000' }}
           data-cursor-hover-link
         >
-          {personalData.name.split(' ')[0]}<span className="text-accent-orange">.</span>
+          {personalData.name.split(' ')[0]}<span className="text-black">.</span>
         </motion.div>
         
         <div className="hidden md:flex space-x-8 items-center">
@@ -71,8 +71,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
           <motion.a
             href={personalData.resumeUrl}
             download
-            className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-amber-500/50 transition-all duration-300 transform hover:scale-105"
-            whileHover={{ boxShadow: "0px 0px 15px rgba(255, 107, 53, 0.6)" }}
+            className="bg-gradient-to-r from-black to-gray-700 hover:from-black hover:to-gray-800 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-gray-500/50 transition-all duration-300 transform hover:scale-105"
+            whileHover={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.6)" }}
             data-cursor-hover-link
           >
             Resume
@@ -114,7 +114,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
               <motion.a
                 href={personalData.resumeUrl}
                 download
-                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md mt-3 text-lg"
+                className="bg-gradient-to-r from-black to-gray-700 hover:from-black hover:to-gray-800 text-white font-semibold px-8 py-3 rounded-lg shadow-md mt-3 text-lg"
                 data-cursor-hover-link
               >
                 Resume
