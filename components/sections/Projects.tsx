@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Github, Eye } from 'lucide-react';
-import { ProjectsProps, ProjectCardProps, Project } from '../../types';
+import { ProjectsProps, ProjectCardProps } from '../../types';
 import Section from '../common/Section';
 
 // ProjectCard Component - defined outside Projects to avoid re-creation on parent render
