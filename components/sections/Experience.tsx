@@ -20,7 +20,7 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
   };
 
   return (
-    <Section id="experience" className="bg-[#100F1C] text-white" refProp={refProp}>
+    <Section id="experience" className="text-white" refProp={refProp}>
       <motion.div
         className="text-center mb-16 md:mb-20"
         initial="hidden"

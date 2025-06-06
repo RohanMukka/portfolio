@@ -37,7 +37,7 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
   return (
     <Section
       id="home"
-      className="bg-gradient-to-b from-[#0f0c29] via-[#302b63] to-black text-white"
+      className="text-white"
       fullHeight
       refProp={refProp}
     >

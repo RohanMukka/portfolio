@@ -97,7 +97,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="bg-[#0A0A14] min-h-screen text-gray-100 selection:bg-purple-500 selection:text-white">
+    <div className="min-h-screen text-gray-100 selection:bg-purple-500 selection:text-white">
       <AnimatedCursor />
       <Navbar 
         setActiveSection={setActiveSection} 

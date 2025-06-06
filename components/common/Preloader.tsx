@@ -25,8 +25,9 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
   return (
     <AnimatePresence>
       {progress < 100 && (
-        <motion.div 
-          className="fixed inset-0 bg-[#0A0A14] flex flex-col items-center justify-center z-[10000]"
+        <motion.div
+          className="fixed inset-0 flex flex-col items-center justify-center z-[10000]"
+          style={{ background: 'linear-gradient(to bottom, #1e1e3f, #2b1452)' }}
           exit={{ opacity: 0, y: -50, transition: { duration: 0.5, ease: "easeInOut" } }}
         >
           <motion.div 

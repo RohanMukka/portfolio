@@ -25,7 +25,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
   ];
   
   return (
-    <Section id="contact" className="bg-gradient-to-br from-[#1A1A2E] to-[#121224] text-white" refProp={refProp} fullHeight>
+    <Section id="contact" className="text-white" refProp={refProp} fullHeight>
       <motion.div
         className="text-center mb-12 md:mb-16"
         initial="hidden"
