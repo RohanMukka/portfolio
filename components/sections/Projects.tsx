@@ -7,7 +7,7 @@ import Section from '../common/Section';
 
 // ProjectCard Component - defined outside Projects to avoid re-creation on parent render
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
-  <div className="flex flex-col bg-gray-800/40 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-gray-700/60 group hover:border-purple-500/70 transition-all duration-300 h-full">
+  <div className="flex flex-col bg-white/60 dark:bg-gray-800/40 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-gray-700/60 group hover:border-purple-500/70 transition-all duration-300 h-full">
     <div className="relative overflow-hidden h-52 md:h-60">
       <img 
         src={project.imageUrl} 
