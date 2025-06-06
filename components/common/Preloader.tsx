@@ -28,9 +28,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
         <motion.div
           className="fixed inset-0 flex flex-col items-center justify-center z-[10000]"
           style={{
-            background: 'radial-gradient(circle at center, var(--gradient-from), var(--gradient-to))',
-            backgroundSize: '400% 400%',
-            animation: 'gradient-bg 15s ease infinite'
+            backgroundColor: 'var(--background-color)'
           }}
           exit={{ opacity: 0, y: -50, transition: { duration: 0.5, ease: "easeInOut" } }}
         >
@@ -43,11 +41,11 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
             <Layers size={80} className="text-accent-orange filter drop-shadow-[0_0_15px_rgba(255,107,53,0.6)]" />
           </motion.div>
           <div className="w-72 h-2.5 bg-gray-700 rounded-full overflow-hidden shadow-inner">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 rounded-full"
+            <motion.div
+              className="h-full bg-accent-orange rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.1, ease: "linear" }} // Faster bar update
+              transition={{ duration: 0.1, ease: 'linear' }} // Faster bar update
             />
           </div>
           <motion.p
