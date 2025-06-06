@@ -31,7 +31,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
         className="text-center mb-12 md:mb-16"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ amount: 0.3 }}
         variants={sectionTitleVariants}
       >
         <h2
@@ -59,7 +59,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
             variants={itemVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ amount: 0.5 }}
             className="flex items-center p-5 md:p-6 bg-gray-800/50 backdrop-blur-md rounded-xl shadow-xl border border-gray-700/70 hover:border-purple-500/80 hover:bg-gray-700/60 transition-all duration-300 group"
             data-cursor-hover-link
           >
@@ -80,7 +80,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
         variants={itemVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.5 }}
+        viewport={{ amount: 0.5 }}
         data-cursor-hover-text
        >
         {personalData.contact.cta}

@@ -27,7 +27,11 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
       {progress < 100 && (
         <motion.div
           className="fixed inset-0 flex flex-col items-center justify-center z-[10000]"
-          style={{ background: 'radial-gradient(circle at center, #2b1452, #1e1e3f)' }}
+          style={{
+            background: 'radial-gradient(circle at center, #2b1452, #1e1e3f)',
+            backgroundSize: '400% 400%',
+            animation: 'gradient-bg 15s ease infinite'
+          }}
           exit={{ opacity: 0, y: -50, transition: { duration: 0.5, ease: "easeInOut" } }}
         >
           <motion.div 
