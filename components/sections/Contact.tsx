@@ -35,7 +35,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
         variants={sectionTitleVariants}
       >
         <h2
-          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 via-cyan-400 to-sky-500"
+          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500"
           data-cursor-hover-text
         >
           Let's Get In Touch
@@ -60,17 +60,17 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
             initial="hidden"
             whileInView="visible"
             viewport={{ amount: 0.5 }}
-            className="flex items-center p-5 md:p-6 bg-white/60 dark:bg-gray-800/50 backdrop-blur-md rounded-xl shadow-xl border border-gray-700/70 hover:border-purple-500/80 hover:bg-gray-700/60 transition-all duration-300 group"
+            className="flex items-center p-5 md:p-6 bg-white/60 dark:bg-gray-800/50 backdrop-blur-md rounded-xl shadow-xl border border-gray-700/70 hover:border-accent-orange/80 hover:bg-gray-700/60 transition-all duration-300 group"
             data-cursor-hover-link
           >
-            <div className="mr-5 p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg shadow-md group-hover:bg-purple-600/50 transition-colors duration-300">
+            <div className="mr-5 p-3 bg-white/50 dark:bg-gray-700/50 rounded-lg shadow-md group-hover:bg-amber-600/50 transition-colors duration-300">
               {method.icon}
             </div>
             <div>
-              <h4 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200 group-hover:text-purple-500 dark:group-hover:text-purple-300 transition-colors duration-300">{method.label}</h4>
+              <h4 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200 group-hover:text-accent-orange dark:group-hover:text-amber-300 transition-colors duration-300">{method.label}</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-300 break-all">{method.value}</p>
             </div>
-            <Send size={22} className="ml-auto text-gray-500 group-hover:text-purple-400 transition-all duration-300 transform group-hover:translate-x-1"/>
+            <Send size={22} className="ml-auto text-gray-500 group-hover:text-accent-orange transition-all duration-300 transform group-hover:translate-x-1"/>
           </motion.a>
         ))}
       </div>

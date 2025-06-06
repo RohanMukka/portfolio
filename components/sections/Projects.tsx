@@ -7,7 +7,7 @@ import Section from '../common/Section';
 
 // ProjectCard Component - defined outside Projects to avoid re-creation on parent render
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
-  <div className="flex flex-col bg-white/60 dark:bg-gray-800/40 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-gray-700/60 group hover:border-purple-500/70 transition-all duration-300 h-full">
+  <div className="flex flex-col bg-white/60 dark:bg-gray-800/40 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-gray-700/60 group hover:border-accent-orange/70 transition-all duration-300 h-full">
     <div className="relative overflow-hidden h-52 md:h-60">
       <img 
         src={project.imageUrl} 
@@ -27,7 +27,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
       )}
     </div>
     <div className="p-6 flex flex-col flex-grow">
-      <h3 className="text-xl md:text-2xl font-semibold text-purple-300 mb-2 group-hover:text-purple-200 transition-colors" data-cursor-hover-text>
+      <h3 className="text-xl md:text-2xl font-semibold text-accent-orange mb-2 group-hover:text-amber-300 transition-colors" data-cursor-hover-text>
         {project.title}
       </h3>
       <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed mb-4 flex-grow" data-cursor-hover-text>
@@ -39,10 +39,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
         </p>
       )}
       <div className="mb-4">
-        <p className="text-xs text-sky-300 mb-1 font-medium">Technologies Used:</p>
+        <p className="text-xs text-amber-300 mb-1 font-medium">Technologies Used:</p>
         <div className="flex flex-wrap gap-2">
           {project.tags.map(tag => (
-            <span key={tag} className="px-2.5 py-1 text-xs bg-sky-700/50 text-sky-200 rounded-full shadow-sm">
+            <span key={tag} className="px-2.5 py-1 text-xs bg-amber-700/50 text-amber-200 rounded-full shadow-sm">
               {tag}
             </span>
           ))}
@@ -54,7 +54,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
             href={project.githubUrl} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+            className="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-accent-orange dark:hover:text-amber-400 transition-colors duration-200"
             whileHover={{ scale: 1.05 }} 
             data-cursor-hover-link
           >
@@ -103,7 +103,7 @@ const Projects: React.FC<ProjectsProps> = ({ refProp, projects }) => {
         viewport={{ once: true, amount: 0.3 }} 
         variants={sectionTitleVariants}
       >
-        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-red-500 to-orange-500" data-cursor-hover-text>
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500" data-cursor-hover-text>
           My Featured Creations
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>

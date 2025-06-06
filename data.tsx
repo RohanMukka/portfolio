@@ -32,21 +32,21 @@ export const personalData: PersonalData = {
       company: "Internpe (Remote)",
       duration: "Jul 2024 - Aug 2024",
       description: "Developed and fine-tuned ML models (Python, TensorFlow, Scikit-learn), improving prediction accuracy by 20%. Optimized preprocessing and feature engineering, reducing training time by 15%. Collaborated on deploying AI/ML solutions, boosting project efficiency.",
-      icon: <Cpu size={24} className="text-purple-400" />
+      icon: <Cpu size={24} className="text-accent-orange" />
     },
      {
       role: "Master of Science in Computer Science",
       company: "University of Oklahoma",
       duration: "Aug 2024 - May 2026 (Expected)",
       description: "Specializing in advanced computer science topics with a focus on AI/ML. Maintained a 4.0 GPA.",
-      icon: <BookOpen size={24} className="text-purple-400" />
+      icon: <BookOpen size={24} className="text-accent-orange" />
     },
     {
       role: "Bachelor of Technology in CSE (Minor in AI/ML)",
       company: "CVR College of Engineering",
       duration: "Aug 2020 - May 2024",
       description: "Comprehensive foundation in Computer Science and Engineering with a specialization in Artificial Intelligence and Machine Learning. Graduated with a 9.1/10.0 GPA.",
-      icon: <Award size={24} className="text-purple-400" />
+      icon: <Award size={24} className="text-accent-orange" />
     },
   ],
   projects: [
@@ -91,14 +91,14 @@ export const personalData: PersonalData = {
     { name: "HTML/CSS", category: "Frontend", icon: <Palette size={24} className="text-pink-400"/>, proficiency: 90 },
     { name: "React.js", category: "Frameworks & Libraries", icon: <Code size={24} className="text-sky-400"/>, proficiency: 90 },
     { name: "Node.js", category: "Frameworks & Libraries", icon: <Server size={24} className="text-green-400"/>, proficiency: 85 },
-    { name: "TensorFlow", category: "AI/ML", icon: <BrainCircuit size={24} className="text-purple-400"/>, proficiency: 80 },
-    { name: "Scikit-learn", category: "AI/ML", icon: <BrainCircuit size={24} className="text-purple-400"/>, proficiency: 85 },
+    { name: "TensorFlow", category: "AI/ML", icon: <BrainCircuit size={24} className="text-accent-orange"/>, proficiency: 80 },
+    { name: "Scikit-learn", category: "AI/ML", icon: <BrainCircuit size={24} className="text-accent-orange"/>, proficiency: 85 },
     { name: "Firebase", category: "Backend & Cloud", icon: <Cloud size={24} className="text-red-400"/>, proficiency: 75 },
     { name: "Google Cloud", category: "Backend & Cloud", icon: <Cloud size={24} className="text-blue-500"/>, proficiency: 70 },
     { name: "Git", category: "Tools", icon: <GitMerge size={24} className="text-gray-400"/>, proficiency: 90 },
     { name: "Kotlin", category: "Languages", icon: <Code size={24} className="text-indigo-400"/>, proficiency: 70 },
     { name: "C", category: "Languages", icon: <Code size={24} className="text-gray-500"/>, proficiency: 75 },
-    { name: "Bootstrap5", category: "Frontend", icon: <Palette size={24} className="text-purple-500"/>, proficiency: 80 },
+    { name: "Bootstrap5", category: "Frontend", icon: <Palette size={24} className="text-accent-orange"/>, proficiency: 80 },
   ],
   contact: {
     intro: "I'm always excited to discuss new projects, innovative ideas, or opportunities to collaborate on something impactful. Whether you have a question or just want to say hi, feel free to reach out!",

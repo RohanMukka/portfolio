@@ -107,7 +107,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen text-inherit selection:bg-purple-500 selection:text-white">
+    <div className="min-h-screen text-inherit selection:bg-accent-orange selection:text-white">
       <Navbar
         currentSection={activeSection}
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}

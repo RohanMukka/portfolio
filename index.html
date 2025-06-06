@@ -8,32 +8,26 @@
     <meta name="description" content="A personal portfolio website for Rohan Mukka, showcasing skills, projects, and experience as an MS Computer Science Student and ML Engineer." />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <link href="https://api.fontshare.com/v2/css?f[]=pp-neue-montreal@400,500,700&display=swap" rel="stylesheet">
     <style>
         html {
             scroll-behavior: smooth;
         }
         :root {
-            --text-color: #1f2937;
-            --gradient-from: #f8fafc;
-            --gradient-to: #e2e8f0;
+            --text-color: #E0E0E0;
+            --background-color: #000000;
         }
         body {
             /* Text styling */
             color: var(--text-color);
-            font-family: 'Inter', sans-serif; /* Default font */
-            background: radial-gradient(circle at center, var(--gradient-from), var(--gradient-to));
-            background-size: 400% 400%;
-            animation: gradient-bg 15s ease infinite;
+            font-family: 'PP Neue Montreal', 'Inter', sans-serif;
+            background-color: var(--background-color);
         }
         body.light {
             --text-color: #1f2937;
-            --gradient-from: #f8fafc;
-            --gradient-to: #e2e8f0;
         }
         body.dark {
             --text-color: #E0E0E0;
-            --gradient-from: #1a1a1a;
-            --gradient-to: #0f0f0f;
         }
         /* Custom scrollbar for Webkit browsers */
         body::-webkit-scrollbar {
@@ -49,8 +43,9 @@
         }
         /* Fallback for non-Webkit if needed, though Tailwind provides utilities for most things */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        @import url('https://api.fontshare.com/v2/css?f[]=pp-neue-montreal@400,500,700&display=swap');
         body {
-             font-family: 'Inter', sans-serif;
+             font-family: 'PP Neue Montreal', 'Inter', sans-serif;
         }
         .font-mono { /* Use Fira Code for monospaced text */
             font-family: 'Fira Code', monospace;
@@ -66,14 +61,12 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['\'PP Neue Montreal\'', 'Inter', 'sans-serif'],
                         mono: ['Fira Code', 'monospace'],
                     },
                     colors: {
-                        // You can define custom colors here if needed, matching your palette
-                        // Example:
-                        // 'primary-purple': '#8A2BE2',
-                        // 'dark-bg': '#0A0A14',
+                        'dark-bg': '#0A0A14',
+                        'accent-orange': '#FF6B35',
                     }
                 }
             }
