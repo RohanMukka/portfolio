@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { NavbarProps } from '../../types';
 
 const NAV_ITEMS = ["Home", "About", "Skills", "Projects", "Experience", "Contact"];
 
-const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, personalData, scrollToSection }) => {
+const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, personalData, scrollToSection, toggleTheme, isDark }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -67,15 +67,23 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, perso
               {activeIndicator(item)}
             </motion.button>
           ))}
-          <motion.a 
-            href={personalData.resumeUrl} 
-            download 
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105" 
-            whileHover={{ boxShadow: "0px 0px 15px rgba(167, 139, 250, 0.6)" }} 
+          <motion.a
+            href={personalData.resumeUrl}
+            download
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105"
+            whileHover={{ boxShadow: "0px 0px 15px rgba(167, 139, 250, 0.6)" }}
             data-cursor-hover-link
           >
             Resume
           </motion.a>
+          <button
+            onClick={toggleTheme}
+            className="text-gray-300 hover:text-yellow-400 transition-colors"
+            aria-label="Toggle theme"
+            data-cursor-hover-link
+          >
+            {isDark ? <Sun size={22} /> : <Moon size={22} />}
+          </button>
         </div>
 
         <div className="md:hidden">
@@ -110,14 +118,22 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveSection, currentSection, perso
                   {item}
                 </button>
               ))}
-              <motion.a 
-                href={personalData.resumeUrl} 
-                download 
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md mt-3 text-lg" 
+              <motion.a
+                href={personalData.resumeUrl}
+                download
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md mt-3 text-lg"
                 data-cursor-hover-link
               >
                 Resume
               </motion.a>
+              <button
+                onClick={toggleTheme}
+                className="text-gray-300 hover:text-yellow-400 transition-colors"
+                aria-label="Toggle theme"
+                data-cursor-hover-link
+              >
+                {isDark ? <Sun size={24} /> : <Moon size={24} />}
+              </button>
             </div>
           </motion.div>
         )}
