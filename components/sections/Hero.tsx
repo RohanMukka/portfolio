@@ -24,7 +24,12 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
   const typedText = useTypewriter(typewriterWords);
 
   return (
-    <Section id="home" className="bg-gradient-to-br from-[#0A0A14] via-[#121224] to-[#0A0A14] text-white" fullHeight refProp={refProp}>
+    <Section
+      id="home"
+      className="bg-gradient-to-b from-[#0f0c29] via-[#302b63] to-black text-white"
+      fullHeight
+      refProp={refProp}
+    >
       <div className="absolute inset-0 overflow-hidden z-0">
         {/* Using Tailwind arbitrary values for positioning percentages */}
         <motion.div 
@@ -52,22 +57,28 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, refProp, personalData, typ
         <motion.div variants={lottieItemVariants} className="w-56 h-56 md:w-72 md:h-72 mb-6 md:mb-8">
            <LottieAnimation animationData={placeholderLottieData} loop={true} className="filter drop-shadow-2xl w-full h-full" />
         </motion.div>
-        <motion.h1 
-          variants={itemVariants} 
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-3 md:mb-4 leading-tight" 
+        <motion.h1
+          variants={itemVariants}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-3 md:mb-4 leading-tight"
           data-cursor-hover-text
         >
           Hi, I'm <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">{personalData.name.split(' ')[0]}</span>
           <span className="wave-emoji ml-2 md:ml-3 text-3xl md:text-4xl lg:text-5xl" role="img" aria-label="waving hand">👋</span>
         </motion.h1>
-        <motion.div 
-          variants={itemVariants} 
-          className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-16 md:h-auto min-h-[4rem] md:min-h-[auto]" 
+        <motion.p
+          variants={itemVariants}
+          className="text-sm sm:text-base text-gray-400 font-mono mb-2 sm:mb-3"
+        >
+          {personalData.title}
+        </motion.p>
+        <motion.div
+          variants={itemVariants}
+          className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-16 md:h-auto min-h-[4rem] md:min-h-[auto]"
           data-cursor-hover-text
         >
           <span>{typedText}</span><span className="animate-pulse">_</span> 
         </motion.div>
-        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 md:gap-6">
+        <motion.div variants={itemVariants} className="flex flex-row flex-wrap items-center justify-center gap-4 md:gap-6">
           <motion.button 
             onClick={() => scrollToSection('projects')} 
             className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg" 
