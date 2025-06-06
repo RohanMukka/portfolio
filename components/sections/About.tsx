@@ -34,7 +34,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
   };
 
   return (
-    <Section id="about" className="bg-[#100F1C] text-white" refProp={refProp}>
+    <Section id="about" className="text-white" refProp={refProp}>
       <motion.div 
         className="text-center mb-16 md:mb-20" 
         initial="hidden" 

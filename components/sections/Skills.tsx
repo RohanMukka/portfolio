@@ -51,7 +51,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
   };
 
   return (
-    <Section id="skills" className="bg-gradient-to-br from-[#121224] to-[#1A1A2E] text-white" refProp={refProp}>
+    <Section id="skills" className="text-white" refProp={refProp}>
       <motion.div 
         className="text-center mb-16 md:mb-20" 
         initial="hidden" 

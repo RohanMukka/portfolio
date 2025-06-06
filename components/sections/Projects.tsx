@@ -95,7 +95,7 @@ const Projects: React.FC<ProjectsProps> = ({ refProp, projects }) => {
   };
 
   return (
-    <Section id="projects" className="bg-[#0F0F1A] text-white" refProp={refProp}>
+    <Section id="projects" className="text-white" refProp={refProp}>
       <motion.div 
         className="text-center mb-16 md:mb-20" 
         initial="hidden" 

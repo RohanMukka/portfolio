@@ -5,7 +5,7 @@ import { FooterProps } from '../../types';
 
 const Footer: React.FC<FooterProps> = ({ personalData }) => {
   return (
-    <footer className="py-10 bg-[#0A0A14] text-center text-gray-400 border-t border-gray-700/30">
+    <footer className="py-10 text-center text-gray-400 border-t border-gray-700/30">
       <p className="text-sm">&copy; {new Date().getFullYear()} {personalData.name}. All rights reserved.</p>
       <div className="flex justify-center space-x-6 mt-4">
           <a 
