@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { personalData, placeholderLottieData, typewriterWords } from './data';
+import { personalData, typewriterWords } from './data';
 
 import Navbar from './components/common/Navbar';
 import Preloader from './components/common/Preloader';
@@ -128,7 +128,6 @@ const App: React.FC = () => {
             scrollToSection={scrollToSection} 
             personalData={{name: personalData.name, title: personalData.title, resumeUrl: personalData.resumeUrl}} 
             typewriterWords={typewriterWords}
-            placeholderLottieData={placeholderLottieData}
         />
         <About refProp={aboutRef} personalData={{name: personalData.name, about: personalData.about, resumeUrl: personalData.resumeUrl}} />
         <Skills refProp={skillsRef} skills={personalData.skills} />

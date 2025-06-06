@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Download } from "lucide-react";
 import { HeroProps } from "../../types";
 import Section from "../common/Section";
-import LottieAnimation from "../common/LottieAnimation";
+import InfinitySymbol from "../common/InfinitySymbol";
 import { useTypewriter } from "../../hooks/useTypewriter";
 
 const Hero: React.FC<HeroProps> = ({
@@ -11,7 +11,6 @@ const Hero: React.FC<HeroProps> = ({
   refProp,
   personalData,
   typewriterWords,
-  placeholderLottieData,
 }) => {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -93,11 +92,7 @@ const Hero: React.FC<HeroProps> = ({
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="w-56 h-56 md:w-72 md:h-72 mb-6 md:mb-8"
         >
-          <LottieAnimation
-            animationData={placeholderLottieData}
-            loop={true}
-            className="filter drop-shadow-2xl w-full h-full"
-          />
+          <InfinitySymbol className="w-full h-full" />
         </motion.div>
         <motion.h1
           variants={itemVariants}

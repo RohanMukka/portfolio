@@ -89,7 +89,6 @@ export interface HeroProps {
   refProp: React.RefObject<HTMLElement | null>;
   personalData: Pick<PersonalData, 'name' | 'title' | 'resumeUrl'>;
   typewriterWords: string[];
-  placeholderLottieData: any;
 }
 
 export interface AboutProps {
