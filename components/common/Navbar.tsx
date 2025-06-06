@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { NavbarProps } from '../../types';
 
 const NAV_ITEMS = ["Home", "About", "Skills", "Projects", "Experience", "Contact"];
 
 
-const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection, toggleTheme, isDark }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -77,14 +77,6 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
           >
             Resume
           </motion.a>
-          <button
-            onClick={toggleTheme}
-            className="text-gray-700 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors"
-            aria-label="Toggle theme"
-            data-cursor-hover-link
-          >
-            {isDark ? <Sun size={22} /> : <Moon size={22} />}
-          </button>
         </div>
 
         <div className="md:hidden">
@@ -127,14 +119,6 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
               >
                 Resume
               </motion.a>
-              <button
-                onClick={toggleTheme}
-                className="text-gray-700 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors"
-                aria-label="Toggle theme"
-                data-cursor-hover-link
-              >
-                {isDark ? <Sun size={24} /> : <Moon size={24} />}
-              </button>
             </div>
           </motion.div>
         )}
