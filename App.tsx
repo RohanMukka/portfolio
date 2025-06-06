@@ -118,7 +118,7 @@ const App: React.FC = () => {
         <Skills refProp={skillsRef} skills={personalData.skills} />
         <Projects refProp={projectsRef} projects={personalData.projects} />
         <Experience refProp={experienceRef} experience={personalData.experience} />
-        <Contact refProp={contactRef} personalData={{email: personalData.email, linkedin: personalData.linkedin, github: personalData.github, contact: personalData.contact}} />
+        <Contact refProp={contactRef} personalData={{email: personalData.email, linkedin: personalData.linkedin, github: personalData.github, leetcode: personalData.leetcode, contact: personalData.contact}} />
       </main>
       
       <Footer personalData={{name: personalData.name, github: personalData.github, linkedin: personalData.linkedin, email: personalData.email}} />
