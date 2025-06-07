@@ -51,7 +51,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
           whileHover={{ scale: 1.05, color: '#000000' }}
           data-cursor-hover-link
         >
-          {personalData.name.split(' ')[0]}<span className="text-black">.</span>
+          {personalData.name.split(' ')[0]}
+          <span className="text-purple-600 dark:text-pink-400">.</span>
         </motion.div>
         
         <div className="hidden md:flex space-x-8 items-center">
