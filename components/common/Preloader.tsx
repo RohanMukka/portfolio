@@ -1,11 +1,30 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { PreloaderProps } from '../../types';
 
 const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
+  const calledRef = useRef(false);
+
   useEffect(() => {
-    const timer = setTimeout(onLoaded, 4000);
-    return () => clearTimeout(timer);
+    const handleLoaded = () => {
+      if (!calledRef.current) {
+        calledRef.current = true;
+        onLoaded();
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      handleLoaded();
+      return;
+    }
+
+    window.addEventListener('load', handleLoaded);
+    const timer = setTimeout(handleLoaded, 4000);
+
+    return () => {
+      window.removeEventListener('load', handleLoaded);
+      clearTimeout(timer);
+    };
   }, [onLoaded]);
 
   return (
