@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { NavbarProps } from '../../types';
 
 const NAV_ITEMS = ["Home", "About", "Skills", "Projects", "Experience", "Contact"];
 
 
-const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection, theme, toggleTheme }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -68,14 +68,6 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
               {activeIndicator(item)}
             </motion.button>
           ))}
-          <button
-            onClick={toggleTheme}
-            className="text-gray-900 dark:text-white focus:outline-none"
-            aria-label="Toggle theme"
-            data-cursor-hover-link
-          >
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
           <motion.a
             href={personalData.resumeUrl}
             download
@@ -119,14 +111,6 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
                   {item}
                 </button>
               ))}
-              <button
-                onClick={toggleTheme}
-                className="text-gray-900 dark:text-white focus:outline-none"
-                aria-label="Toggle theme"
-                data-cursor-hover-link
-              >
-                {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
-              </button>
               <motion.a
                 href={personalData.resumeUrl}
                 download
