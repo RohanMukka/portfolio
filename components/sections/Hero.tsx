@@ -96,7 +96,7 @@ const Hero: React.FC<HeroProps> = ({
         </motion.div>
         <motion.h1
           variants={itemVariants}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-3 md:mb-4 leading-tight"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-3 md:mb-4 leading-tight inline-flex items-center"
           data-cursor-hover-text
         >
           Hi, I'm{" "}
@@ -104,7 +104,7 @@ const Hero: React.FC<HeroProps> = ({
             {personalData.name.split(" ")[0]}
           </span>
           <span
-            className="wave-emoji ml-2 md:ml-3 text-3xl md:text-4xl lg:text-5xl"
+            className="wave-emoji ml-2 md:ml-3 text-3xl md:text-4xl lg:text-5xl align-middle"
             role="img"
             aria-label="waving hand"
           >
