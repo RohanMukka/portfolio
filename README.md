@@ -37,6 +37,7 @@ This project contains the source code for my personal portfolio website built wi
 - **Site metadata**: Edit [`metadata.json`](metadata.json) or the `<head>` tags in [`index.html`](index.html).
 - **Theme**: Modify fonts and colors in [`index.html`](index.html). Fonts are imported from Google Fonts and Fontshare.
 - **Environment variables**: Create a `.env` file and set `GEMINI_API_KEY` if your build needs it. Vite exposes it as `process.env.GEMINI_API_KEY`.
+- **Resume file**: Place `rohan_resume.pdf` in the `public/` directory. It's referenced using `import.meta.env.BASE_URL` so the link works even when the site is deployed to a subpath.
 
 ## Project Structure
 

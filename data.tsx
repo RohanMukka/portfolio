@@ -2,6 +2,8 @@
 import { PersonalData } from './types';
 import { Briefcase, Lightbulb, Code, Server, BrainCircuit, Award, BookOpen, TrendingUp, ShieldCheck, Cpu, Database, Cloud, GitMerge, Palette, Zap, Target } from 'lucide-react';
 
+const resumeUrl = `${import.meta.env.BASE_URL}rohan_resume.pdf`;
+
 export const personalData: PersonalData = {
   name: "Rohan Mukka",
   title: "MS Computer Science Student",
@@ -11,7 +13,7 @@ export const personalData: PersonalData = {
   linkedin: "https://linkedin.com/in/rohanmukka",
   github: "https://github.com/rohanmukka",
   leetcode: "https://leetcode.com/u/rohan_mukka",
-  resumeUrl: "/rohan_resume.pdf", // Changed to absolute path from domain root
+  resumeUrl,
   about: {
     greeting: "Hello! I'm Rohan Mukka.",
     bio: [
