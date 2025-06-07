@@ -100,7 +100,7 @@ const Hero: React.FC<HeroProps> = ({
           data-cursor-hover-text
         >
           Hi, I'm{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-600 to-white">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-red-400">
             {personalData.name.split(" ")[0]}
           </span>
           <span
@@ -131,7 +131,7 @@ const Hero: React.FC<HeroProps> = ({
         >
           <motion.button
             onClick={() => scrollToSection("projects")}
-            className="px-8 py-3.5 bg-gradient-to-r from-black to-gray-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
+            className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
             whileHover={{ boxShadow: "0px 0px 25px rgba(0, 0, 0, 0.6)" }}
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
