@@ -74,13 +74,13 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
           </motion.a>
         ))}
       </div>
-       <motion.p
-        className="text-center text-xl md:text-2xl text-gray-700 dark:text-gray-300 mt-16 md:mt-20 font-semibold"
-        custom={contactMethods.length}
-        variants={itemVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ amount: 0.5 }}
+        <motion.p
+         className="text-center text-xl md:text-2xl text-gray-700 dark:text-gray-300 mt-16 md:mt-20 mb-6 font-semibold"
+         custom={contactMethods.length}
+         variants={itemVariants}
+         initial="hidden"
+         whileInView="visible"
+         viewport={{ amount: 0.5 }}
         data-cursor-hover-text
        >
         {personalData.contact.cta}
