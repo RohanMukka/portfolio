@@ -41,13 +41,13 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
   };
 
   const categoryIcons: Record<string, React.ReactElement> = {
-    "Languages": <Code size={28} className="mr-3 text-black"/>,
-    "Frameworks & Libraries": <Settings2 size={28} className="mr-3 text-black"/>,
-    "AI/ML": <BrainCircuit size={28} className="mr-3 text-black"/>,
-    "Databases": <Database size={28} className="mr-3 text-black"/>,
-    "Frontend": <Palette size={28} className="mr-3 text-black"/>,
-    "Backend & Cloud": <Cloud size={28} className="mr-3 text-black"/>,
-    "Tools": <BriefcaseIcon size={28} className="mr-3 text-black"/>, // Use renamed import
+    "Languages": <Code size={28} className="mr-3 text-yellow-400" />,
+    "Frameworks & Libraries": <Settings2 size={28} className="mr-3 text-green-400" />,
+    "AI/ML": <BrainCircuit size={28} className="mr-3 text-fuchsia-400" />,
+    "Databases": <Database size={28} className="mr-3 text-blue-500" />,
+    "Frontend": <Palette size={28} className="mr-3 text-pink-400" />,
+    "Backend & Cloud": <Cloud size={28} className="mr-3 text-teal-300" />,
+    "Tools": <BriefcaseIcon size={28} className="mr-3 text-gray-400" />, // Use renamed import
   };
 
   return (
@@ -74,12 +74,12 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
             variants={categoryCardVariants}
             className="p-6 md:p-8 bg-white/50 dark:bg-gray-800/30 backdrop-blur-md rounded-xl shadow-2xl border border-gray-700/50"
           >
-            <motion.h3 
-              className="text-2xl md:text-3xl font-semibold text-black mb-6 md:mb-8 flex items-center"
+            <motion.h3
+              className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 md:mb-8 flex items-center"
               variants={skillItemVariants} // Animate title as well
               data-cursor-hover-text
             >
-              {categoryIcons[category] || <BriefcaseIcon size={28} className="mr-3 text-black"/>}
+              {categoryIcons[category] || <BriefcaseIcon size={28} className="mr-3 text-gray-400"/>}
               {category}
             </motion.h3>
             <motion.div 
