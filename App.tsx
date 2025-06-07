@@ -77,8 +77,19 @@ const App: React.FC = () => {
   }, [isLoading]); // Re-run when isLoading changes to attach observer after preloader
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.body.classList.add('dark');
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+      const applyTheme = (isDark: boolean) => {
+        document.body.classList.toggle('dark', isDark);
+        document.body.classList.toggle('light', !isDark);
+      };
+
+      applyTheme(media.matches);
+
+      const handler = (e: MediaQueryListEvent) => applyTheme(e.matches);
+      media.addEventListener('change', handler);
+      return () => media.removeEventListener('change', handler);
     }
   }, []);
 
