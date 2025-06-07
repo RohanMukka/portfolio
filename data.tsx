@@ -32,21 +32,21 @@ export const personalData: PersonalData = {
       company: "Internpe (Remote)",
       duration: "Jul 2024 - Aug 2024",
       description: "Developed and fine-tuned ML models (Python, TensorFlow, Scikit-learn), improving prediction accuracy by 20%. Optimized preprocessing and feature engineering, reducing training time by 15%. Collaborated on deploying AI/ML solutions, boosting project efficiency.",
-      icon: <Cpu size={24} className="text-black" />
+      icon: <Cpu size={24} className="text-purple-400" />
     },
      {
       role: "Master of Science in Computer Science",
       company: "University of Oklahoma",
       duration: "Aug 2024 - May 2026 (Expected)",
       description: "Specializing in advanced computer science topics with a focus on AI/ML. Maintained a 4.0 GPA.",
-      icon: <BookOpen size={24} className="text-black" />
+      icon: <BookOpen size={24} className="text-yellow-400" />
     },
     {
       role: "Bachelor of Technology in CSE (Minor in AI/ML)",
       company: "CVR College of Engineering",
       duration: "Aug 2020 - May 2024",
       description: "Comprehensive foundation in Computer Science and Engineering with a specialization in Artificial Intelligence and Machine Learning. Graduated with a 9.1/10.0 GPA.",
-      icon: <Award size={24} className="text-black" />
+      icon: <Award size={24} className="text-green-400" />
     },
   ],
   projects: [
