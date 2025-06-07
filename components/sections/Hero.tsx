@@ -40,46 +40,6 @@ const Hero: React.FC<HeroProps> = ({
 
   return (
     <Section id="home" fullHeight refProp={refProp}>
-      <div className="absolute inset-0 overflow-hidden z-0">
-        {/* Using Tailwind arbitrary values for positioning percentages */}
-        <motion.div
-          className="absolute w-[50vw] h-[50vw] max-w-xl max-h-xl bg-black/20 rounded-full filter blur-3xl opacity-60 top-[5%] left-[10%]"
-          animate={{
-            x: ["-10%", "10%", "-10%"],
-            y: ["-10%", "0%", "-10%"],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute w-[40vw] h-[40vw] max-w-lg max-h-lg bg-black/20 rounded-full filter blur-3xl opacity-50 bottom-[10%] right-[15%]"
-          animate={{
-            x: ["10%", "-5%", "10%"],
-            y: ["15%", "5%", "15%"],
-            scale: [1, 1.05, 1],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 3,
-          }}
-        />
-        <motion.div
-          className="absolute w-[30vw] h-[30vw] max-w-md max-h-md bg-black/10 rounded-full filter blur-2xl opacity-40 top-1/2 left-[45%] -translate-x-1/2 -translate-y-1/2"
-          animate={{
-            x: ["0%", "5%", "-5%", "0%"],
-            y: ["-5%", "10%", "0%", "-5%"],
-            rotate: [0, 15, -10, 0],
-          }}
-          transition={{
-            duration: 35,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 6,
-          }}
-        />
-      </div>
       <motion.div
         className="flex flex-col items-center justify-center text-center relative z-10 h-full"
         variants={containerVariants}
