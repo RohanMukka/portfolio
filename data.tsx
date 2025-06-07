@@ -7,7 +7,7 @@ const resumeUrl = `${import.meta.env.BASE_URL}rohan_resume.pdf`;
 export const personalData: PersonalData = {
   name: "Rohan Mukka",
   title: "MS Computer Science Student",
-  email: "rohan.mukka-1@ou.edu",
+  email: "rohanmukka09@gmail.com",
   phone: "+1 (405) 501-5699",
   location: "Oklahoma, United States",
   linkedin: "https://linkedin.com/in/rohanmukka",
