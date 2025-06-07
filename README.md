@@ -1,14 +1,14 @@
 # Rohan Mukka - Portfolio
 
-This repository contains the source code for my personal portfolio website. It is built with **React**, **TypeScript**, and **Vite** and showcases my projects, skills, and experience.
+This project contains the source code for my personal portfolio website built with **React**, **TypeScript** and **Vite**. It showcases my work, skills and experience using a modern, responsive design powered by Tailwind CSS.
 
 ## Features
 
-- Responsive layout built with [Tailwind CSS](https://tailwindcss.com/) and React components.
-- Animated sections including a typewriter effect (`useTypewriter` hook) and Lottie animations.
-- Animated radial background with a dark theme.
-- Data-driven design using `data.tsx` and typed interfaces in `types.ts`.
-- Simple configuration via `vite.config.ts` with support for environment variables.
+- **Responsive design** built with Tailwind CSS components.
+- **Animated sections** including a typewriter effect (via `useTypewriter`) and Lottie animations.
+- **Dark theme** with a radial background gradient.
+- **Data driven**: portfolio details are loaded from `data.tsx` and validated with TypeScript interfaces.
+- **Quick setup** using Vite with optional environment variables.
 
 ## Getting Started
 
@@ -20,70 +20,46 @@ This repository contains the source code for my personal portfolio website. It i
    ```bash
    npm run dev
    ```
-   This will open the app on <http://localhost:5173> by default.
-
-3. To create a production build:
+   The app opens on <http://localhost:5173> by default.
+3. Build for production:
    ```bash
    npm run build
    ```
-   The compiled files are output to the `dist` directory.
-
+   Compiled files are output to the `dist` folder and can be deployed to any static host.
 4. Preview the production build locally:
    ```bash
    npm run preview
    ```
 
+## Customization
+
+- **Personal data**: Update your name, links and project information in [`data.tsx`](data.tsx).
+- **Site metadata**: Edit [`metadata.json`](metadata.json) or the `<head>` tags in [`index.html`](index.html).
+- **Theme**: Modify fonts and colors in [`index.html`](index.html). Fonts are imported from Google Fonts and Fontshare.
+- **Environment variables**: Create a `.env` file and set `GEMINI_API_KEY` if your build needs it. Vite exposes it as `process.env.GEMINI_API_KEY`.
+
 ## Project Structure
 
-- `index.html` – entry HTML file using an import map to load dependencies from `esm.sh`.
-- `index.tsx` – mounts the `App` component into the page.
-- `components/` – React components for common UI elements and page sections.
-- `hooks/` – custom React hooks such as `useTypewriter`.
-- `data.tsx` – data describing projects, skills, and other profile information.
-- `types.ts` – TypeScript interfaces used throughout the project.
+- `index.html` – Entry HTML file using an import map.
+- `index.tsx` – Mounts the `App` component.
+- `components/` – Common UI elements and page sections.
+- `hooks/` – Custom hooks such as `useTypewriter`.
+- `data.tsx` – Profile and project information.
+- `types.ts` – Shared TypeScript interfaces.
 
 ## Styling and Theme
 
-The project relies on Tailwind CSS and a small amount of custom CSS. Fonts are loaded
-from Google Fonts and then referenced in Tailwind via an inline configuration.
-
-### Fonts
-
-- **Inter** is the default sans‑serif font.
-- **Fira Code** is used for any monospaced text.
-
-Both fonts are imported in `index.html` using a `@import` rule:
+Tailwind CSS is extended with custom fonts and colors. The default fonts are **Inter** and **Fira Code**:
 
 ```html
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 ```
 
-Tailwind is customized with these fonts by extending the `fontFamily` section of the
-`tailwind.config` object also defined in `index.html`:
-
-```javascript
-tailwind.config = {
-    theme: {
-        extend: {
-            fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                mono: ['Fira Code', 'monospace'],
-            },
-            // additional color overrides can be added here
-        },
-    },
-}
-```
+You can further customize the palette and fonts in `tailwind.config` inside `index.html`.
 
 ### Color Palette
 
-The background uses a radial gradient defined with CSS custom properties. The gradient
-transitions from `#1a1a1a` to `#0f0f0f`. Accent elements primarily use Tailwind's
-purple and pink shades for gradients and hover states.
-
-Feel free to fork this repository or use it as inspiration for your own portfolio.
-
-
+The background uses a radial gradient (`#1a1a1a` to `#0f0f0f`) and accent elements use purple and pink shades. Feel free to tweak these values to match your own style.
 
 ## License
 
