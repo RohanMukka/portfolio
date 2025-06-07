@@ -10,8 +10,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-[10000]"
-      style={{ backgroundColor: 'var(--background-color)' }}
+      className="fixed inset-0 flex items-center justify-center z-[10000] bg-transparent"
     >
       <div className="loader4">
         <svg viewBox="25 25 50 50">
