@@ -25,21 +25,21 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
   };
 
   const navLinkClasses = (item: string) =>
-    `text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-black transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-black dark:text-black font-semibold' : ''}`;
+    `text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-pink-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-purple-600 dark:text-pink-400 font-semibold' : ''}`;
   
-  const activeIndicator = (item: string) => 
+  const activeIndicator = (item: string) =>
     currentSection === item.toLowerCase() && (
-      <motion.div 
-        layoutId="activePill" 
-        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black"
-        initial={false} 
-        transition={{ type: "spring", stiffness: 350, damping: 30 }} 
+      <motion.div
+        layoutId="activePill"
+        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500"
+        initial={false}
+        transition={{ type: "spring", stiffness: 350, damping: 30 }}
       />
     );
 
   return (
-    <motion.nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || isOpen ? 'bg-white/70 dark:bg-[#0A0A14]/80 backdrop-blur-md shadow-xl py-4' : 'bg-transparent py-6'}`}
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || isOpen ? 'bg-white/40 dark:bg-[#0A0A14]/60 backdrop-blur-lg shadow-xl py-4' : 'bg-transparent py-6'}`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
