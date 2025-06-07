@@ -7,7 +7,7 @@ const Section: React.FC<SectionProps> = ({ children, id, className = '', fullHei
     <motion.section
       ref={refProp}
       id={id}
-      className={`relative ${fullHeight ? 'min-h-screen' : 'py-24 md:py-32'} px-6 md:px-12 text-gray-200 dark:text-gray-100 bg-black ${className}`}
+      className={`relative ${fullHeight ? 'min-h-screen' : 'py-24 md:py-32'} px-6 md:px-12 text-gray-200 dark:text-gray-100 bg-transparent ${className}`}
       data-testid={`section-${id}`} // For testing
     >
       <div className={`container mx-auto relative z-10 

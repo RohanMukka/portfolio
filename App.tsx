@@ -15,6 +15,12 @@ import Footer from './components/common/Footer';
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('theme') as 'light' | 'dark') || 'dark';
+    }
+    return 'dark';
+  });
 
   const homeRef = useRef<HTMLElement | null>(null);
   const aboutRef = useRef<HTMLElement | null>(null);
@@ -76,13 +82,13 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]); // Re-run when isLoading changes to attach observer after preloader
 
-  // Force dark theme on mount
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.body.classList.add('dark');
-      document.body.classList.remove('light');
+      document.body.classList.toggle('dark', theme === 'dark');
+      document.body.classList.toggle('light', theme === 'light');
+      localStorage.setItem('theme', theme);
     }
-  }, []);
+  }, [theme]);
 
   const scrollToSection = (id: string) => {
     const sectionRef = sectionRefs[id];
@@ -101,6 +107,10 @@ const App: React.FC = () => {
     }
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
 
   if (isLoading && typeof window !== 'undefined') { // Ensure window check for SSR safety, though not strictly needed for CSR
     return <Preloader onLoaded={handlePreloaderLoaded} />;
@@ -112,6 +122,8 @@ const App: React.FC = () => {
         currentSection={activeSection}
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}
         scrollToSection={scrollToSection}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
       
       <main>

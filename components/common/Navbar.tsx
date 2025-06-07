@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { NavbarProps } from '../../types';
 
 const NAV_ITEMS = ["Home", "About", "Skills", "Projects", "Experience", "Contact"];
 
 
-const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection, theme, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -56,11 +56,11 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
         
         <div className="hidden md:flex space-x-8 items-center">
           {NAV_ITEMS.map((item) => (
-            <motion.button 
-              key={item} 
-              onClick={() => handleNavClick(item)} 
+            <motion.button
+              key={item}
+              onClick={() => handleNavClick(item)}
               className={navLinkClasses(item)}
-              whileHover={{ y: -2 }} 
+              whileHover={{ y: -2 }}
               whileTap={{ y: 0 }}
               data-cursor-hover-link
             >
@@ -68,6 +68,14 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
               {activeIndicator(item)}
             </motion.button>
           ))}
+          <button
+            onClick={toggleTheme}
+            className="text-gray-900 dark:text-white focus:outline-none"
+            aria-label="Toggle theme"
+            data-cursor-hover-link
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
           <motion.a
             href={personalData.resumeUrl}
             download
@@ -102,15 +110,23 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
           >
             <div className="flex flex-col items-center py-6 space-y-5">
               {NAV_ITEMS.map((item) => (
-                <button 
-                  key={item} 
-                  onClick={() => handleNavClick(item)} 
+                <button
+                  key={item}
+                  onClick={() => handleNavClick(item)}
                   className={`text-xl py-2 ${navLinkClasses(item)}`}
                   data-cursor-hover-link
                 >
                   {item}
                 </button>
               ))}
+              <button
+                onClick={toggleTheme}
+                className="text-gray-900 dark:text-white focus:outline-none"
+                aria-label="Toggle theme"
+                data-cursor-hover-link
+              >
+                {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
+              </button>
               <motion.a
                 href={personalData.resumeUrl}
                 download

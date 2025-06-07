@@ -6,6 +6,7 @@ This repository contains the source code for my personal portfolio website. It i
 
 - Responsive layout built with [Tailwind CSS](https://tailwindcss.com/) and React components.
 - Animated sections including a typewriter effect (`useTypewriter` hook) and Lottie animations.
+- Optional light/dark theme toggle with animated radial background.
 - Data-driven design using `data.tsx` and typed interfaces in `types.ts`.
 - Simple configuration via `vite.config.ts` with support for environment variables.
 
