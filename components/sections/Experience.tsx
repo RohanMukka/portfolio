@@ -62,7 +62,12 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
                             ${index % 2 === 0 ? 'md:translate-x-[-50%]' : 'md:translate-x-[-50%]'}
                             p-3 bg-gray-700 rounded-full shadow-xl border-2 border-black flex items-center justify-center`}
             >
-              {exp.icon ? React.cloneElement(exp.icon, { size:22, className: `text-white ${exp.icon.props.className || ''}`}) : <Briefcase size={22} className="text-white"/>}
+              {exp.icon
+                ? React.cloneElement(exp.icon, {
+                    size: 22,
+                    className: exp.icon.props.className || 'text-white',
+                  })
+                : <Briefcase size={22} className="text-white"/>}
             </div>
             
             {/* Spacer for desktop to push content to one side */}
