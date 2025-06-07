@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from './hooks/useTheme';
 import { personalData, typewriterWords } from './data';
 
 import Navbar from './components/common/Navbar';
@@ -15,6 +16,7 @@ import Footer from './components/common/Footer';
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
+  const { theme, toggleTheme } = useTheme();
 
   const homeRef = useRef<HTMLElement | null>(null);
   const aboutRef = useRef<HTMLElement | null>(null);
@@ -76,22 +78,6 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]); // Re-run when isLoading changes to attach observer after preloader
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-      const media = window.matchMedia('(prefers-color-scheme: dark)');
-
-      const applyTheme = (isDark: boolean) => {
-        document.body.classList.toggle('dark', isDark);
-        document.body.classList.toggle('light', !isDark);
-      };
-
-      applyTheme(media.matches);
-
-      const handler = (e: MediaQueryListEvent) => applyTheme(e.matches);
-      media.addEventListener('change', handler);
-      return () => media.removeEventListener('change', handler);
-    }
-  }, []);
 
   const scrollToSection = (id: string) => {
     const sectionRef = sectionRefs[id];
@@ -122,6 +108,8 @@ const App: React.FC = () => {
         currentSection={activeSection}
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}
         scrollToSection={scrollToSection}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
       
       <main>
