@@ -6,7 +6,7 @@ This repository contains the source code for my personal portfolio website. It i
 
 - Responsive layout built with [Tailwind CSS](https://tailwindcss.com/) and React components.
 - Animated sections including a typewriter effect (`useTypewriter` hook) and Lottie animations.
-- Optional light/dark theme toggle with animated radial background.
+- Animated radial background with a dark theme.
 - Data-driven design using `data.tsx` and typed interfaces in `types.ts`.
 - Simple configuration via `vite.config.ts` with support for environment variables.
 
@@ -77,8 +77,7 @@ tailwind.config = {
 
 ### Color Palette
 
-The background uses a radial gradient defined with CSS custom properties. In light
-mode the gradient transitions from `#f8fafc` to `#e2e8f0`, while in dark mode it
+The background uses a radial gradient defined with CSS custom properties. The gradient
 transitions from `#1a1a1a` to `#0f0f0f`. Accent elements primarily use Tailwind's
 purple and pink shades for gradients and hover states.
 

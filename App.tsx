@@ -15,12 +15,6 @@ import Footer from './components/common/Footer';
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('theme') as 'light' | 'dark') || 'dark';
-    }
-    return 'dark';
-  });
 
   const homeRef = useRef<HTMLElement | null>(null);
   const aboutRef = useRef<HTMLElement | null>(null);
@@ -84,11 +78,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.body.classList.toggle('dark', theme === 'dark');
-      document.body.classList.toggle('light', theme === 'light');
-      localStorage.setItem('theme', theme);
+      document.body.classList.add('dark');
     }
-  }, [theme]);
+  }, []);
 
   const scrollToSection = (id: string) => {
     const sectionRef = sectionRefs[id];
@@ -107,9 +99,6 @@ const App: React.FC = () => {
     }
   };
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
 
 
   if (isLoading && typeof window !== 'undefined') { // Ensure window check for SSR safety, though not strictly needed for CSR
@@ -122,8 +111,6 @@ const App: React.FC = () => {
         currentSection={activeSection}
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}
         scrollToSection={scrollToSection}
-        theme={theme}
-        toggleTheme={toggleTheme}
       />
       
       <main>
