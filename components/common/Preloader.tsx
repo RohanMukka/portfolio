@@ -13,16 +13,10 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded }) => {
       className="fixed inset-0 flex items-center justify-center z-[10000]"
       style={{ backgroundColor: 'var(--background-color)' }}
     >
-      <div className="terminal-loader">
-        <div className="terminal-header">
-          <div className="terminal-title">Status</div>
-          <div className="terminal-controls">
-            <span className="control close"></span>
-            <span className="control minimize"></span>
-            <span className="control maximize"></span>
-          </div>
-        </div>
-        <span className="text">Loading...</span>
+      <div className="loader4">
+        <svg viewBox="25 25 50 50">
+          <circle r="20" cx="50" cy="50" />
+        </svg>
       </div>
     </div>
   );
