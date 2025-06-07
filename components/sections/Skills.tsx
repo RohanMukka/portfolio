@@ -59,7 +59,7 @@ const Skills: React.FC<SkillsProps> = ({ refProp, skills }) => {
         viewport={{ once: true, amount: 0.3 }} 
         variants={sectionTitleVariants}
       >
-        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-600 to-white" data-cursor-hover-text>
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-red-400" data-cursor-hover-text>
           My Technical Arsenal
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-cursor-hover-text>
