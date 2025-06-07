@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Download } from "lucide-react";
 import { HeroProps } from "../../types";
 import Section from "../common/Section";
-import InfinitySymbol from "../common/InfinitySymbol";
+//import InfinitySymbol from "../common/InfinitySymbol";
 import { useTypewriter } from "../../hooks/useTypewriter";
 
 const Hero: React.FC<HeroProps> = ({
@@ -81,7 +81,7 @@ const Hero: React.FC<HeroProps> = ({
         />
       </div>
       <motion.div
-        className="flex flex-col items-center justify-center text-center relative z-10 h-full pt-20 md:pt-0"
+        className="flex flex-col items-center justify-center text-center relative z-10 h-full"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -92,7 +92,7 @@ const Hero: React.FC<HeroProps> = ({
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="w-56 h-56 md:w-72 md:h-72 mb-6 md:mb-8"
         >
-          <InfinitySymbol className="w-full h-full" />
+          
         </motion.div>
         <motion.h1
           variants={itemVariants}
