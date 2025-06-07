@@ -35,7 +35,7 @@ const Contact: React.FC<ContactProps> = ({ refProp, personalData }) => {
         variants={sectionTitleVariants}
       >
         <h2
-          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-600 to-white"
+          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-red-400"
           data-cursor-hover-text
         >
           Let's Get In Touch

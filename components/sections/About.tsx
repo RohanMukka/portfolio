@@ -43,7 +43,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
         variants={titleVariants}
       >
         <h2
-          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-600 to-white"
+          className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-red-400"
           data-cursor-hover-text
         >
           Discover More About Me
@@ -61,7 +61,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
         variants={contentContainerVariants}
       >
         <motion.div className="relative group" variants={imageVariants}>
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-black to-gray-700 rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-700 to-pink-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
           <img 
             src={profileImageUrl} 
             alt={personalData.name} 
@@ -114,7 +114,7 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
            <motion.a 
             href={personalData.resumeUrl} 
             download 
-           className="mt-8 inline-flex items-center px-7 py-3 bg-gradient-to-r from-black to-gray-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:shadow-gray-500/40 transition-all duration-300 transform hover:scale-105 text-md"
+           className="mt-8 inline-flex items-center px-7 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md"
            whileHover={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.6)" }}
             whileTap={{ scale: 0.95 }} 
             data-cursor-hover-link 
