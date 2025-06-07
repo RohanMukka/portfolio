@@ -6,7 +6,7 @@ This project contains the source code for my personal portfolio website built wi
 
 - **Responsive design** built with Tailwind CSS components.
 - **Animated sections** including a typewriter effect (via `useTypewriter`) and Lottie animations.
-- **Dark theme** with a radial background gradient.
+- **Adaptive theme** that follows your system's light or dark mode.
 - **Data driven**: portfolio details are loaded from `data.tsx` and validated with TypeScript interfaces.
 - **Quick setup** using Vite with optional environment variables.
 
@@ -50,7 +50,7 @@ This project contains the source code for my personal portfolio website built wi
 
 ## Styling and Theme
 
-Tailwind CSS is extended with custom fonts and colors. The default fonts are **Inter** and **Fira Code**:
+Tailwind CSS is extended with custom fonts and colors. The site automatically adapts to your operating system's dark or light mode preference. The default fonts are **Inter** and **Fira Code**:
 
 ```html
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
