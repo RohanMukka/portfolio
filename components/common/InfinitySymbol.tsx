@@ -17,14 +17,14 @@ const InfinitySymbol: React.FC<InfinitySymbolProps> = ({ className }) => (
         <stop offset="100%" stopColor="#ef4444" />
       </linearGradient>
       <filter id="infShadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#000" floodOpacity="0.4" />
+        <feDropShadow dx="0" dy="4" stdDeviation="2" floodColor="#000" floodOpacity="0.2" />
       </filter>
     </defs>
     <path
       d="M30,50 C30,20 70,20 100,50 C130,80 170,80 170,50 C170,20 130,20 100,50 C70,80 30,80 30,50 Z"
       fill="none"
       stroke="url(#infGrad)"
-      strokeWidth="14"
+      strokeWidth="8"
       strokeLinecap="round"
       filter="url(#infShadow)"
     />
