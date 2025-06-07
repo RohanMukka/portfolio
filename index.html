@@ -15,19 +15,27 @@
         }
         :root {
             --text-color: #E0E0E0;
-            --background-color: #000000;
+            --gradient-start: #1a1a1a;
+            --gradient-end: #0f0f0f;
         }
         body {
             /* Text styling */
             color: var(--text-color);
             font-family: 'PP Neue Montreal', 'Inter', sans-serif;
-            background-color: var(--background-color);
+            background: radial-gradient(circle at top left, var(--gradient-start), var(--gradient-end));
+            background-attachment: fixed;
+            background-size: 200% 200%;
+            animation: gradient-bg 30s ease infinite;
         }
         body.light {
             --text-color: #1f2937;
+            --gradient-start: #f8fafc;
+            --gradient-end: #e2e8f0;
         }
         body.dark {
             --text-color: #E0E0E0;
+            --gradient-start: #1a1a1a;
+            --gradient-end: #0f0f0f;
         }
         /* Custom scrollbar for Webkit browsers */
         body::-webkit-scrollbar {
