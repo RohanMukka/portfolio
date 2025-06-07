@@ -27,7 +27,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => (
       )}
     </div>
     <div className="p-6 flex flex-col flex-grow">
-      <h3 className="text-xl md:text-2xl font-semibold text-black mb-2 group-hover:text-gray-300 transition-colors" data-cursor-hover-text>
+      <h3 className="text-xl md:text-2xl font-semibold mb-2 text-gray-800 dark:text-gray-100 group-hover:text-purple-300 transition-colors" data-cursor-hover-text>
         {project.title}
       </h3>
       <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed mb-4 flex-grow" data-cursor-hover-text>
