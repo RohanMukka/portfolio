@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { NavbarProps } from '../../types';
 
-const NAV_ITEMS = ["Home", "About", "Skills", "Projects", "Experience", "Contact"];
+const NAV_ITEMS = ["Home", "About", "Projects", "Skills", "Experience", "Contact"];
 
 
 const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToSection }) => {

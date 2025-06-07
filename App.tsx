@@ -18,16 +18,16 @@ const App: React.FC = () => {
 
   const homeRef = useRef<HTMLElement | null>(null);
   const aboutRef = useRef<HTMLElement | null>(null);
-  const skillsRef = useRef<HTMLElement | null>(null);
   const projectsRef = useRef<HTMLElement | null>(null);
+  const skillsRef = useRef<HTMLElement | null>(null);
   const experienceRef = useRef<HTMLElement | null>(null);
   const contactRef = useRef<HTMLElement | null>(null);
 
   const sectionRefs: Record<string, React.RefObject<HTMLElement | null>> = {
     home: homeRef,
     about: aboutRef,
-    skills: skillsRef,
     projects: projectsRef,
+    skills: skillsRef,
     experience: experienceRef,
     contact: contactRef,
   };
@@ -121,8 +121,8 @@ const App: React.FC = () => {
             typewriterWords={typewriterWords}
         />
         <About refProp={aboutRef} personalData={{name: personalData.name, about: personalData.about, resumeUrl: personalData.resumeUrl}} />
-        <Skills refProp={skillsRef} skills={personalData.skills} />
         <Projects refProp={projectsRef} projects={personalData.projects} />
+        <Skills refProp={skillsRef} skills={personalData.skills} />
         <Experience refProp={experienceRef} experience={personalData.experience} />
         <Contact refProp={contactRef} personalData={{email: personalData.email, linkedin: personalData.linkedin, github: personalData.github, leetcode: personalData.leetcode, contact: personalData.contact}} />
       </main>
