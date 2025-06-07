@@ -141,9 +141,8 @@ const Hero: React.FC<HeroProps> = ({
           <motion.a
             href={personalData.resumeUrl}
             download
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-black text-black font-semibold rounded-xl hover:bg-black hover:text-white transition-colors duration-300 text-md md:text-lg"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-pink-600 hover:shadow-pink-500/50 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
             whileHover={{
-              scale: 1.05,
               boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.4)",
             }}
             whileTap={{ scale: 0.95 }}
