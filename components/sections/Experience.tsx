@@ -77,7 +77,7 @@ const Experience: React.FC<ExperienceProps> = ({ refProp, experience }) => {
             {/* Content Card */}
             <div className={`w-full md:w-[calc(50%-2rem)] ${index % 2 === 0 ? 'ml-12 md:ml-8' : 'ml-12 md:mr-8 md:ml-0'} `}>
               <div className="p-6 bg-white/60 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl border border-gray-700 hover:border-black/70 transition-colors duration-300">
-                <h3 className="text-xl md:text-2xl font-semibold text-black mb-1" data-cursor-hover-text>{exp.role}</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-black dark:text-gray-100 mb-1" data-cursor-hover-text>{exp.role}</h3>
                 <p className="text-md text-gray-300 mb-2" data-cursor-hover-text>{exp.company}</p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 flex items-center" data-cursor-hover-text>
                   <CalendarDays size={14} className="mr-2 text-gray-500"/> {exp.duration}
