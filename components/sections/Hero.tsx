@@ -99,8 +99,8 @@ const Hero: React.FC<HeroProps> = ({
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-3 md:mb-4 leading-tight inline-flex items-center"
           data-cursor-hover-text
         >
-          Hi, I'm{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-red-400">
+          <span className="mr-2">Hi, I'm</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-red-400 mr-2">
             {personalData.name.split(" ")[0]}
           </span>
           <span
