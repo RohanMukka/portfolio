@@ -16,7 +16,7 @@ const Hero: React.FC<HeroProps> = ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.8 },
+      transition: { staggerChildren: 0.2, delayChildren: 0 },
     },
   };
   const itemVariants = {
