@@ -58,7 +58,7 @@ export const personalData: PersonalData = {
       description: "Built two ETH-staking models for fitness goals (solo & group). Developed smart contracts with a React frontend and OAuth-secured backend. Outperformed competitors in decentralization and flexibility.",
       tags: ["Blockchain", "DeFi", "React", "Solidity", "OAuth"],
       imageUrl: "https://placehold.co/720x400/8A2BE2/FFFFFF?text=BEneFIT+Project",
-      githubUrl: "https://github.com/rohanmukka",
+      githubUrl: "https://github.com/RohanMukka/BEneFIT",
       liveUrl: null,
       icon: <TrendingUp size={24} className="text-green-400" />
     },
@@ -68,7 +68,7 @@ export const personalData: PersonalData = {
       description: "Built internship modules for requests, tracking, and evaluations for OU CS, boosting submission efficiency by 30%. Automated approvals and reminders, cutting manual follow-ups by 50%. Improved compliance with dashboards and outcome mapping.",
       tags: ["Full-Stack", "React", "Node.js", "System Design", "Automation"],
       imageUrl: "https://placehold.co/720x400/4682B4/FFFFFF?text=IPMS+Project",
-      githubUrl: "https://github.com/rohanmukka",
+      githubUrl: "https://github.com/RohanMukka/IPMS",
       liveUrl: null,
       duration: "Jan 2025 - Apr 2025",
       icon: <Briefcase size={24} className="text-blue-400" />
