@@ -39,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || isOpen ? 'bg-white/40 dark:bg-[#0A0A14]/60 backdrop-blur-lg shadow-xl py-4' : 'bg-transparent py-6'}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || isOpen ? 'bg-white/30 dark:bg-[#0A0A14]/50 backdrop-blur-lg shadow-xl py-4' : 'bg-transparent py-6'}`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
@@ -99,7 +99,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
             animate={{ opacity: 1, height: 'auto' }} 
             exit={{ opacity: 0, height: 0, transition: { duration: 0.3 } }} 
             transition={{ duration: 0.4, ease: "easeInOut" }} 
-            className="md:hidden absolute top-full left-0 right-0 bg-white/90 dark:bg-[#0A0A14]/95 backdrop-blur-lg shadow-2xl border-t border-gray-700/50"
+            className="md:hidden absolute top-full left-0 right-0 bg-white/80 dark:bg-[#0A0A14]/90 backdrop-blur-lg shadow-2xl border-t border-gray-700/50"
           >
             <div className="flex flex-col items-center py-6 space-y-5">
               {NAV_ITEMS.map((item) => (
