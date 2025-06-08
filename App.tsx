@@ -12,6 +12,7 @@ import Projects from './components/sections/Projects';
 import Experience from './components/sections/Experience';
 import Contact from './components/sections/Contact';
 import Footer from './components/common/Footer';
+import { Analytics } from '@vercel/analytics/react';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -127,6 +128,7 @@ const App: React.FC = () => {
       </main>
       
       <Footer personalData={{name: personalData.name, github: personalData.github, linkedin: personalData.linkedin, email: personalData.email}} />
+      <Analytics />
     </div>
   );
 };
