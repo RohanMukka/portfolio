@@ -84,6 +84,16 @@ export const personalData: PersonalData = {
       duration: "Completed Mar 2024",
       icon: <ShieldCheck size={24} className="text-red-400" />
     },
+    {
+      id: 4,
+      title: "Fee Automation",
+      description: "A streamlined system that automates fee processing and management for institutions.",
+      tags: ["Automation", "Full-Stack", "Payments"],
+      imageUrl: "https://placehold.co/720x400/FF7F50/FFFFFF?text=Fee+Automation",
+      githubUrl: "https://github.com/RohanMukka/FeeAutomation",
+      liveUrl: null,
+      icon: <Server size={24} className="text-orange-400" />
+    },
   ],
   skills: [
     { name: "Python", category: "Languages", icon: <Code size={24} className="text-yellow-400"/>, proficiency: 95 },
