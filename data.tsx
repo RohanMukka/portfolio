@@ -94,6 +94,16 @@ export const personalData: PersonalData = {
       liveUrl: null,
       icon: <Server size={24} className="text-orange-400" />
     },
+    {
+      id: 5,
+      title: "A Robust Diagnostic System Leveraging Explicit Domain Knowledge and Learned Data Patterns",
+      description: "Integrates EHRs, lab results and interviews into an ontology-driven knowledge base. SWRL rules capture symptom–disease links, while ML models analyze ambiguous cases for a comprehensive diagnosis.",
+      tags: ["Healthcare", "Ontology", "SWRL", "Machine Learning", "AI"],
+      imageUrl: "https://placehold.co/720x400/2E8B57/FFFFFF?text=Diagnostic+System",
+      githubUrl: "https://github.com/RohanMukka/A-Robust-Diagnostic-System-Leveraging-Explicit-Domain-Knowledge-and-Learned-Data-Patterns-",
+      liveUrl: null,
+      icon: <BrainCircuit size={24} className="text-purple-400" />
+    },
   ],
   skills: [
     { name: "Python", category: "Languages", icon: <Code size={24} className="text-yellow-400"/>, proficiency: 95 },
