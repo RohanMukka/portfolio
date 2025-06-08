@@ -111,13 +111,14 @@ const About: React.FC<AboutProps> = ({ refProp, personalData }) => {
               </motion.ul>
             </motion.div>
           )}
-           <motion.a 
-            href={personalData.resumeUrl} 
-            download 
-           className="mt-8 inline-flex items-center px-7 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md"
-           whileHover={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.6)" }}
-            whileTap={{ scale: 0.95 }} 
-            data-cursor-hover-link 
+          <motion.a
+            href={personalData.resumeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex items-center px-7 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 transform hover:scale-105 text-md"
+            whileHover={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.6)" }}
+            whileTap={{ scale: 0.95 }}
+            data-cursor-hover-link
             variants={paragraphVariants}
           >
             View Full Resume <Download size={20} className="inline ml-2.5" />

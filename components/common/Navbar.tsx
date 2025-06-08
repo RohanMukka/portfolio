@@ -71,7 +71,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
           ))}
           <motion.a
             href={personalData.resumeUrl}
-            download
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-pink-500/50 transition-all duration-300 transform hover:scale-105"
             whileHover={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.6)" }}
             data-cursor-hover-link
@@ -122,7 +123,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
               ))}
               <motion.a
                 href={personalData.resumeUrl}
-                download
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md mt-3 text-lg"
                 data-cursor-hover-link
               >
