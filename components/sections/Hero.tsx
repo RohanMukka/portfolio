@@ -108,7 +108,7 @@ const Hero: React.FC<HeroProps> = ({
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
           >
-            Download CV <Download size={20} />
+            Download Resume <Download size={20} />
           </motion.a>
         </motion.div>
       </motion.div>
