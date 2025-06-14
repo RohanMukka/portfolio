@@ -30,6 +30,14 @@ This project contains the source code for my personal portfolio website built wi
    ```bash
    npm run preview
    ```
+5. Run the linter to check code quality:
+   ```bash
+   npm run lint
+   ```
+6. Execute tests with Vitest:
+   ```bash
+   npm run test
+   ```
 
 ## Customization
 
