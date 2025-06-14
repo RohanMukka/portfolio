@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Download } from "lucide-react";
+import { Download, ChevronDown } from "lucide-react";
 import { HeroProps } from "../../types";
 import Section from "../common/Section";
 //import InfinitySymbol from "../common/InfinitySymbol";
@@ -112,11 +112,19 @@ const Hero: React.FC<HeroProps> = ({
           </motion.a>
         </motion.div>
       </motion.div>
+      <motion.button
+        onClick={() => scrollToSection("about")}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 p-2 text-gray-800 dark:text-gray-200 animate-bounce"
+        whileHover={{ scale: 1.1 }}
+        aria-label="Scroll down"
+      >
+        <ChevronDown size={32} />
+      </motion.button>
       {/* Wave animation style tag - Tailwind doesn't directly support keyframes without config */}
       <style>{`
-        .wave-emoji { 
-          display: inline-block; 
-          animation: wave-animation 2.5s infinite; 
+        .wave-emoji {
+          display: inline-block;
+          animation: wave-animation 2.5s infinite;
           transform-origin: 70% 70%; 
         } 
         @keyframes wave-animation { 
