@@ -14,7 +14,6 @@
     "moduleDetection": "force",
     "noEmit": true,
     "allowJs": true,
-    "resolveJsonModule": true,
     "jsx": "react-jsx",
 
     /* Linting */
