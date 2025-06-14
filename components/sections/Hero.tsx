@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import { Download } from "lucide-react";
 import { HeroProps } from "../../types";
 import Section from "../common/Section";
-//import InfinitySymbol from "../common/InfinitySymbol";
+import LottieAnimation from "../common/LottieAnimation";
+import heroAnimationData from "../../public/heroAnimation.json";
 import { useTypewriter } from "../../hooks/useTypewriter";
 
 const Hero: React.FC<HeroProps> = ({
@@ -52,7 +53,7 @@ const Hero: React.FC<HeroProps> = ({
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="w-56 h-56 md:w-72 md:h-72 mb-6 md:mb-8"
         >
-          
+          <LottieAnimation animationData={heroAnimationData} className="w-full h-full" />
         </motion.div>
         <motion.h1
           variants={itemVariants}
