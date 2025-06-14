@@ -56,7 +56,7 @@ Tailwind CSS is extended with custom fonts and colors. The site automatically ad
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 ```
 
-You can further customize the palette and fonts in `tailwind.config` inside `index.html`.
+You can further customize the palette and fonts in [`tailwind.config.js`](tailwind.config.js).
 
 ### Color Palette
 
