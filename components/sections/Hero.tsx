@@ -4,6 +4,8 @@ import { Download } from "lucide-react";
 import { HeroProps } from "../../types";
 import Section from "../common/Section";
 //import InfinitySymbol from "../common/InfinitySymbol";
+import LottieAnimation from "../common/LottieAnimation";
+import coderAnimationData from "../../public/coder-animation.json";
 import { useTypewriter } from "../../hooks/useTypewriter";
 
 const Hero: React.FC<HeroProps> = ({
@@ -27,6 +29,14 @@ const Hero: React.FC<HeroProps> = ({
       transition: { type: "spring", stiffness: 100, damping: 12 },
     },
   };
+  const lottieItemVariants = {
+    hidden: { opacity: 0, scale: 0.5 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { type: "spring", stiffness: 80, damping: 10, delay: 1 },
+    },
+  };
 
   const typedText = useTypewriter(typewriterWords);
 
@@ -38,10 +48,17 @@ const Hero: React.FC<HeroProps> = ({
         initial="hidden"
         animate="visible"
       >
-        {/* Lottie Animation Removed */}
+        <motion.div
+          variants={lottieItemVariants}
+          animate={{ y: [0, -15, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 mb-6 md:mb-8"
+        >
+          <LottieAnimation animationData={coderAnimationData} loop={true} />
+        </motion.div>
         <motion.h1
           variants={itemVariants}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mt-10 mb-3 md:mb-4 leading-tight inline-flex items-center"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-3 md:mb-4 leading-tight inline-flex items-center"
           data-cursor-hover-text
         >
           <span className="mr-2">Hi, I'm</span>
