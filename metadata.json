@@ -1,5 +1,9 @@
 
 {
   "name": "Rohan Mukka - Portfolio",
-  "description": "A personal portfolio website for Rohan Mukka, showcasing skills, projects, and experience as an MS Computer Science Student and ML Engineer."
+  "description": "A personal portfolio website for Rohan Mukka, showcasing skills, projects, and experience as an MS Computer Science Student and ML Engineer.",
+  "ogTitle": "Rohan Mukka - Portfolio",
+  "ogDescription": "Personal portfolio showcasing skills and projects.",
+  "ogImage": "URL_to_preview_image",
+  "twitterCard": "summary_large_image"
 }
