@@ -4,6 +4,8 @@ import { Download } from "lucide-react";
 import { HeroProps } from "../../types";
 import Section from "../common/Section";
 //import InfinitySymbol from "../common/InfinitySymbol";
+import LottieAnimation from "../common/LottieAnimation";
+import coderAnimationData from "../../public/coder-animation.json";
 import { useTypewriter } from "../../hooks/useTypewriter";
 
 const Hero: React.FC<HeroProps> = ({
@@ -50,9 +52,9 @@ const Hero: React.FC<HeroProps> = ({
           variants={lottieItemVariants}
           animate={{ y: [0, -15, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="w-56 h-56 md:w-72 md:h-72 mb-6 md:mb-8"
+          className="w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 mb-6 md:mb-8"
         >
-          
+          <LottieAnimation animationData={coderAnimationData} loop={true} />
         </motion.div>
         <motion.h1
           variants={itemVariants}
@@ -79,7 +81,7 @@ const Hero: React.FC<HeroProps> = ({
         </motion.p>
         <motion.div
           variants={itemVariants}
-          className="text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-16 md:h-auto min-h-[4rem] md:min-h-[auto] text-center"
+          className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 max-w-xl md:max-w-2xl mb-8 md:mb-10 font-mono h-12 sm:h-16 md:h-auto min-h-[3rem] sm:min-h-[4rem] md:min-h-[auto] text-center"
           data-cursor-hover-text
         >
           <span>{typedText}</span>
@@ -87,11 +89,11 @@ const Hero: React.FC<HeroProps> = ({
         </motion.div>
         <motion.div
           variants={itemVariants}
-          className="flex flex-row flex-wrap items-center justify-center gap-4 md:gap-6"
+          className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 md:gap-6"
         >
           <motion.button
             onClick={() => scrollToSection("projects")}
-            className="px-8 py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
+            className="px-6 sm:px-8 py-3 sm:py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 text-md md:text-lg w-full sm:w-auto"
             whileHover={{ boxShadow: "0px 0px 25px rgba(0, 0, 0, 0.6)" }}
             whileTap={{ scale: 0.95 }}
             data-cursor-hover-link
@@ -101,7 +103,7 @@ const Hero: React.FC<HeroProps> = ({
           <motion.a
             href={personalData.resumeUrl}
             download
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-pink-600 hover:shadow-pink-500/50 transition-all duration-300 transform hover:scale-105 text-md md:text-lg"
+            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-pink-600 hover:shadow-pink-500/50 transition-all duration-300 transform hover:scale-105 text-md md:text-lg w-full sm:w-auto"
             whileHover={{
               boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.4)",
             }}

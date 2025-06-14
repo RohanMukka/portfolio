@@ -25,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
   };
 
   const navLinkClasses = (item: string) =>
-    `text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-pink-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-purple-600 dark:text-pink-400 font-semibold' : ''}`;
+    `text-[var(--text-color)] dark:text-gray-300 hover:text-purple-600 dark:hover:text-pink-400 transition-colors duration-200 relative group ${currentSection === item.toLowerCase() ? 'text-purple-600 dark:text-pink-400 font-semibold' : ''}`;
   
   const activeIndicator = (item: string) =>
     currentSection === item.toLowerCase() && (
@@ -46,9 +46,9 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         <motion.div
-          className="text-3xl font-bold text-gray-900 dark:text-white cursor-pointer"
+          className="text-2xl sm:text-3xl font-bold text-[var(--text-color)] dark:text-white cursor-pointer"
           onClick={() => handleNavClick('home')}
-          whileHover={{ scale: 1.05, color: '#000000' }}
+          whileHover={{ scale: 1.05, color: 'var(--text-color)' }}
           data-cursor-hover-link
         >
           {personalData.name.split(' ')[0]}
@@ -73,7 +73,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
             href={personalData.resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-pink-500/50 transition-all duration-300 transform hover:scale-105"
+            className="bg-gradient-to-r from-purple-600 to-pink-500 hover:bg-gradient-to-bl hover:from-purple-700 hover:to-pink-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:shadow-pink-500/50 transition-all duration-300 transform hover:scale-105"
             whileHover={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.6)" }}
             data-cursor-hover-link
           >
@@ -81,7 +81,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
           </motion.a>
           <button
             onClick={toggleTheme}
-            className="text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-pink-400 focus:outline-none"
+            className="text-[var(--text-color)] dark:text-gray-300 hover:text-purple-600 dark:hover:text-pink-400 focus:outline-none"
             aria-label="Toggle theme"
             data-cursor-hover-link
           >
@@ -92,7 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
         <div className="md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-900 dark:text-white focus:outline-none z-50"
+            className="text-[var(--text-color)] dark:text-white focus:outline-none z-50"
             data-cursor-hover-link
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
@@ -125,14 +125,14 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, personalData, scrollToS
                 href={personalData.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md mt-3 text-lg"
+                className="bg-gradient-to-r from-purple-600 to-pink-500 hover:bg-gradient-to-bl hover:from-purple-700 hover:to-pink-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md mt-3 text-lg transition-all duration-300"
                 data-cursor-hover-link
               >
                 Resume
               </motion.a>
               <button
                 onClick={toggleTheme}
-                className="text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-pink-400 focus:outline-none"
+                className="text-[var(--text-color)] dark:text-gray-300 hover:text-purple-600 dark:hover:text-pink-400 focus:outline-none"
                 aria-label="Toggle theme"
                 data-cursor-hover-link
               >
