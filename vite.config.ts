@@ -5,7 +5,6 @@ import { defineConfig, loadEnv } from 'vite';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-    console.log(`Vite is running in ${mode} mode`); // Log the mode
     const env = loadEnv(mode, '.', '');
     return {
       define: {
