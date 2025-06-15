@@ -110,6 +110,7 @@ export const personalData: PersonalData = {
     { name: "JavaScript", category: "Languages", icon: <Code size={24} className="text-yellow-400"/>, proficiency: 90 },
     { name: "Java", category: "Languages", icon: <Code size={24} className="text-black"/>, proficiency: 80 },
     { name: "SQL", category: "Databases", icon: <Database size={24} className="text-blue-400"/>, proficiency: 85 },
+    { name: "MongoDB", category: "Databases", icon: <Database size={24} className="text-green-400"/>, proficiency: 80 },
     { name: "HTML/CSS", category: "Frontend", icon: <Palette size={24} className="text-pink-400"/>, proficiency: 90 },
     { name: "React.js", category: "Frameworks & Libraries", icon: <Code size={24} className="text-sky-400"/>, proficiency: 90 },
     { name: "Node.js", category: "Frameworks & Libraries", icon: <Server size={24} className="text-green-400"/>, proficiency: 85 },

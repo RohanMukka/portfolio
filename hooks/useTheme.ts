@@ -9,9 +9,8 @@ export const useTheme = (): { theme: Theme; toggleTheme: () => void } => {
       if (stored === 'light' || stored === 'dark') {
         return stored;
       }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    return 'light';
+    return 'dark';
   };
 
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
