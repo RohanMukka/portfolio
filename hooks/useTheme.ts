@@ -2,32 +2,35 @@ import { useState, useEffect } from 'react';
 
 export type Theme = 'light' | 'dark';
 
-export const useTheme = (): { theme: Theme; toggleTheme: () => void } => {
-  const getInitialTheme = (): Theme => {
+export const useTheme = (): { theme: Theme } => {
+  const getPreferredTheme = (): Theme => {
     if (typeof window !== 'undefined') {
-      const stored = window.localStorage.getItem('theme');
-      if (stored === 'light' || stored === 'dark') {
-        return stored;
-      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
     }
     return 'dark';
   };
 
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [theme, setTheme] = useState<Theme>(getPreferredTheme);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = (e: MediaQueryListEvent) => {
+        setTheme(e.matches ? 'dark' : 'light');
+      };
+      media.addEventListener('change', listener);
+      return () => media.removeEventListener('change', listener);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.body.classList.toggle('dark', theme === 'dark');
       document.body.classList.toggle('light', theme === 'light');
     }
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('theme', theme);
-    }
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  return { theme, toggleTheme };
+  return { theme };
 };
