@@ -114,7 +114,7 @@ const Hero: React.FC<HeroProps> = ({
         <motion.button
 
   onClick={() => scrollToSection("about")}
-  className="mt-10 md:mt-40 p-2 text-black dark:text-gray-200 animate-bounce opacity-80 hover:opacity-100"
+  className="mt-10 md:mt-40 p-2 text-gray-700 dark:text-gray-200 animate-bounce opacity-80 hover:opacity-100"
   whileHover={{ scale: 1.1 }}
   aria-label="Scroll down"
 >
