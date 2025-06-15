@@ -17,7 +17,7 @@ import { Analytics } from '@vercel/analytics/react';
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   const homeRef = useRef<HTMLElement | null>(null);
   const aboutRef = useRef<HTMLElement | null>(null);
@@ -110,7 +110,6 @@ const App: React.FC = () => {
         personalData={{name: personalData.name, resumeUrl: personalData.resumeUrl}}
         scrollToSection={scrollToSection}
         theme={theme}
-        toggleTheme={toggleTheme}
       />
       
       <main>

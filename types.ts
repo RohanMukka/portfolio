@@ -81,7 +81,6 @@ export interface NavbarProps {
   personalData: Pick<PersonalData, 'name' | 'resumeUrl'>;
   scrollToSection: (id: string) => void;
   theme: 'light' | 'dark';
-  toggleTheme: () => void;
 }
 
 export interface HeroProps {
