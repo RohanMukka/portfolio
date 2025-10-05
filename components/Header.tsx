@@ -27,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ activeSection }) => {
           <a
             className="inline-flex items-center leading-tight font-semibold text-slate-200 group"
             aria-label="View Full Résumé (opens in a new tab)"
-            href="/resume.pdf"
+            href="resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
           >
