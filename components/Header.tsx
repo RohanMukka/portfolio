@@ -26,14 +26,14 @@ export const Header: React.FC<HeaderProps> = ({ activeSection }) => {
          <div className="mt-8">
           <a
             className="inline-flex items-center leading-tight font-semibold text-slate-200 group"
-            aria-label="View Full Résumé (opens in a new tab)"
-            href="resume.pdf"
+            aria-label="View Full Resume (opens in a new tab)"
+            href="/resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
           >
             <span>
               <span className="border-b border-transparent pb-px transition group-hover:border-sky-300 motion-reduce:transition-none">View Full 
-                <span className="whitespace-nowrap"> Résumé</span>
+                <span className="whitespace-nowrap"> Resume</span>
               </span>
               <ExternalLinkIcon className="inline-block h-4 w-4 shrink-0 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 motion-reduce:transition-none ml-1 translate-y-px" />
             </span>
@@ -64,3 +64,4 @@ export const Header: React.FC<HeaderProps> = ({ activeSection }) => {
     </header>
   );
 };
+
