@@ -96,9 +96,9 @@ export const skillsData: SkillCategory[] = [
 ];
 
 export const certificationsData: Certification[] = [
-    { name: 'Python Data Structures', issuer: 'University of Michigan', url: '#' },
-    { name: 'Artificial Intelligence Foundation', issuer: 'Wipro', url: '#' },
-    { name: 'Networking Essentials', issuer: 'Cisco', url: '#' },
-    { name: 'Java Full Stack', issuer: 'Wipro', url: '#' },
-    { name: 'Java and OOP', issuer: 'University of Pennsylvania', url: '#' }
+    { name: 'Python Data Structures', issuer: 'University of Michigan', url: 'https://www.coursera.org/account/accomplishments/verify/QXGV6SBWGYM9' },
+    { name: 'Artificial Intelligence Foundation', issuer: 'Wipro', url: 'https://cert.diceid.com/fsn/cid/zyxOFx' },
+    { name: 'Networking Essentials', issuer: 'Cisco', url: 'https://drive.google.com/file/d/1eZI5kQ-rogEl7H5Fz46xGvxbxaNXEjVy/view?usp=drivesdk' },
+    { name: 'Java Full Stack', issuer: 'Wipro', url: 'https://cert.diceid.com/csr/cid/jBonSK' },
+    { name: 'Java and OOP', issuer: 'University of Pennsylvania', url: 'https://www.coursera.org/account/accomplishments/verify/YRM6FSDBSGDJ' }
 ];
