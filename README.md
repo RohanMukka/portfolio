@@ -1,20 +1,53 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Rohan Mukka — Portfolio
 
-# Run and deploy your AI Studio app
+A personal portfolio built with React, Vite, Tailwind CSS, and Framer Motion. Includes an animated particles background.
 
-This contains everything you need to run your app locally.
+## Tech Stack
 
-View your app in AI Studio: https://ai.studio/apps/drive/1YwK0XIxKiK-uxOKki-EcKpwaKuXu8QDk
+- React 19 + Vite 6
+- Tailwind CSS 4
+- Framer Motion
+- Particles.js (via CDN)
 
-## Run Locally
+## Getting Started
 
-**Prerequisites:**  Node.js
+Prerequisites: Node.js 18+ and npm
 
+- Install dependencies: `npm install`
+- Start dev server: `npm run dev`
+- Build for production: `npm run build`
+- Preview production build: `npm run preview`
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Particles Background
+
+An animated particles layer is rendered behind the app content.
+
+- Config file: `public/particlesjs-config.json`
+- Loader and container: `index.html`
+  - Container div: `<div id="particles-js"></div>`
+  - CDN script: `https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js`
+  - Loads config with: `particlesJS.load('particles-js', '/particlesjs-config.json', ...)`
+- Layering: the canvas is fixed full-screen with `pointer-events: none`, and the React `#root` sits above it.
+
+### Customize
+
+Edit `public/particlesjs-config.json` to adjust behavior:
+
+- Count: `particles.number.value`
+- Color: `particles.color.value`
+- Speed: `particles.move.speed`
+- Links: `particles.line_linked.enable`
+- Interactivity: `interactivity.events` and `interactivity.modes`
+
+## Project Structure (high level)
+
+- `index.html` — HTML shell, Tailwind setup, particles container/loader
+- `index.tsx` — React entry
+- `App.tsx` — Main layout and sections
+- `components/` — UI components
+- `hooks/` — Custom hooks
+- `public/` — Static assets (including `particlesjs-config.json`)
+
+## Deploy
+
+This is a static site. After `npm run build`, deploy the `dist/` folder to any static host (Vercel, Netlify, GitHub Pages, etc.).
