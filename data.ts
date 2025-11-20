@@ -92,7 +92,7 @@ export const skillsData: SkillCategory[] = [
     { category: 'Languages', skills: ['Python', 'Java', 'C/C++', 'JavaScript/TypeScript', 'SQL', 'Kotlin', 'HTML/CSS'] },
     { category: 'Frameworks/Tools', skills: ['React.js', 'Node.js', 'Next.js', 'TensorFlow', 'Scikit-learn', 'Firebase', 'Django'] },
     { category: 'DevOps/Cloud', skills: ['Docker', 'Kubernetes', 'AWS', 'Google Cloud', 'CI/CD', 'GitHub/GitLab'] },
-    { category: 'Concepts', skills: ['RESTful APIs', 'Full-stack Web Dev', 'ML/AI', 'Distributed Systems', 'NLP', 'Security'] },
+    { category: 'Concepts', skills: ['RESTful APIs', 'Full-stack Web Dev', 'ML/AI', 'Distributed Systems', 'NLP', 'Security', 'Generative AI'] },
 ];
 
 export const certificationsData: Certification[] = [
