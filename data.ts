@@ -1,17 +1,17 @@
 import type { Experience, Project, Certification, SkillCategory } from './types';
 
 export const experienceData: Experience[] = [
-  {
-    role: 'ML Engineer Intern',
-    company: 'Internpe',
-    period: 'July 2024 - Aug 2024',
-    location: 'Remote',
-    description: [
-      'Built and fine-tuned predictive models (Python, TensorFlow, Scikit-learn); improved accuracy by 20% and reduced training time by 15% via streamlined data prep/feature engineering.',
-      'Worked cross-functionally with PMs/designers to turn ambiguous problem statements into testable prototypes, documenting findings and next steps for stakeholders.',
-      'Presented insights and clear visuals (PowerPoint/Canva, Excel) during bi-weekly updates, contributing to 10% higher overall project throughput.'
-    ]
-  }
+    {
+        role: 'ML Engineer Intern',
+        company: 'Internpe',
+        period: 'July 2024 - Aug 2024',
+        location: 'Remote',
+        description: [
+            'Built and fine-tuned predictive models (Python, TensorFlow, Scikit-learn); improved accuracy by 20% and reduced training time by 15% via streamlined data prep/feature engineering.',
+            'Worked cross-functionally with PMs/designers to turn ambiguous problem statements into testable prototypes, documenting findings and next steps for stakeholders.',
+            'Presented insights and clear visuals (PowerPoint/Canva, Excel) during bi-weekly updates, contributing to 10% higher overall project throughput.'
+        ]
+    }
 ];
 
 export const educationData = [
@@ -30,6 +30,19 @@ export const educationData = [
 ];
 
 export const projectData: Project[] = [
+    {
+        name: 'FitPrep',
+        period: 'Sep 2025',
+        description: [
+            'A meal planning app that generates 7-day meal plans with macro breakdowns, supports voice and text input, and interactive charts.'
+        ],
+        links: [
+            { name: 'GitHub', url: 'https://github.com/RohanMukka/fitprep' },
+            { name: 'Live URL', url: 'https://fitprep.vercel.app' }
+        ],
+        tech: 'React 19, Chart.js, Firebase, Node.js',
+        imageUrl: `data:image/svg+xml,%3csvg width='600' height='400' viewBox='0 0 600 400' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='600' height='400' fill='%231e293b'/%3e%3ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter, sans-serif' font-size='48' fill='%23cbd5e1' font-weight='600'%3eFitPrep%3c/text%3e%3c/svg%3e`
+    },
     {
         name: 'BEneFIT: A Decentralized Fitness Accountability Framework',
         period: 'Aug 2025',
