@@ -1,5 +1,7 @@
 # Rohan Mukka — Portfolio
 
+[Live Site](https://portfolio-rohan03.vercel.app/)
+
 A personal portfolio built with React, Vite, Tailwind CSS, and Framer Motion. Includes an animated particles background.
 
 ## Tech Stack
@@ -46,8 +48,8 @@ Edit `public/particlesjs-config.json` to adjust behavior:
 - `App.tsx` — Main layout and sections
 - `components/` — UI components
 - `hooks/` — Custom hooks
+- `data.ts` — Portfolio content (experience, projects, skills)
+- `types.ts` — TypeScript interfaces
 - `public/` — Static assets (including `particlesjs-config.json`)
 
-## Deploy
 
-This is a static site. After `npm run build`, deploy the `dist/` folder to any static host (Vercel, Netlify, GitHub Pages, etc.).
