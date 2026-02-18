@@ -4,6 +4,7 @@ import { LinkedInIcon } from './icons/LinkedInIcon';
 import { EmailIcon } from './icons/EmailIcon';
 import { Navigation } from './Navigation';
 import { ExternalLinkIcon } from './icons/ExternalLinkIcon';
+import { LeetCodeIcon } from './icons/LeetCodeIcon';
 
 interface HeaderProps {
     activeSection: string | null;
@@ -58,6 +59,12 @@ export const Header: React.FC<HeaderProps> = ({ activeSection }) => {
           <a className="block hover:text-slate-200 transition-colors" href="mailto:rohan.mukka-1@ou.edu" aria-label="Email">
             <span className="sr-only">Email</span>
             <EmailIcon className="h-6 w-6" />
+          </a>
+        </li>
+        <li className="mr-5 text-xs shrink-0">
+          <a className="block hover:text-slate-200 transition-colors" href="https://leetcode.com/u/rohan_mukka/" target="_blank" rel="noreferrer noopener" aria-label="LeetCode">
+            <span className="sr-only">LeetCode</span>
+            <LeetCodeIcon className="h-6 w-6" />
           </a>
         </li>
       </ul>
