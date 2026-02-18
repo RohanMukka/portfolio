@@ -19,7 +19,7 @@ import SystemHUD from './components/SystemHUD';
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [cursorType, setCursorType] = useState<CursorType>('ring');
+  const [cursorType, setCursorType] = useState<CursorType>('default');
 
   useEffect(() => {
     // Simulate initial loading
