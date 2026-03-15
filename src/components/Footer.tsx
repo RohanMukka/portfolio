@@ -1,5 +1,5 @@
-import { Github, Linkedin, Mail, ExternalLink, Send, Activity } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Github, Linkedin, Mail, ExternalLink, Send, Activity, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { siLeetcode, siMonkeytype, siDevpost } from 'simple-icons';
 
@@ -211,57 +211,74 @@ const Footer = () => {
             <p className="text-sm text-primary-secondary leading-relaxed">
               Subscribe to my monthly newsletter for insights on web engineering and AI.
             </p>
-            <form 
-              className="flex gap-2"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setNewsletterStatus('sending');
-                try {
-                  const res = await fetch("https://formsubmit.co/ajax/rohanmukka07@gmail.com", {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ 
-                      _subject: "New Newsletter Subscriber!", 
-                      email: newsletterEmail,
-                      _template: "table"
-                    })
-                  });
-                  if (res.ok) {
-                    setNewsletterStatus('success');
-                    setNewsletterEmail('');
-                    setTimeout(() => setNewsletterStatus('idle'), 3000);
-                  } else {
-                    setNewsletterStatus('idle');
-                  }
-                } catch {
-                  setNewsletterStatus('idle');
-                }
-              }}
-            >
-              <input 
-                type="email" 
-                required
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="email@example.com" 
-                className="flex-grow bg-bg-elevated/50 border-2 border-glass-border rounded-xl px-4 py-2 text-sm text-primary-text outline-none focus:border-accent/50 transition-all placeholder:text-text-tertiary"
-              />
-              <button 
-                type="submit"
-                disabled={newsletterStatus !== 'idle'}
-                className="p-2 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all disabled:opacity-50"
-              >
-                {newsletterStatus === 'sending' ? (
-                  <div className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                ) : newsletterStatus === 'success' ? (
-                  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+            <div className="relative h-[42px]">
+              <AnimatePresence mode="wait">
+                {newsletterStatus === 'success' ? (
+                  <motion.div 
+                    key="success"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="flex items-center gap-2 text-green-500 h-full px-2 font-medium"
+                  >
+                    <CheckCircle2 size={20} />
+                    <span className="text-sm">Thanks for subscribing!</span>
+                  </motion.div>
                 ) : (
-                  <Send size={18} />
+                  <motion.form 
+                    key="form"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className="flex gap-2 h-full"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      setNewsletterStatus('sending');
+                      try {
+                        const res = await fetch("https://formsubmit.co/ajax/rohanmukka07@gmail.com", {
+                          method: "POST",
+                          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                          body: JSON.stringify({ 
+                            _subject: "New Newsletter Subscriber!", 
+                            email: newsletterEmail,
+                            _template: "table"
+                          })
+                        });
+                        if (res.ok) {
+                          setNewsletterStatus('success');
+                          setNewsletterEmail('');
+                          setTimeout(() => setNewsletterStatus('idle'), 3000);
+                        } else {
+                          setNewsletterStatus('idle');
+                        }
+                      } catch {
+                        setNewsletterStatus('idle');
+                      }
+                    }}
+                  >
+                    <input 
+                      type="email" 
+                      required
+                      value={newsletterEmail}
+                      onChange={(e) => setNewsletterEmail(e.target.value)}
+                      placeholder="email@example.com" 
+                      className="flex-grow bg-bg-elevated/50 border-2 border-glass-border rounded-xl px-4 py-2 text-sm text-primary-text outline-none focus:border-accent/50 transition-all placeholder:text-text-tertiary"
+                    />
+                    <button 
+                      type="submit"
+                      disabled={newsletterStatus === 'sending'}
+                      className="p-2 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all disabled:opacity-50 min-w-[42px] flex justify-center items-center"
+                    >
+                      {newsletterStatus === 'sending' ? (
+                        <div className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      ) : (
+                        <Send size={18} />
+                      )}
+                    </button>
+                  </motion.form>
                 )}
-              </button>
-            </form>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
