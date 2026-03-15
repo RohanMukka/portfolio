@@ -1,7 +1,19 @@
 import { Github, Linkedin, Mail, ExternalLink, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 const Footer = () => {
+  const [visitorCount, setVisitorCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch('https://api.counterapi.dev/v1/rohanmukka/portfolio/up')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.count) setVisitorCount(data.count);
+      })
+      .catch(err => console.error('Failed to fetch visitor count', err));
+  }, []);
+
   return (
     <footer className="relative pt-20 pb-12 mt-20 overflow-hidden bg-surface-subtle/20">
       {/* Premium Separator Line */}
@@ -83,8 +95,14 @@ const Footer = () => {
 
         {/* Legal & Copyright */}
         <div className="pt-8 border-t border-glass-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-primary-secondary font-medium relative z-10">
-          <div>
-            © {new Date().getFullYear()} Rohan Mukka. Built with React, Framer Motion, and Coffee.
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <span>© {new Date().getFullYear()} Rohan Mukka. Built with React, Framer Motion, and Coffee.</span>
+            {visitorCount !== null && (
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-subtle/50 border border-white/5 text-primary-text shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-electric-cyan animate-pulse shadow-[0_0_8px_rgba(0,184,255,0.8)]"></span>
+                Profile Views: {visitorCount.toLocaleString()}
+              </span>
+            )}
           </div>
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary-text transition-colors">Privacy Policy</a>
