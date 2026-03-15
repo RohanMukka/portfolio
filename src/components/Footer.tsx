@@ -87,7 +87,6 @@ const Footer = () => {
                 <div className="absolute bottom-full left-0 mb-4 opacity-0 invisible group-hover/lc:opacity-100 group-hover/lc:visible transition-all duration-300 z-50 pointer-events-none w-[90vw] max-w-[450px]">
                   <div className="p-2 rounded-2xl bg-bg-elevated backdrop-blur-xl border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/lc:translate-y-0 transition-transform duration-300">
                     <img src={`https://leetcard.jacoblin.cool/rohan_mukka?theme=${theme === 'dark' ? 'dark' : 'light'}&font=Syne&ext=activity`} alt="LeetCode Stats" className="w-full rounded-xl" />
-                    <div className="absolute -bottom-2 left-6 border-8 border-transparent border-t-glass-border" />
                   </div>
                 </div>
               </div>
@@ -102,7 +101,6 @@ const Footer = () => {
                   <div className="p-2 rounded-2xl bg-bg-elevated backdrop-blur-xl border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/gh:translate-y-0 transition-transform duration-300 flex flex-col gap-2">
                     <img src={`https://github-readme-stats.vercel.app/api?username=rohanmukka&show_icons=true&theme=${theme === 'dark' ? 'transparent' : 'default'}&hide_border=true&title_color=00B8FF&text_color=${theme === 'dark' ? 'a3a3a3' : '333333'}&icon_color=8b5cf6`} alt="GitHub Stats" className={`w-full rounded-xl ${theme === 'dark' ? 'bg-[#0d1117]' : 'bg-transparent'}`} />
                     <img src={`https://github-readme-activity-graph.vercel.app/graph?username=rohanmukka&bg_color=${theme === 'dark' ? '0d1117' : 'ffffff'}&color=00B8FF&line=00B8FF&point=8b5cf6&area=true&hide_border=true`} alt="GitHub Activity Graph" className="w-full rounded-xl" />
-                    <div className="absolute -bottom-2 left-6 border-8 border-transparent border-t-glass-border" />
                   </div>
                 </div>
               </div>
@@ -165,8 +163,6 @@ const Footer = () => {
                           <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{monkeyStats.stats.completedTests.toLocaleString()}</span>
                         </div>
                       </div>
-
-                      <div className="absolute -bottom-2 left-6 border-8 border-transparent border-t-glass-border" />
                     </div>
                   )}
                 </div>
