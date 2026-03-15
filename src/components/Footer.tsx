@@ -7,6 +7,8 @@ const Footer = () => {
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [monkeyStats, setMonkeyStats] = useState<any>(null);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
   useEffect(() => {
     // Visitor Count logic
@@ -209,14 +211,55 @@ const Footer = () => {
             <p className="text-sm text-primary-secondary leading-relaxed">
               Subscribe to my monthly newsletter for insights on web engineering and AI.
             </p>
-            <form className="flex gap-2">
+            <form 
+              className="flex gap-2"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setNewsletterStatus('sending');
+                try {
+                  const res = await fetch("https://formsubmit.co/ajax/rohanmukka07@gmail.com", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ 
+                      _subject: "New Newsletter Subscriber!", 
+                      email: newsletterEmail,
+                      _template: "table"
+                    })
+                  });
+                  if (res.ok) {
+                    setNewsletterStatus('success');
+                    setNewsletterEmail('');
+                    setTimeout(() => setNewsletterStatus('idle'), 3000);
+                  } else {
+                    setNewsletterStatus('idle');
+                  }
+                } catch {
+                  setNewsletterStatus('idle');
+                }
+              }}
+            >
               <input 
                 type="email" 
+                required
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="email@example.com" 
                 className="flex-grow bg-bg-elevated/50 border-2 border-glass-border rounded-xl px-4 py-2 text-sm text-primary-text outline-none focus:border-accent/50 transition-all placeholder:text-text-tertiary"
               />
-              <button className="p-2 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all">
-                <Send size={18} />
+              <button 
+                type="submit"
+                disabled={newsletterStatus !== 'idle'}
+                className="p-2 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all disabled:opacity-50"
+              >
+                {newsletterStatus === 'sending' ? (
+                  <div className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : newsletterStatus === 'success' ? (
+                  <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <Send size={18} />
+                )}
               </button>
             </form>
           </div>

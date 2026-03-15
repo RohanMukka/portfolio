@@ -16,7 +16,7 @@ interface Project {
 const projects: Project[] = [
   {
     title: 'BEneFIT',
-    tagline: 'Succeed or Pay the Price',
+    tagline: 'Stake Your Success, Own Your Fitness.',
     description: 'Decentralized fitness accountability with ETH staking and smart contracts. Users stake ETH and earn it back by completing workout goals verified by oracles.',
     tags: ['Ethereum', 'Web3', 'React', 'Solidity'],
     category: 'Blockchain',
@@ -66,7 +66,7 @@ const projects: Project[] = [
   },
   {
     title: 'JAI',
-    tagline: 'Neural Integration Core',
+    tagline: 'Job Application Intelligence',
     description: 'High-performance framework focused on JavaScript AI integration and neural pattern recognition development.',
     tags: ['TypeScript', 'AI', 'JavaScript'],
     category: 'ML',
@@ -75,7 +75,7 @@ const projects: Project[] = [
     color: '#f7df1e'
   },
   {
-    title: 'Portfolio V1',
+    title: 'Portfolio',
     tagline: 'Modern Web Identity',
     description: 'A personal portfolio website showcasing work and projects. Built with TypeScript for type-safe development and modern web technologies.',
     tags: ['TypeScript', 'Vercel', 'Responsive'],

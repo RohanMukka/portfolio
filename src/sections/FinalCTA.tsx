@@ -4,13 +4,36 @@ import { Send, CheckCircle2, Mail, ExternalLink, Linkedin, Github } from 'lucide
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FinalCTA = () => {
-  const [formState, setFormState] = useState<'idle' | 'sending' | 'success'>('idle');
+  const [formState, setFormState] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormState('sending');
-    // Simulate API call
-    setTimeout(() => setFormState('success'), 2000);
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/rohanmukka07@gmail.com", {
+          method: "POST",
+          headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+              _subject: formData.subject || "New Portfolio Contact Form Submission",
+              name: formData.name,
+              email: formData.email,
+              message: formData.message,
+              _template: "table"
+          })
+      });
+      if (response.ok) {
+        setFormState('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setFormState('error');
+      }
+    } catch (err) {
+      setFormState('error');
+    }
   };
 
   return (
@@ -41,13 +64,13 @@ const FinalCTA = () => {
             </p>
 
             <div className="space-y-6">
-              <a href="mailto:rohanmukka03@gmail.com" className="flex items-center gap-4 group p-5 rounded-[2rem] bg-bg-elevated/50 border-2 border-glass-border hover:border-accent/40 hover:bg-bg-elevated transition-all duration-300 w-fit pr-12 shadow-sm hover:shadow-2xl hover:-translate-y-1">
+              <a href="mailto:rohanmukka07@gmail.com" className="flex items-center gap-4 group p-5 rounded-[2rem] bg-bg-elevated/50 border-2 border-glass-border hover:border-accent/40 hover:bg-bg-elevated transition-all duration-300 w-fit pr-12 shadow-sm hover:shadow-2xl hover:-translate-y-1">
                 <div className="p-4 rounded-2xl bg-accent text-white group-hover:bg-accent/80 transition-all duration-500 shadow-inner">
                   <Mail size={28} />
                 </div>
                 <div>
                   <div className="text-xs text-primary-text font-black uppercase tracking-widest mb-1 opacity-60">Email Me</div>
-                  <div className="text-xl font-bold text-primary-text group-hover:text-accent transition-colors">rohanmukka03@gmail.com</div>
+                  <div className="text-xl font-bold text-primary-text group-hover:text-accent transition-colors">rohanmukka07@gmail.com</div>
                 </div>
               </a>
 
@@ -88,6 +111,24 @@ const FinalCTA = () => {
                     Send another message
                   </button>
                 </motion.div>
+              ) : formState === 'error' ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="h-full flex flex-col items-center justify-center text-center py-10"
+                >
+                  <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mb-6 text-red-500">
+                    <CheckCircle2 size={40} />
+                  </div>
+                  <h3 className="text-3xl font-display font-bold text-primary-text mb-2">Oops! Something went wrong.</h3>
+                  <p className="text-primary-secondary">Please try again or email me directly.</p>
+                  <button 
+                    onClick={() => setFormState('idle')}
+                    className="mt-8 text-accent font-bold hover:underline"
+                  >
+                    Try again
+                  </button>
+                </motion.div>
               ) : (
                 <motion.form 
                   onSubmit={handleSubmit}
@@ -96,24 +137,24 @@ const FinalCTA = () => {
                   exit={{ opacity: 0 }}
                   className="space-y-6"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Full Name</label>
-                      <input required type="text" placeholder="John Doe" className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-all placeholder:text-text-tertiary" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Full Name</label>
+                        <input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required type="text" placeholder="John Doe" className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-all placeholder:text-text-tertiary" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Email Address</label>
+                        <input value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required type="email" placeholder="john@example.com" className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-all placeholder:text-text-tertiary" />
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Email Address</label>
-                      <input required type="email" placeholder="john@example.com" className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-all placeholder:text-text-tertiary" />
+                      <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Subject</label>
+                      <input value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} required type="text" placeholder="Project Inquiry" className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-all placeholder:text-text-tertiary" />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Subject</label>
-                    <input required type="text" placeholder="Project Inquiry" className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-all placeholder:text-text-tertiary" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Message</label>
-                    <textarea required rows={4} placeholder="Hello, I'd like to talk about..." className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-colors resize-none placeholder:text-text-tertiary"></textarea>
-                  </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Message</label>
+                      <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} required rows={4} placeholder="Hello, I'd like to talk about..." className="w-full bg-surface-subtle border-2 border-glass-border rounded-xl px-4 py-3 text-primary-text outline-none focus:border-accent/50 focus:bg-bg-elevated transition-colors resize-none placeholder:text-text-tertiary"></textarea>
+                    </div>
                   
                   <button 
                     disabled={formState === 'sending'}
