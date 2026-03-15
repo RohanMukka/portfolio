@@ -5,7 +5,6 @@ import Hero from './sections/Hero';
 import Architecture from './sections/Architecture';
 import Projects from './sections/Projects';
 import Skills from './sections/Skills';
-import Stats from './sections/Stats';
 import Education from './sections/Education';
 import FinalCTA from './sections/FinalCTA';
 import Loader from './components/Loader';
@@ -70,7 +69,6 @@ const App = () => {
         <Architecture />
         <Projects />
         <Skills />
-        <Stats />
         <Education />
         <FinalCTA />
         <Footer />

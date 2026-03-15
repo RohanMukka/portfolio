@@ -15,16 +15,6 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: 'Web Engineering',
-    tagline: 'High-Performance Systems',
-    description: 'My flagship portfolio featuring advanced animations, custom cursor systems, and multi-theme support. Built for maximum performance and UX.',
-    tags: ['TypeScript', 'React', 'Framer Motion'],
-    category: 'Web',
-    links: { github: 'https://github.com/RohanMukka/web-engineering-portfolio', demo: 'https://web-engineering-portfolio.vercel.app' },
-    image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1510&auto=format&fit=crop',
-    color: '#ea4335'
-  },
-  {
     title: 'BEneFIT',
     tagline: 'Succeed or Pay the Price',
     description: 'Decentralized fitness accountability with ETH staking and smart contracts. Users stake ETH and earn it back by completing workout goals verified by oracles.',
@@ -113,6 +103,26 @@ const projects: Project[] = [
     links: { github: 'https://github.com/RohanMukka/FeeAutomation' },
     image: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?q=80&w=1548&auto=format&fit=crop',
     color: '#f1c40f'
+  },
+  {
+    title: 'Patient Assistant DB',
+    tagline: 'Healthcare Networking',
+    description: 'A robust database management system designed to connect, manage, and scale patient and healthcare assistant networks.',
+    tags: ['Java', 'Database', 'Healthcare', 'SQL'],
+    category: 'System',
+    links: { github: 'https://github.com/RohanMukka/Patient-Assistant-Network-Database-System' },
+    image: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?q=80&w=1470&auto=format&fit=crop',
+    color: '#e74c3c'
+  },
+  {
+    title: 'Polarization Detection',
+    tagline: 'Multilingual NLP',
+    description: 'A machine learning pipeline for analyzing text across multiple languages to detect social and political sentiment polarization.',
+    tags: ['Python', 'NLP', 'Machine Learning'],
+    category: 'ML',
+    links: { github: 'https://github.com/RohanMukka/Multilingual-Polarization-Detection' },
+    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1470&auto=format&fit=crop',
+    color: '#3498db'
   }
 ];
 
