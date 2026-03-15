@@ -22,6 +22,24 @@ interface LeetCodeStats {
 const Stats = () => {
   const [lcStats, setLcStats] = useState<LeetCodeStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    const currentTheme = (document.documentElement.getAttribute('data-theme') as 'light' | 'dark') || 'dark';
+    setTheme(currentTheme);
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme') as 'light' | 'dark';
+          setTheme(newTheme || 'dark');
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     fetch('https://leetcode-api-faisalshohag.vercel.app/rohan_mukka')
@@ -109,26 +127,21 @@ const Stats = () => {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="p-8 rounded-3xl glass-card border border-glass-border flex flex-col h-full hover:border-primary-text/20 transition-all duration-300"
+              className={`p-8 rounded-xl border bg-transparent flex flex-col h-full col-span-1 ${theme === 'dark' ? 'border-[#30363d]' : 'border-gray-200 shadow-sm'}`}
             >
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 rounded-full bg-surface-subtle/50 border border-white/5 shadow-inner">
-                  <Activity className="w-6 h-6 text-electric-cyan" />
-                </div>
-                <h3 className="text-2xl font-display font-bold text-primary-text">GitHub Contributions</h3>
-              </div>
-              
-              <div className="flex-grow flex items-center justify-center w-full overflow-x-auto overflow-y-hidden pb-4 custom-scrollbar">
-                <div className="min-w-[750px] flex justify-center">
+              <div className="w-full h-full flex items-center justify-center overflow-x-auto pb-4">
+                <div className="min-w-fit px-4">
                   <GitHubCalendar 
                     username="rohanmukka" 
-                    colorScheme="dark"
+                    colorScheme={theme}
                     theme={{
+                      light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
                       dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
                     }}
-                    fontSize={14}
-                    blockSize={14}
-                    blockMargin={5}
+                    fontSize={12}
+                    blockSize={11}
+                    blockMargin={4}
+                    showWeekdayLabels={true}
                   />
                 </div>
               </div>
@@ -139,13 +152,10 @@ const Stats = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="p-8 rounded-3xl glass-card border border-glass-border flex flex-col h-full hover:border-primary-text/20 transition-all duration-300"
+              className={`p-8 rounded-3xl glass-card border flex flex-col h-full transition-all duration-300 ${theme === 'dark' ? 'bg-[#282828] border-gray-700/50 hover:border-gray-500/50' : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'}`}
             >
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 rounded-full bg-surface-subtle/50 border border-white/5 shadow-inner">
-                  <BrainCircuit className="w-6 h-6 text-primary-purple" />
-                </div>
-                <h3 className="text-2xl font-display font-bold text-primary-text">LeetCode Progress</h3>
+              <div className="flex items-center gap-4 mb-6">
+                <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>Solved Problems</h3>
               </div>
 
               {loading || !lcStats ? (
@@ -153,58 +163,103 @@ const Stats = () => {
                   <div className="w-10 h-10 rounded-full border-2 border-primary-purple border-t-transparent animate-spin" />
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-4 flex-grow">
-                  <div className="col-span-2 p-6 rounded-2xl bg-surface-subtle/30 border border-white/5 flex items-center justify-between hover:bg-white/5 transition-colors">
-                    <div>
-                      <p className="text-sm text-primary-secondary mb-1">Total Solved</p>
-                      <p className="text-5xl font-display font-bold text-primary-text">{lcStats.totalSolved}</p>
-                    </div>
-                    <Trophy className="w-16 h-16 text-primary-orange opacity-80" />
-                  </div>
-                  
-                  <div className="p-5 rounded-2xl bg-surface-subtle/30 border border-white/5 hover:bg-white/5 transition-colors flex flex-col justify-center">
-                    <p className="text-sm text-primary-secondary mb-1">Easy</p>
-                    <p className="text-3xl font-display font-bold text-primary-green tracking-tight">{lcStats.easySolved} <span className="text-sm font-normal text-primary-secondary">/ {lcStats.totalEasy}</span></p>
-                  </div>
-                  
-                  <div className="p-5 rounded-2xl bg-surface-subtle/30 border border-white/5 hover:bg-white/5 transition-colors flex flex-col justify-center">
-                    <p className="text-sm text-primary-secondary mb-1">Medium</p>
-                    <p className="text-3xl font-display font-bold text-primary-orange tracking-tight">{lcStats.mediumSolved} <span className="text-sm font-normal text-primary-secondary">/ {lcStats.totalMedium}</span></p>
-                  </div>
-
-                  <div className="p-5 rounded-2xl bg-surface-subtle/30 border border-white/5 hover:bg-white/5 transition-colors flex flex-col justify-center">
-                    <p className="text-sm text-primary-secondary mb-1">Hard</p>
-                    <p className="text-3xl font-display font-bold text-primary-pink tracking-tight">{lcStats.hardSolved} <span className="text-sm font-normal text-primary-secondary">/ {lcStats.totalHard}</span></p>
-                  </div>
-
-                  <div className="p-5 rounded-2xl bg-surface-subtle/30 border border-white/5 hover:bg-white/5 transition-colors flex flex-col justify-center">
-                    <p className="text-sm text-primary-secondary mb-1">Acceptance Rate</p>
-                    <p className="text-3xl font-display font-bold text-electric-cyan tracking-tight">{lcStats.acceptanceRate}%</p>
-                  </div>
-                  <div className="col-span-2 mt-4 p-6 rounded-2xl bg-surface-subtle/30 border border-white/5 hover:bg-white/5 transition-colors">
-                    <div className="flex items-center gap-2 mb-4">
-                      <CalendarIcon className="w-5 h-5 text-electric-cyan" />
-                      <h4 className="text-lg font-display font-bold text-primary-text">Submissions in Last Year</h4>
-                    </div>
-                    <div className="w-full flex justify-center overflow-x-auto custom-scrollbar pb-2">
-                      <div className="min-w-[650px] flex justify-center">
-                        {lcStats.calendar && lcStats.calendar.length > 0 ? (
-                          <ActivityCalendar 
-                            data={lcStats.calendar} 
-                            theme={{
-                              dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
-                            }}
-                            colorScheme="dark"
-                            fontSize={14}
-                            blockSize={14}
-                            blockMargin={5}
-                            hideColorLegend={false}
-                            hideTotalCount={true}
+                <div className="flex flex-col gap-8 flex-grow">
+                  <div className="flex items-center gap-8">
+                    {/* Ring Chart */}
+                    <div className="relative flex items-center justify-center flex-shrink-0" style={{ width: "120px", height: "120px" }}>
+                      <svg width="120" height="120" className="transform -rotate-90">
+                        {/* Base Track */}
+                        <circle cx="60" cy="60" r="54" fill="none" stroke={theme === 'dark' ? "#444444" : "#f3f4f6"} strokeWidth="4" />
+                        
+                        {/* Easy Arc */}
+                        {lcStats.totalSolved > 0 && (
+                          <circle 
+                            cx="60" cy="60" r="54" fill="none" stroke="#2cb55d" strokeWidth="4" strokeLinecap="round"
+                            strokeDasharray={`${(lcStats.easySolved / lcStats.totalSolved) * (2 * Math.PI * 54)} ${2 * Math.PI * 54}`}
+                            strokeDashoffset={0}
                           />
-                        ) : (
-                          <p className="text-sm text-primary-secondary">No submission data found.</p>
                         )}
+                        {/* Medium Arc */}
+                        {lcStats.totalSolved > 0 && (
+                          <circle 
+                            cx="60" cy="60" r="54" fill="none" stroke="#ffb800" strokeWidth="4" strokeLinecap="round"
+                            strokeDasharray={`${(lcStats.mediumSolved / lcStats.totalSolved) * (2 * Math.PI * 54)} ${2 * Math.PI * 54}`}
+                            strokeDashoffset={-((lcStats.easySolved / lcStats.totalSolved) * (2 * Math.PI * 54))}
+                          />
+                        )}
+                        {/* Hard Arc */}
+                        {lcStats.totalSolved > 0 && (
+                          <circle 
+                            cx="60" cy="60" r="54" fill="none" stroke="#ef4743" strokeWidth="4" strokeLinecap="round"
+                            strokeDasharray={`${(lcStats.hardSolved / lcStats.totalSolved) * (2 * Math.PI * 54)} ${2 * Math.PI * 54}`}
+                            strokeDashoffset={-(((lcStats.easySolved + lcStats.mediumSolved) / lcStats.totalSolved) * (2 * Math.PI * 54))}
+                          />
+                        )}
+                      </svg>
+                      <div className="absolute flex flex-col items-center justify-center">
+                        <span className={`text-3xl font-bold leading-none mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{lcStats.totalSolved}</span>
+                        <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Solved</span>
                       </div>
+                    </div>
+
+                    {/* Bars */}
+                    <div className="flex flex-col flex-grow justify-center gap-4">
+                      {/* Easy */}
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex justify-between items-end text-sm">
+                          <span className="text-[#2cb55d] font-medium">Easy</span>
+                          <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}><span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{lcStats.easySolved}</span>/{lcStats.totalEasy}</span>
+                        </div>
+                        <div className={`w-full rounded-full h-1.5 overflow-hidden ${theme === 'dark' ? 'bg-[#444444]' : 'bg-gray-200'}`}>
+                          <div className="bg-[#2cb55d] h-full rounded-full" style={{ width: `${(lcStats.easySolved / lcStats.totalEasy) * 100}%` }}></div>
+                        </div>
+                      </div>
+                      
+                      {/* Medium */}
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex justify-between items-end text-sm">
+                          <span className="text-[#ffb800] font-medium">Medium</span>
+                          <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}><span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{lcStats.mediumSolved}</span>/{lcStats.totalMedium}</span>
+                        </div>
+                        <div className={`w-full rounded-full h-1.5 overflow-hidden ${theme === 'dark' ? 'bg-[#444444]' : 'bg-gray-200'}`}>
+                          <div className="bg-[#ffb800] h-full rounded-full" style={{ width: `${(lcStats.mediumSolved / lcStats.totalMedium) * 100}%` }}></div>
+                        </div>
+                      </div>
+
+                      {/* Hard */}
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex justify-between items-end text-sm">
+                          <span className="text-[#ef4743] font-medium">Hard</span>
+                          <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}><span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{lcStats.hardSolved}</span>/{lcStats.totalHard}</span>
+                        </div>
+                        <div className={`w-full rounded-full h-1.5 overflow-hidden ${theme === 'dark' ? 'bg-[#444444]' : 'bg-gray-200'}`}>
+                          <div className="bg-[#ef4743] h-full rounded-full" style={{ width: `${(lcStats.hardSolved / lcStats.totalHard) * 100}%` }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Submission Calendar */}
+                  <div className="mt-auto overflow-x-auto pb-4">
+                    <div className="min-w-fit flex justify-center px-4">
+                      {lcStats.calendar && lcStats.calendar.length > 0 ? (
+                        <ActivityCalendar 
+                          data={lcStats.calendar} 
+                          theme={{
+                            light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+                            dark: ['#282828', '#0e4429', '#006d32', '#26a641', '#39d353'],
+                          }}
+                          colorScheme={theme}
+                          fontSize={12}
+                          blockSize={11}
+                          blockMargin={4}
+                          hideColorLegend={true}
+                          hideTotalCount={true}
+                          showWeekdayLabels={true}
+                        />
+                      ) : (
+                        <p className="text-sm text-primary-secondary">No submission data found.</p>
+                      )}
                     </div>
                   </div>
                 </div>

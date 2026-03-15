@@ -1,6 +1,7 @@
-import { Github, Linkedin, Mail, ExternalLink, Send } from 'lucide-react';
+import { Github, Linkedin, Mail, ExternalLink, Send, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { siLeetcode, siMonkeytype, siDevpost } from 'simple-icons';
 
 const Footer = () => {
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
@@ -32,11 +33,31 @@ const Footer = () => {
               Designing and developing high-performance applications with a focus on user experience and architectural cleaniness.
             </p>
             <div className="flex gap-4">
-              <a href="https://github.com/rohanmukka" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1">
+              {/* LeetCode */}
+              <a href="https://leetcode.com/u/rohan_mukka/" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1" aria-label="LeetCode">
+                <svg role="img" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d={siLeetcode.path} />
+                </svg>
+              </a>
+              {/* GitHub */}
+              <a href="https://github.com/rohanmukka" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1" aria-label="GitHub">
                 <Github size={20} />
               </a>
-              <a href="https://linkedin.com/in/rohanmukka" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1">
+              {/* LinkedIn */}
+              <a href="https://linkedin.com/in/rohanmukka" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1" aria-label="LinkedIn">
                 <Linkedin size={20} />
+              </a>
+              {/* Devpost */}
+              <a href="https://devpost.com/rohan-mukka-1" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1" aria-label="Devpost">
+                <svg role="img" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d={siDevpost.path} />
+                </svg>
+              </a>
+              {/* MonkeyType */}
+              <a href="https://monkeytype.com/profile/kunnu" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1" aria-label="MonkeyType">
+                <svg role="img" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d={siMonkeytype.path} />
+                </svg>
               </a>
             </div>
           </div>
@@ -94,20 +115,48 @@ const Footer = () => {
         </div>
 
         {/* Legal & Copyright */}
-        <div className="pt-8 border-t border-glass-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-primary-secondary font-medium relative z-10">
-          <div className="flex flex-col md:flex-row items-center gap-4">
+        <div className="pt-8 border-t border-glass-border grid grid-cols-1 md:grid-cols-3 gap-6 items-center text-xs text-primary-secondary font-medium relative z-10 w-full">
+          {/* Left - Copyright */}
+          <div className="flex justify-center md:justify-start text-center md:text-left">
             <span>© {new Date().getFullYear()} Rohan Mukka. Built with React, Framer Motion, and Coffee.</span>
+          </div>
+
+          {/* Center - Counter Badge */}
+          <div className="flex justify-center flex-1">
             {visitorCount !== null && (
-              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-subtle/50 border border-white/5 text-primary-text shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-electric-cyan animate-pulse shadow-[0_0_8px_rgba(0,184,255,0.8)]"></span>
-                Profile Views: {visitorCount.toLocaleString()}
-              </span>
+               <div className="flex items-center gap-2.5 px-5 py-2 rounded-full bg-surface-subtle border border-glass-border shadow-sm hover:border-accent/50 hover:shadow-md transition-all duration-300 group cursor-default overflow-hidden">
+                <div className="relative w-5 h-5 flex items-center justify-center overflow-hidden">
+                  <motion.div 
+                    animate={{ x: ["-50%", "0%"] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                    className="flex text-accent drop-shadow-[0_0_8px_var(--accent)] absolute left-0"
+                  >
+                    <div className="w-5 flex-shrink-0 flex justify-center">
+                      <Activity className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                    </div>
+                    <div className="w-5 flex-shrink-0 flex justify-center">
+                      <Activity className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                    </div>
+                  </motion.div>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-base font-bold text-primary-text font-display relative z-10">
+                    {visitorCount.toLocaleString()}
+                  </span>
+                  <div className="grid grid-cols-[0fr] group-hover:grid-cols-[1fr] transition-all duration-300 ease-in-out">
+                    <div className="overflow-hidden flex items-center">
+                      <span className="text-[10px] uppercase tracking-widest font-semibold text-primary-secondary whitespace-nowrap pl-2">
+                        Profile Views
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-primary-text transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary-text transition-colors">Terms of Service</a>
-          </div>
+
+          {/* Right - Links (Removed for minimalist approach) */}
+          <div className="hidden md:block"></div>
         </div>
       </div>
     </footer>
