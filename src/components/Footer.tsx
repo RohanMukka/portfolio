@@ -13,12 +13,28 @@ const Footer = () => {
 
   useEffect(() => {
     // Visitor Count logic
-    fetch('https://api.counterapi.dev/v1/rohanmukka/portfolio/up')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.count) setVisitorCount(data.count);
-      })
-      .catch(err => console.error('Failed to fetch visitor count', err));
+    const hasVisited = localStorage.getItem('portfolioVisited');
+
+    if (!hasVisited) {
+      // New visitor: increment count and set LocalStorage flag
+      fetch('https://api.counterapi.dev/v1/rohanmukka/portfolio/up')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.count) {
+            setVisitorCount(data.count);
+            localStorage.setItem('portfolioVisited', 'true');
+          }
+        })
+        .catch(err => console.error('Failed to fetch visitor count', err));
+    } else {
+      // Returning visitor: just fetch current count without incrementing
+      fetch('https://api.counterapi.dev/v1/rohanmukka/portfolio')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.count) setVisitorCount(data.count);
+        })
+        .catch(err => console.error('Failed to fetch visitor count', err));
+    }
 
     // MonkeyType Stats fetch
     const fetchMonkeyType = async () => {
