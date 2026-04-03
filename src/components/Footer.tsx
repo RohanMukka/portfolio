@@ -14,26 +14,45 @@ const Footer = () => {
   useEffect(() => {
     // Visitor Count logic
     const hasVisited = localStorage.getItem('portfolioVisited');
+    const cachedCount = localStorage.getItem('portfolioCount');
+
+    // Show the cached count immediately if we have it, so the UI doesn't disappear on refresh
+    if (cachedCount) {
+      setVisitorCount(parseInt(cachedCount, 10));
+    }
 
     if (!hasVisited) {
       // New visitor: increment count and set LocalStorage flag
       fetch('https://api.counterapi.dev/v1/rohanmukka/portfolio/up')
         .then(res => res.json())
         .then(data => {
-          if (data && data.count) {
+          if (data && typeof data.count !== 'undefined') {
             setVisitorCount(data.count);
             localStorage.setItem('portfolioVisited', 'true');
+            localStorage.setItem('portfolioCount', data.count.toString());
           }
         })
-        .catch(err => console.error('Failed to fetch visitor count', err));
+        .catch(err => console.error('Failed to fetch visitor count increment', err));
     } else {
       // Returning visitor: just fetch current count without incrementing
       fetch('https://api.counterapi.dev/v1/rohanmukka/portfolio')
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.count) setVisitorCount(data.count);
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
         })
-        .catch(err => console.error('Failed to fetch visitor count', err));
+        .then(data => {
+          if (data && typeof data.count !== 'undefined') {
+            setVisitorCount(data.count);
+            localStorage.setItem('portfolioCount', data.count.toString());
+          }
+        })
+        .catch(err => {
+          console.error('Failed to read updated visitor count, falling back to cache if available.', err);
+          // If we had no cached count but the user is marked as visited, let's at least show a fallback so it's not invisible.
+          if (!cachedCount) {
+            setVisitorCount(300); // Approximate current views shown as fallback
+          }
+        });
     }
 
     // MonkeyType Stats fetch
