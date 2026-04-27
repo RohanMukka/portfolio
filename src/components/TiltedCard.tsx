@@ -1,15 +1,20 @@
-
-import React, { useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, SpringOptions } from 'framer-motion';
+import React, { useRef, useState } from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  SpringOptions,
+} from "framer-motion";
 
 interface TiltedCardProps {
-  imageSrc: React.ComponentProps<'img'>['src'];
+  imageSrc: React.ComponentProps<"img">["src"];
   altText?: string;
   captionText?: string;
-  containerHeight?: React.CSSProperties['height'];
-  containerWidth?: React.CSSProperties['width'];
-  imageHeight?: React.CSSProperties['height'];
-  imageWidth?: React.CSSProperties['width'];
+  containerHeight?: React.CSSProperties["height"];
+  containerWidth?: React.CSSProperties["width"];
+  imageHeight?: React.CSSProperties["height"];
+  imageWidth?: React.CSSProperties["width"];
   scaleOnHover?: number;
   rotateAmplitude?: number;
   showMobileWarning?: boolean;
@@ -21,23 +26,23 @@ interface TiltedCardProps {
 const springValues: SpringOptions = {
   damping: 30,
   stiffness: 100,
-  mass: 2
+  mass: 2,
 };
 
 export default function TiltedCard({
   imageSrc,
-  altText = 'Tilted card image',
-  captionText = '',
-  containerHeight = '300px',
-  containerWidth = '100%',
-  imageHeight = '300px',
-  imageWidth = '300px',
+  altText = "Tilted card image",
+  captionText = "",
+  containerHeight = "300px",
+  containerWidth = "100%",
+  imageHeight = "300px",
+  imageWidth = "300px",
   scaleOnHover = 1.1,
   rotateAmplitude = 14,
   showMobileWarning = true,
   showTooltip = true,
   overlayContent = null,
-  displayOverlayContent = false
+  displayOverlayContent = false,
 }: TiltedCardProps) {
   const ref = useRef<HTMLElement>(null);
   const x = useMotionValue(0);
@@ -49,18 +54,34 @@ export default function TiltedCard({
   const rotateFigcaption = useSpring(0, {
     stiffness: 350,
     damping: 30,
-    mass: 1
+    mass: 1,
   });
 
   const [lastY, setLastY] = useState(0);
 
   // Dynamic values for Glare and Shadow
-  const glareOpacity = useTransform(rotateY, [-rotateAmplitude, rotateAmplitude], [0, 0.5]);
-  const glarePosition = useTransform(rotateX, [-rotateAmplitude, rotateAmplitude], ["0%", "100%"]);
-  
+  const glareOpacity = useTransform(
+    rotateY,
+    [-rotateAmplitude, rotateAmplitude],
+    [0, 0.5],
+  );
+  const glarePosition = useTransform(
+    rotateX,
+    [-rotateAmplitude, rotateAmplitude],
+    ["0%", "100%"],
+  );
+
   // Shadow moves opposite to the card tilt to simulate light source
-  const shadowX = useTransform(rotateY, [-rotateAmplitude, rotateAmplitude], [20, -20]);
-  const shadowY = useTransform(rotateX, [-rotateAmplitude, rotateAmplitude], [20, -20]);
+  const shadowX = useTransform(
+    rotateY,
+    [-rotateAmplitude, rotateAmplitude],
+    [20, -20],
+  );
+  const shadowY = useTransform(
+    rotateX,
+    [-rotateAmplitude, rotateAmplitude],
+    [20, -20],
+  );
 
   function handleMouse(e: React.MouseEvent<HTMLElement>) {
     if (!ref.current) return;
@@ -101,9 +122,9 @@ export default function TiltedCard({
       ref={ref}
       className="relative w-full h-full flex flex-col items-center justify-center bg-transparent" // bg-transparent to ensure no box clips
       style={{
-        perspective: '800px',
+        perspective: "800px",
         height: containerHeight,
-        width: containerWidth
+        width: containerWidth,
       }}
       onMouseMove={handleMouse}
       onMouseEnter={handleMouseEnter}
@@ -118,7 +139,7 @@ export default function TiltedCard({
       <motion.div
         className="relative"
         style={{
-          transformStyle: 'preserve-3d',
+          transformStyle: "preserve-3d",
           width: imageWidth,
           height: imageHeight,
           rotateX,
@@ -127,13 +148,13 @@ export default function TiltedCard({
         }}
       >
         {/* Dynamic Shadow Layer */}
-        <motion.div 
-            className="absolute inset-4 rounded-[15px] bg-black blur-2xl -z-10"
-            style={{
-                x: shadowX,
-                y: shadowY,
-                opacity: 0.4
-            }}
+        <motion.div
+          className="absolute inset-4 rounded-[15px] bg-black blur-2xl -z-10"
+          style={{
+            x: shadowX,
+            y: shadowY,
+            opacity: 0.4,
+          }}
         />
 
         <motion.img
@@ -141,26 +162,29 @@ export default function TiltedCard({
           alt={altText}
           className="absolute top-0 left-0 object-cover rounded-[15px] will-change-transform"
           style={{
-            transform: 'translateZ(0)',
+            transform: "translateZ(0)",
             width: imageWidth,
-            height: imageHeight
+            height: imageHeight,
           }}
         />
-        
+
         {/* Glare/Sheen Overlay */}
         <motion.div
-            className="absolute inset-0 rounded-[15px] pointer-events-none mix-blend-overlay z-[20]"
-            style={{
-                opacity: glareOpacity,
-                background: `linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.8) 50%, transparent 60%)`,
-                backgroundPosition: glarePosition, // Moves sheen across
-                backgroundSize: '200% 200%', // Larger size to allow movement
-                transform: 'translateZ(1px)' // Sit slightly above image
-            }}
+          className="absolute inset-0 rounded-[15px] pointer-events-none mix-blend-overlay z-[20]"
+          style={{
+            opacity: glareOpacity,
+            background: `linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.8) 50%, transparent 60%)`,
+            backgroundPosition: glarePosition, // Moves sheen across
+            backgroundSize: "200% 200%", // Larger size to allow movement
+            transform: "translateZ(1px)", // Sit slightly above image
+          }}
         />
 
         {displayOverlayContent && overlayContent && (
-          <motion.div className="absolute top-0 left-0 z-[2] will-change-transform" style={{ transform: 'translateZ(30px)' }}>
+          <motion.div
+            className="absolute top-0 left-0 z-[2] will-change-transform"
+            style={{ transform: "translateZ(30px)" }}
+          >
             {overlayContent}
           </motion.div>
         )}
@@ -173,7 +197,7 @@ export default function TiltedCard({
             x,
             y,
             opacity,
-            rotate: rotateFigcaption
+            rotate: rotateFigcaption,
           }}
         >
           {captionText}
