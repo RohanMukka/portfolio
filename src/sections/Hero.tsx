@@ -116,8 +116,8 @@ const Hero = () => {
           <div className="relative w-[300px] h-[400px] md:w-[400px] md:h-[500px]">
              <TiltedCard
                imageSrc={`${import.meta.env.BASE_URL}hero-profile.png`}
-               altText="Rohan Mukka - Full Stack Developer"
-               captionText="Rohan Mukka • Full Stack Developer"
+               altText="Rohan Mukka - Machine Learning & Software Engineer"
+               captionText="Rohan Mukka • Machine Learning & Software Engineer"
                containerHeight="100%"
                containerWidth="100%"
                imageHeight="100%"
@@ -149,7 +149,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Full Stack Developer
+            Machine Learning & Software Engineer
           </motion.p>
           
           <motion.h1
