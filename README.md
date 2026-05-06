@@ -1,4 +1,4 @@
-# Rohan Mukka | Web Engineering Portfolio
+# Rohan Mukka Portfolio
 
 A premium, state-of-the-art portfolio website built to showcase high-performance web systems and creative engineering. Built with a focus on architectural integrity, fluid interactivity, and premium aesthetics.
 
