@@ -11,6 +11,7 @@ This isn't just a portfolio; it's a live demonstration of modern web engineering
 - **Draggable "System Log" HUD:** An interactive floating monitor that tracks live section navigation, mouse vectors, and system events.
 - **Tech Infinity Ribbon:** An infinite-scrolling marquee showcasing a mastery of modern technologies (React, TS, Solidity, etc.).
 - **Magnetic Interaction UI:** Custom CTA components that utilize magnetic physics to "pull" the cursor and tilt toward user interaction.
+- **Interactive Marquee:** A custom-built, continuously scrolling "clothesline" physics animation for certifications using CSS keyframes.
 - **Glassmorphic Architecture:** A consistent design language using high-fidelity blur effects, translucent borders, and depth-aware shadows.
 
 ## 🛠️ Tech Stack
@@ -41,7 +42,7 @@ Mastery across Web, Machine Learning, and Systems:
 /public             # Static assets (Resume, local icons)
 /src
   /components       # Reusable UI (HUD, Ribbon, Background, etc.)
-  /sections         # Main page sections (Hero, Projects, Education)
+  /sections         # Main page sections (Hero, Projects, Education, Certifications)
   /hooks            # Custom React hooks
   App.tsx           # Layout Orchestration
   index.css         # Design System & Global Variables

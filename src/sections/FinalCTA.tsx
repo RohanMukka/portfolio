@@ -75,10 +75,10 @@ const FinalCTA = () => {
               </a>
 
               <div className="flex gap-4">
-                <a href="https://linkedin.com/in/rohanmukka" target="_blank" rel="noopener noreferrer" className="p-4 rounded-2xl bg-surface-subtle border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1">
+                <a href="https://linkedin.com/in/rohanmukka" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-4 rounded-2xl bg-surface-subtle border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1">
                   <Linkedin size={24} />
                 </a>
-                <a href="https://github.com/rohanmukka" target="_blank" rel="noopener noreferrer" className="p-4 rounded-2xl bg-surface-subtle border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1">
+                <a href="https://github.com/rohanmukka" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="p-4 rounded-2xl bg-surface-subtle border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1">
                   <Github size={24} />
                 </a>
               </div>
