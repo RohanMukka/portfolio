@@ -42,22 +42,49 @@ const certificationsData = [
 ];
 
 const Certifications = () => {
+  // Duplicate the array to create a seamless marquee loop
+  const marqueeData = [...certificationsData, ...certificationsData];
+
   return (
     <section
       id="certifications"
-      className="py-32 px-6 relative overflow-hidden flex flex-col items-center"
+      className="py-32 relative overflow-hidden flex flex-col items-center"
     >
+      <style>
+        {`
+          @keyframes scroll-marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .marquee-container {
+            animation: scroll-marquee 45s linear infinite;
+          }
+          .marquee-container:hover {
+            animation-play-state: paused;
+          }
+          @keyframes swing {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+          }
+          .swing-animation {
+            transform-origin: top center;
+            animation: swing 5s ease-in-out infinite;
+          }
+        `}
+      </style>
+
+      {/* Decorative Top Line */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-glass-border to-transparent opacity-50"></div>
       
       {/* Background Accent */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.05) 0%, transparent 70%)'}}></div>
       
-      <div className="max-w-6xl w-full relative z-10">
+      <div className="max-w-6xl w-full relative z-10 px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
           <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-text mb-6">
             Certifications
@@ -66,64 +93,82 @@ const Certifications = () => {
             Continuous learning and professional credentials.
           </p>
         </motion.div>
+      </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {certificationsData.map((cert, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="glass-card rounded-2xl p-6 transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden flex flex-col h-full hover:shadow-xl hover:shadow-accent/5 border border-glass-border hover:border-accent/30"
+      {/* The Clothesline Section */}
+      <div className="relative w-full overflow-visible py-10 mt-4">
+        
+        {/* The Thread */}
+        <div className="absolute top-10 left-0 w-full h-[2px] bg-glass-border z-0 shadow-[0_1px_3px_rgba(var(--accent-rgb),0.3)]"></div>
+
+        {/* The Marquee Container */}
+        <div className="flex w-max marquee-container px-4">
+          {marqueeData.map((cert, idx) => (
+            <div 
+              key={idx} 
+              className="relative w-80 md:w-96 mx-4 swing-animation pt-8 group"
+              style={{ animationDelay: `${(idx % certificationsData.length) * 0.7}s` }}
             >
-              {/* Subtle accent glow on hover */}
-              <div className="absolute -inset-px bg-gradient-to-br from-accent/0 via-accent/5 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-              <div className="flex items-start justify-between mb-4 relative z-10">
-                <div className="p-3 rounded-xl bg-surface-subtle border border-glass-border text-accent group-hover:scale-110 transition-transform duration-300 shadow-sm shadow-glass-shadow">
-                  <Award className="w-6 h-6" />
-                </div>
+              {/* The Peg/Clip */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-8 bg-surface-subtle border border-glass-border rounded-sm z-20 flex flex-col items-center shadow-lg shadow-black/20">
+                 {/* Clip dot/accent */}
+                 <div className="w-1.5 h-1.5 rounded-full bg-accent/70 mt-1"></div>
               </div>
+              
+              {/* The string connecting peg to card */}
+              <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[2px] h-4 bg-glass-border z-10 group-hover:bg-accent/50 transition-colors"></div>
+              
+              {/* The Card */}
+              <div className="glass-card rounded-2xl p-6 h-full border border-glass-border relative mt-4 flex flex-col hover:border-accent/40 transition-colors shadow-lg shadow-black/10 hover:shadow-accent/5 bg-glass-bg/90 backdrop-blur-md">
+                
+                {/* Subtle highlight */}
+                <div className="absolute -inset-px bg-gradient-to-b from-white/5 to-transparent rounded-2xl pointer-events-none" />
 
-              <h3 className="text-xl font-display font-bold text-primary-text mb-2 leading-tight relative z-10 flex-grow">
-                {cert.name}
-              </h3>
-
-              <div className="space-y-4 mt-auto pt-4 relative z-10">
-                <p className="text-primary-secondary font-medium flex items-center gap-2 text-sm">
-                  <ShieldCheck className="w-4 h-4 text-accent/70" />
-                  {cert.issuer}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-3 text-xs text-primary-secondary">
-                  {cert.issued && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle border border-glass-border font-medium">
-                      <Calendar size={12} className="text-accent/70" />
-                      Issued {cert.issued}
-                    </span>
-                  )}
-                  {cert.expires && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle border border-glass-border font-medium opacity-80">
-                      Expires {cert.expires}
-                    </span>
-                  )}
-                </div>
-
-                {cert.skills && cert.skills.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-4 border-t border-glass-border">
-                    {cert.skills.map((skill, skillIdx) => (
-                      <span
-                        key={skillIdx}
-                        className="px-2 py-1 rounded-md bg-surface-subtle/50 text-[11px] font-medium text-primary-secondary border border-glass-border"
-                      >
-                        {skill}
-                      </span>
-                    ))}
+                <div className="flex items-start justify-between mb-4 relative z-10">
+                  <div className="p-3 rounded-xl bg-surface-subtle border border-glass-border text-accent shadow-sm">
+                    <Award className="w-6 h-6" />
                   </div>
-                )}
+                </div>
+
+                <h3 className="text-xl font-display font-bold text-primary-text mb-3 leading-tight relative z-10 flex-grow">
+                  {cert.name}
+                </h3>
+
+                <div className="space-y-4 mt-auto pt-4 relative z-10">
+                  <p className="text-primary-secondary font-medium flex items-center gap-2 text-sm">
+                    <ShieldCheck className="w-4 h-4 text-accent/70" />
+                    {cert.issuer}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-primary-secondary">
+                    {cert.issued && (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle border border-glass-border font-medium">
+                        <Calendar size={12} className="text-accent/70" />
+                        Issued {cert.issued}
+                      </span>
+                    )}
+                    {cert.expires && (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-subtle border border-glass-border font-medium opacity-80">
+                        Expires {cert.expires}
+                      </span>
+                    )}
+                  </div>
+
+                  {cert.skills && cert.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-4 border-t border-glass-border">
+                      {cert.skills.map((skill, skillIdx) => (
+                        <span
+                          key={skillIdx}
+                          className="px-2 py-1 rounded-md bg-surface-subtle/50 text-[11px] font-medium text-primary-secondary border border-glass-border"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
