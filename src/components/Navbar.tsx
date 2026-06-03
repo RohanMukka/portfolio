@@ -32,6 +32,7 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
         "projects",
         "skills",
         "education",
+        "certifications",
         "contact",
       ];
       const current = sections.find((section) => {
@@ -61,6 +62,7 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
     { name: "Work", href: "#projects" },
     { name: "Skills", href: "#skills" },
     { name: "Education", href: "#education" },
+    { name: "Certifications", href: "#certifications" },
     { name: "Contact", href: "#contact" },
   ];
 

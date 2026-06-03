@@ -109,9 +109,40 @@ export const skillsData: SkillCategory[] = [
 ];
 
 export const certificationsData: Certification[] = [
-    { name: 'Python Data Structures', issuer: 'University of Michigan', url: 'https://www.coursera.org/account/accomplishments/verify/QXGV6SBWGYM9' },
-    { name: 'Artificial Intelligence Foundation', issuer: 'Wipro', url: 'https://cert.diceid.com/fsn/cid/zyxOFx' },
-    { name: 'Networking Essentials', issuer: 'Cisco', url: 'https://drive.google.com/file/d/1eZI5kQ-rogEl7H5Fz46xGvxbxaNXEjVy/view?usp=drivesdk' },
-    { name: 'Java Full Stack', issuer: 'Wipro', url: 'https://cert.diceid.com/csr/cid/jBonSK' },
-    { name: 'Java and OOP', issuer: 'University of Pennsylvania', url: 'https://www.coursera.org/account/accomplishments/verify/YRM6FSDBSGDJ' }
+    { 
+        name: 'Oracle Certified Professional: Generative AI', 
+        issuer: 'Oracle', 
+        issued: 'Oct 2025', 
+        expires: 'Oct 2027',
+        skills: ['Generative AI']
+    },
+    { 
+        name: 'Networking Essentials', 
+        issuer: 'Cisco Networking Academy', 
+        issued: 'Dec 2022'
+    },
+    { 
+        name: 'Introduction to Java and Object-Oriented Programming', 
+        issuer: 'University of Pennsylvania', 
+        issued: 'Dec 2021',
+        skills: ['Java', 'Object-Oriented Programming (OOP)']
+    },
+    { 
+        name: 'Java Full Stack', 
+        issuer: 'Wipro', 
+        issued: 'Oct 2023',
+        skills: ['Java']
+    },
+    { 
+        name: 'Python Data Structures', 
+        issuer: 'University of Michigan', 
+        issued: 'Jan 2022',
+        skills: ['Data Structures', 'Python']
+    },
+    { 
+        name: 'Artificial Intelligence Foundation', 
+        issuer: 'Wipro', 
+        issued: 'Mar 2023',
+        skills: ['Artificial Intelligence (AI)']
+    }
 ];

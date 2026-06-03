@@ -5,6 +5,7 @@ import { Projects } from './sections/Projects';
 import { Skills } from './sections/Skills';
 import { About } from './sections/About';
 import { Footer } from './sections/Footer';
+import { Certifications } from './sections/Certifications';
 
 const App: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,6 +27,7 @@ const App: React.FC = () => {
         <About />
         <Skills />
         <Projects />
+        <Certifications />
         <Footer />
       </main>
     </div>

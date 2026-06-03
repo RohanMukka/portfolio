@@ -6,6 +6,7 @@ import Architecture from "./sections/Architecture";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
 import Education from "./sections/Education";
+import Certifications from "./sections/Certifications";
 import FinalCTA from "./sections/FinalCTA";
 import Loader from "./components/Loader";
 import ResumeButton from "./components/ResumeButton";
@@ -73,6 +74,7 @@ const App = () => {
         <Projects />
         <Skills />
         <Education />
+        <Certifications />
         <FinalCTA />
         <Footer />
       </main>
