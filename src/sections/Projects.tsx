@@ -123,6 +123,86 @@ const projects: Project[] = [
     links: { github: 'https://github.com/RohanMukka/Multilingual-Polarization-Detection' },
     image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1470&auto=format&fit=crop',
     color: '#3498db'
+  },
+  {
+    title: 'Fake Review Detection',
+    tagline: 'Transformer Semantics',
+    description: 'Fake Review Detection on Yelp using a combination of Transformer Semantics and Reviewer Behavior modeling.',
+    tags: ['Python', 'NLP', 'Transformers'],
+    category: 'ML',
+    links: { github: 'https://github.com/RohanMukka/Combining-Transformer-Semantics-and-Reviewer-Behavior-for-Fake-Review-Detection-on-Yelp' },
+    image: '/fake_review_project.png',
+    color: '#c0392b'
+  },
+  {
+    title: 'EduLens AI',
+    tagline: 'Adaptive Learning Companion',
+    description: 'Uses NLP to analyze student understanding from free-text responses, generates personalized explanations, and adapts learning paths in real time.',
+    tags: ['TypeScript', 'NLP', 'AI'],
+    category: 'ML',
+    links: { github: 'https://github.com/RohanMukka/edulens-ai', demo: 'https://edulens-ai-lep9.onrender.com' },
+    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1600&auto=format&fit=crop',
+    color: '#9b59b6'
+  },
+  {
+    title: 'JobForge',
+    tagline: 'Distributed Job Processing',
+    description: 'Fault-tolerant background job processing system — Redis Streams, priority queues, exponential backoff, worker health checks, and a real-time React dashboard.',
+    tags: ['Python', 'Redis', 'React'],
+    category: 'System',
+    links: { github: 'https://github.com/RohanMukka/JobForge' },
+    image: 'https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=1600&auto=format&fit=crop',
+    color: '#e67e22'
+  },
+  {
+    title: 'MLFlowForge',
+    tagline: 'End-to-end MLOps',
+    description: 'MLOps pipeline for fraud detection — Airflow DAGs, MLflow model registry, Evidently drift monitoring, automated retraining, FastAPI serving.',
+    tags: ['Airflow', 'MLflow', 'PyTorch'],
+    category: 'ML',
+    links: { github: 'https://github.com/RohanMukka/MLFlowForge' },
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop',
+    color: '#2980b9'
+  },
+  {
+    title: 'Multi-Agent Course Builder',
+    tagline: 'Autonomous AI Orchestration',
+    description: 'A distributed multi-agent system built with Google’s ADK and A2A protocol. Orchestrates AI microservices to autonomously research and generate courses.',
+    tags: ['Python', 'Agents', 'Microservices'],
+    category: 'ML',
+    links: { github: 'https://github.com/RohanMukka/multi-agent-course-builder', demo: 'https://course-creator-205520880647.us-west1.run.app/' },
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1600&auto=format&fit=crop',
+    color: '#e74c3c'
+  },
+  {
+    title: 'NexusRAG',
+    tagline: 'Production-grade RAG',
+    description: 'RAG system with multi-source ingestion, hybrid retrieval (dense + BM25 + reranking), streaming chat, RAGAS evaluation dashboard, and hallucination detection.',
+    tags: ['LLM', 'ChromaDB', 'NextJS'],
+    category: 'ML',
+    links: { github: 'https://github.com/RohanMukka/NexusRAG' },
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop',
+    color: '#16a085'
+  },
+  {
+    title: 'SafeFlow',
+    tagline: 'Data Safety Management',
+    description: 'A comprehensive data flow and safety management application featuring real-time stream control and processing.',
+    tags: ['Python', 'Pipeline', 'Safety'],
+    category: 'Web',
+    links: { github: 'https://github.com/RohanMukka/SafeFlow', demo: 'https://safeflow-frontend-2trn3wwwia-uc.a.run.app/' },
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop',
+    color: '#3498db'
+  },
+  {
+    title: 'StreamSense',
+    tagline: 'Real-Time Event Analytics',
+    description: 'Event streaming analytics platform processing 5k+ events/sec with Kafka, Flink-style processing, Redis, FastAPI, and Next.js.',
+    tags: ['Kafka', 'Redis', 'Python'],
+    category: 'System',
+    links: { github: 'https://github.com/RohanMukka/StreamSense' },
+    image: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=1600&auto=format&fit=crop',
+    color: '#8e44ad'
   }
 ];
 
