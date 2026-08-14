@@ -8,7 +8,6 @@ import Skills from "./sections/Skills";
 import Education from "./sections/Education";
 import Certifications from "./sections/Certifications";
 import FinalCTA from "./sections/FinalCTA";
-import Loader from "./components/Loader";
 import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
 import CustomCursor, { CursorType } from "./components/CustomCursor";
@@ -18,22 +17,18 @@ import TechRibbon from "./components/TechRibbon";
 import SystemHUD from "./components/SystemHUD";
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [cursorType, setCursorType] = useState<CursorType>("default");
 
   useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2500);
-
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
     const savedCursor = localStorage.getItem("cursorType") as CursorType;
     if (savedCursor) setCursorType(savedCursor);
 
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -42,10 +37,6 @@ const App = () => {
     setCursorType(type);
     localStorage.setItem("cursorType", type);
   };
-
-  if (loading) {
-    return <Loader />;
-  }
 
   return (
     <div
