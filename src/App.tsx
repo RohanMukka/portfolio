@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
 import Architecture from "./sections/Architecture";
+import Experience from "./sections/Experience";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
 import Education from "./sections/Education";
@@ -71,6 +72,7 @@ const App = () => {
         <Hero />
         <TechRibbon />
         <Architecture />
+        <Experience />
         <Projects />
         <Skills />
         <Education />
