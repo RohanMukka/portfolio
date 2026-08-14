@@ -32,44 +32,26 @@ const Footer = () => {
       setVisitorCount(parseInt(cachedCount, 10));
     }
 
-    if (!hasVisited) {
-      // New visitor: increment count and set LocalStorage flag
-      fetch("https://api.counterapi.dev/v1/rohanmukka/portfolio/up")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && typeof data.count !== "undefined") {
-            setVisitorCount(data.count);
-            localStorage.setItem("portfolioVisited", "true");
-            localStorage.setItem("portfolioCount", data.count.toString());
-          }
-        })
-        .catch((err) =>
-          console.error("Failed to fetch visitor count increment", err),
-        );
-    } else {
-      // Returning visitor: just fetch current count without incrementing
-      fetch("https://api.counterapi.dev/v1/rohanmukka/portfolio")
-        .then((res) => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then((data) => {
-          if (data && typeof data.count !== "undefined") {
-            setVisitorCount(data.count);
-            localStorage.setItem("portfolioCount", data.count.toString());
-          }
-        })
-        .catch((err) => {
-          console.error(
-            "Failed to read updated visitor count, falling back to cache if available.",
-            err,
-          );
-          // If we had no cached count but the user is marked as visited, let's at least show a fallback so it's not invisible.
-          if (!cachedCount) {
-            setVisitorCount(300); // Approximate current views shown as fallback
-          }
-        });
-    }
+    // A first visit increments the counter; a return visit only reads it.
+    fetch("/api/views", { method: hasVisited ? "GET" : "POST" })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (typeof data?.count !== "number") {
+          throw new Error("Malformed counter response");
+        }
+        setVisitorCount(data.count);
+        localStorage.setItem("portfolioVisited", "true");
+        localStorage.setItem("portfolioCount", data.count.toString());
+      })
+      .catch((err) => {
+        // Any cached value is already on screen from above, so leave it there.
+        // With no cache the counter stays hidden, which is preferable to the
+        // previous behaviour of inventing a plausible-looking number.
+        console.error("Failed to load visitor count", err);
+      });
 
     // MonkeyType Stats fetch
     const fetchMonkeyType = async () => {
