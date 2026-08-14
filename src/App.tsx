@@ -5,6 +5,7 @@ import Hero from "./sections/Hero";
 import Architecture from "./sections/Architecture";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
+import Stats from "./sections/Stats";
 import Education from "./sections/Education";
 import Certifications from "./sections/Certifications";
 import FinalCTA from "./sections/FinalCTA";
@@ -64,6 +65,7 @@ const App = () => {
         <Architecture />
         <Projects />
         <Skills />
+        <Stats />
         <Education />
         <Certifications />
         <FinalCTA />
