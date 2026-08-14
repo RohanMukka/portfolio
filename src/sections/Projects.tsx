@@ -1,17 +1,29 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, ChevronLeft, ChevronRight, Github, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Github, ExternalLink } from 'lucide-react';
+import ProjectVisual, { VisualMotif } from '../components/ProjectVisual';
+
+type Category = 'Web' | 'ML' | 'System' | 'Blockchain';
 
 interface Project {
   title: string;
   tagline: string;
   description: string;
   tags: string[];
-  category: 'Web' | 'ML' | 'System' | 'Blockchain';
+  category: Category;
   links: { github?: string; demo?: string };
-  image: string;
+  /** Optional real asset. When absent, a generated visual is used instead. */
+  image?: string;
   color: string;
 }
+
+/** Each category gets its own generative motif. */
+const MOTIF_BY_CATEGORY: Record<Category, VisualMotif> = {
+  ML: 'neural',
+  System: 'pipeline',
+  Web: 'layout',
+  Blockchain: 'chain',
+};
 
 const projects: Project[] = [
   {
@@ -21,7 +33,6 @@ const projects: Project[] = [
     tags: ['Ethereum', 'Web3', 'React', 'Solidity'],
     category: 'Blockchain',
     links: { github: 'https://github.com/RohanMukka/BEneFIT' },
-    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop',
     color: '#627EEA'
   },
   {
@@ -31,7 +42,6 @@ const projects: Project[] = [
     tags: ['TypeScript', 'Firebase', 'React'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/spendsmart', demo: 'https://spendsmart-three.vercel.app/' },
-    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1626&auto=format&fit=crop',
     color: '#2ecc71'
   },
   {
@@ -41,7 +51,6 @@ const projects: Project[] = [
     tags: ['Python', 'ML', 'Diagnostics'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/A-Robust-Diagnostic-System-Leveraging-Explicit-Domain-Knowledge-and-Learned-Data-Patterns' },
-    image: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1480&auto=format&fit=crop',
     color: '#3776ab'
   },
   {
@@ -51,7 +60,6 @@ const projects: Project[] = [
     tags: ['React', 'Health', 'TypeScript'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/fitprep', demo: 'https://fitprep.vercel.app' },
-    image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=1453&auto=format&fit=crop',
     color: '#1abc9c'
   },
   {
@@ -61,7 +69,6 @@ const projects: Project[] = [
     tags: ['JavaScript', 'System', 'Teamwork'],
     category: 'System',
     links: { github: 'https://github.com/IPMS-Project/IPMS' },
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1470&auto=format&fit=crop',
     color: '#3498db'
   },
   {
@@ -71,7 +78,6 @@ const projects: Project[] = [
     tags: ['TypeScript', 'AI', 'JavaScript'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/JAI' },
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1632&auto=format&fit=crop',
     color: '#f7df1e'
   },
   {
@@ -81,7 +87,6 @@ const projects: Project[] = [
     tags: ['TypeScript', 'Vercel', 'Responsive'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/portfolio', demo: 'https://portfolio-rohan03.vercel.app/' },
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop',
     color: '#3178c6'
   },
   {
@@ -91,7 +96,6 @@ const projects: Project[] = [
     tags: ['Python', 'DL', 'Biosensor'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/Multiclass-Emotion-Recognition-from-EEG-Signals' },
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1530&auto=format&fit=crop',
     color: '#9b59b6'
   },
   {
@@ -101,7 +105,6 @@ const projects: Project[] = [
     tags: ['JavaScript', 'Finance', 'Automation'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/FeeAutomation' },
-    image: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?q=80&w=1548&auto=format&fit=crop',
     color: '#f1c40f'
   },
   {
@@ -111,7 +114,6 @@ const projects: Project[] = [
     tags: ['Java', 'Database', 'Healthcare', 'SQL'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/Patient-Assistant-Network-Database-System' },
-    image: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?q=80&w=1470&auto=format&fit=crop',
     color: '#e74c3c'
   },
   {
@@ -121,7 +123,6 @@ const projects: Project[] = [
     tags: ['Python', 'NLP', 'Machine Learning'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/Multilingual-Polarization-Detection' },
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1470&auto=format&fit=crop',
     color: '#3498db'
   },
   {
@@ -131,7 +132,7 @@ const projects: Project[] = [
     tags: ['Python', 'NLP', 'Transformers'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/Combining-Transformer-Semantics-and-Reviewer-Behavior-for-Fake-Review-Detection-on-Yelp' },
-    image: '/fake_review_project.png',
+    image: 'fake_review_project.png',
     color: '#c0392b'
   },
   {
@@ -141,7 +142,6 @@ const projects: Project[] = [
     tags: ['TypeScript', 'NLP', 'AI'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/edulens-ai', demo: 'https://edulens-ai-lep9.onrender.com' },
-    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1600&auto=format&fit=crop',
     color: '#9b59b6'
   },
   {
@@ -151,7 +151,6 @@ const projects: Project[] = [
     tags: ['Python', 'Redis', 'React'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/JobForge' },
-    image: 'https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=1600&auto=format&fit=crop',
     color: '#e67e22'
   },
   {
@@ -161,7 +160,6 @@ const projects: Project[] = [
     tags: ['Airflow', 'MLflow', 'PyTorch'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/MLFlowForge' },
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop',
     color: '#2980b9'
   },
   {
@@ -171,7 +169,6 @@ const projects: Project[] = [
     tags: ['Python', 'Agents', 'Microservices'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/multi-agent-course-builder', demo: 'https://course-creator-205520880647.us-west1.run.app/' },
-    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1600&auto=format&fit=crop',
     color: '#e74c3c'
   },
   {
@@ -181,7 +178,6 @@ const projects: Project[] = [
     tags: ['LLM', 'ChromaDB', 'NextJS'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/NexusRAG' },
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop',
     color: '#16a085'
   },
   {
@@ -191,7 +187,6 @@ const projects: Project[] = [
     tags: ['Python', 'Pipeline', 'Safety'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/SafeFlow', demo: 'https://safeflow-frontend-2trn3wwwia-uc.a.run.app/' },
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop',
     color: '#3498db'
   },
   {
@@ -201,7 +196,6 @@ const projects: Project[] = [
     tags: ['Kafka', 'Redis', 'Python'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/StreamSense' },
-    image: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=1600&auto=format&fit=crop',
     color: '#8e44ad'
   }
 ];
@@ -209,34 +203,73 @@ const projects: Project[] = [
 const ProjectCard = ({ project }: { project: Project }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
+  // Hover-to-flip is a mouse affordance only; touch users get tap-to-flip and
+  // keyboard users get Enter/Space, so the back face is never unreachable.
+  const handlePointerEnter = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') setIsFlipped(true);
+  };
+
+  const handlePointerLeave = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') setIsFlipped(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setIsFlipped((v) => !v);
+    }
+  };
+
   return (
-    <div 
-      className="relative h-[400px] w-full cursor-pointer group perspective-1000"
-      onMouseEnter={() => setIsFlipped(true)}
-      onMouseLeave={() => setIsFlipped(false)}
+    <div
+      className="relative h-[400px] w-full cursor-pointer group perspective-1000 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      onClick={() => setIsFlipped((v) => !v)}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-expanded={isFlipped}
+      aria-label={`${project.title} — ${project.tagline.replace(/\.$/, '')}. Activate for details.`}
     >
       <motion.div
-        className="w-full h-full relative preserve-3d transition-all duration-500 rounded-2xl"
+        className="w-full h-full relative preserve-3d rounded-2xl"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        whileHover={{ 
+        whileHover={{
           y: -12,
           boxShadow: "0 20px 40px -15px var(--glass-shadow), 0 0 20px 1px var(--accent-dim)"
         }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 260, 
-          damping: 20 
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 20
         }}
       >
         {/* Front Face */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden glass-card">
-          <img 
-            src={project.image} 
-            alt={project.title} 
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            loading="lazy"
-          />
+        <div
+          className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden glass-card"
+          inert={isFlipped}
+        >
+          {project.image ? (
+            <img
+              src={`${import.meta.env.BASE_URL}${project.image}`}
+              alt=""
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <ProjectVisual
+              seed={project.title}
+              motif={MOTIF_BY_CATEGORY[project.category]}
+              color={project.color}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent flex flex-col justify-end p-8">
+            <span className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-primary-tertiary mb-2">
+              {project.category}
+            </span>
             <h3 className="text-3xl font-display font-bold text-primary-text mb-1">{project.title}</h3>
             <p className="text-primary-secondary text-sm font-medium tracking-wide uppercase mb-3">{project.tagline}</p>
             <div className="h-1 w-12 rounded-full" style={{ backgroundColor: project.color }}></div>
@@ -244,9 +277,10 @@ const ProjectCard = ({ project }: { project: Project }) => {
         </div>
 
         {/* Back Face */}
-        <div 
+        <div
           className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden glass-card p-8 flex flex-col"
           style={{ transform: 'rotateY(180deg)' }}
+          inert={!isFlipped}
         >
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-2xl font-display font-bold" style={{ color: project.color }}>
@@ -254,40 +288,42 @@ const ProjectCard = ({ project }: { project: Project }) => {
             </h3>
             <div className="flex gap-2">
               {project.links.github && (
-                <a 
-                  href={project.links.github} 
-                  target="_blank" 
+                <a
+                  href={project.links.github}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-text text-white hover:bg-primary-text/90 transition-all font-medium text-sm shadow-lg shadow-primary-text/10 group/btn"
-                  title="View GitHub"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-text text-background hover:opacity-90 transition-all font-medium text-sm shadow-lg shadow-primary-text/10"
+                  aria-label={`View ${project.title} source on GitHub`}
                 >
-                  <Github size={18} />
+                  <Github size={18} aria-hidden="true" />
                   <span>Code</span>
                 </a>
               )}
               {project.links.demo && (
-                <a 
-                  href={project.links.demo} 
-                  target="_blank" 
+                <a
+                  href={project.links.demo}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all font-medium text-sm shadow-lg shadow-accent/10 group/btn"
-                  title="Live Demo"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent text-white hover:opacity-90 transition-all font-medium text-sm shadow-lg shadow-accent/10"
+                  aria-label={`Open the ${project.title} live demo`}
                 >
-                  <ExternalLink size={18} />
+                  <ExternalLink size={18} aria-hidden="true" />
                   <span>Demo</span>
                 </a>
               )}
             </div>
           </div>
-          
+
           <p className="text-primary-secondary mb-8 leading-relaxed flex-grow">
             {project.description}
           </p>
 
           <div className="flex flex-wrap gap-2">
             {project.tags.map(tag => (
-              <span 
-                key={tag} 
+              <span
+                key={tag}
                 className="px-3 py-1 text-xs font-semibold rounded-full bg-surface-subtle text-primary-text border border-glass-border"
               >
                 {tag}
@@ -302,7 +338,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
 
 const Projects = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [filter, setFilter] = useState<'All' | 'Web' | 'ML' | 'System' | 'Blockchain'>('All');
+  const [filter, setFilter] = useState<'All' | Category>('All');
 
   const filteredProjects = projects.filter(p => filter === 'All' || p.category === filter);
 
@@ -312,10 +348,10 @@ const Projects = () => {
       const cardWidth = container.firstElementChild?.clientWidth || 400;
       const gap = 24;
       const scrollAmount = cardWidth + gap;
-      
+
       const currentScroll = container.scrollLeft;
       const targetScroll = direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount;
-      
+
       container.scrollTo({
         left: targetScroll,
         behavior: 'smooth'
@@ -342,13 +378,14 @@ const Projects = () => {
           </div>
 
           <div className="flex flex-wrap gap-2 bg-surface-subtle p-1.5 rounded-2xl border border-glass-border">
-            {['All', 'Web', 'ML', 'System', 'Blockchain'].map((cat) => (
+            {(['All', 'Web', 'ML', 'System', 'Blockchain'] as const).map((cat) => (
               <button
                 key={cat}
-                onClick={() => setFilter(cat as any)}
+                onClick={() => setFilter(cat)}
+                aria-pressed={filter === cat}
                 className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
-                  filter === cat 
-                  ? 'bg-primary-text text-background shadow-lg scale-105' 
+                  filter === cat
+                  ? 'bg-primary-text text-background shadow-lg scale-105'
                   : 'text-primary-secondary hover:text-primary-text hover:bg-bg-elevated/50'
                 }`}
               >
@@ -356,28 +393,28 @@ const Projects = () => {
               </button>
             ))}
           </div>
-          
+
           <div className="hidden lg:flex gap-3">
-            <button 
+            <button
               onClick={() => scroll('left')}
               className="p-4 rounded-full border border-glass-border bg-glass-bg backdrop-blur-md hover:border-accent transition-all text-primary-text hover:scale-110 active:scale-95 shadow-lg"
-              aria-label="Scroll left"
+              aria-label="Scroll projects left"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={24} aria-hidden="true" />
             </button>
-            <button 
+            <button
               onClick={() => scroll('right')}
               className="p-4 rounded-full border border-glass-border bg-glass-bg backdrop-blur-md hover:border-accent transition-all text-primary-text hover:scale-110 active:scale-95 shadow-lg"
-              aria-label="Scroll right"
+              aria-label="Scroll projects right"
             >
-              <ChevronRight size={24} />
+              <ChevronRight size={24} aria-hidden="true" />
             </button>
           </div>
         </motion.div>
 
         <div className="relative w-full">
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div 
+            <motion.div
               ref={scrollContainerRef}
               className="flex overflow-x-auto gap-8 pb-12 px-6 -mx-6 snap-x snap-mandatory scrollbar-none scroll-smooth"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
