@@ -158,9 +158,25 @@ const Stats = () => {
                 <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>Solved Problems</h3>
               </div>
 
-              {loading || !lcStats ? (
+              {loading ? (
                 <div className="flex-grow flex items-center justify-center min-h-[250px]">
-                  <div className="w-10 h-10 rounded-full border-2 border-primary-purple border-t-transparent animate-spin" />
+                  <div className="w-10 h-10 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+                </div>
+              ) : !lcStats ? (
+                /* The stats come from a third-party API; if it's down, link out
+                   rather than spinning forever. */
+                <div className="flex-grow flex flex-col items-center justify-center text-center gap-3 min-h-[250px]">
+                  <p className="text-primary-secondary">
+                    Live stats are unavailable right now.
+                  </p>
+                  <a
+                    href="https://leetcode.com/u/rohan_mukka/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent font-semibold hover:underline"
+                  >
+                    View my LeetCode profile →
+                  </a>
                 </div>
               ) : (
                 <div className="flex flex-col gap-8 flex-grow">

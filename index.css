@@ -27,6 +27,9 @@
     --accent: #c45c26;
     --accent-rgb: 196, 92, 38;
     --accent-dim: rgba(196, 92, 38, 0.15);
+    --scrollbar-track: #f8f6f2;
+    --scrollbar-thumb: #c4b8a8;
+    color-scheme: light;
   }
 
   [data-theme='dark'] {
@@ -42,6 +45,9 @@
     --accent: #f97316;
     --accent-rgb: 249, 115, 22;
     --accent-dim: rgba(249, 115, 22, 0.2);
+    --scrollbar-track: #0a0a0d;
+    --scrollbar-thumb: #3f3f46;
+    color-scheme: dark;
   }
 
   .glass-card {
@@ -56,7 +62,6 @@
     font-family: "Inter", system-ui, sans-serif;
     line-height: 1.6;
     font-weight: 400;
-    color-scheme: light;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
@@ -85,6 +90,45 @@
   ::selection {
     background: var(--accent-dim);
     color: var(--text-primary);
+  }
+
+  /* Theme-aware scrollbar */
+  * {
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+
+  /* Respect users who ask for reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
