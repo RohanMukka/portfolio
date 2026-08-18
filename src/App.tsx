@@ -72,7 +72,7 @@ const App = () => {
         <Hero />
         <TechRibbon />
         <Architecture />
-        <Experience />
+        {/* <Experience /> */}
         <Projects />
         <Skills />
         <Education />
