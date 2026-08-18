@@ -60,7 +60,7 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
 
   const links = [
     { name: "About", href: "#architecture" },
-    { name: "Experience", href: "#experience" },
+    // { name: "Experience", href: "#experience" },
     { name: "Work", href: "#projects" },
     { name: "Skills", href: "#skills" },
     { name: "Education", href: "#education" },
