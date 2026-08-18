@@ -72,7 +72,8 @@ const App = () => {
         <Hero />
         <TechRibbon />
         <Architecture />
-        <Experience />
+        {/* TODO: re-enable Experience (Professional Path) section when ready */}
+        {/* <Experience /> */}
         <Projects />
         <Skills />
         <Education />
