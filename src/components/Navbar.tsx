@@ -60,7 +60,8 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
 
   const links = [
     { name: "About", href: "#architecture" },
-    { name: "Experience", href: "#experience" },
+    // TODO: re-enable "Experience" (Professional Path section) nav link when ready
+    // { name: "Experience", href: "#experience" },
     { name: "Work", href: "#projects" },
     { name: "Skills", href: "#skills" },
     { name: "Education", href: "#education" },
