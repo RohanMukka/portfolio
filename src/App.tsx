@@ -30,6 +30,9 @@ const App = () => {
     }, 2500);
 
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
     const savedCursor = localStorage.getItem("cursorType") as CursorType;
     if (savedCursor) setCursorType(savedCursor);
 
