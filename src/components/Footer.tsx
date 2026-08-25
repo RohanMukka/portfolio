@@ -122,7 +122,7 @@ const Footer = () => {
                 Rohan Mukka
               </span>
               <span className="text-sm text-primary-secondary font-medium tracking-wide">
-                Machine Learning & Software Engineer
+                Software Engineer
               </span>
             </div>
             <p className="text-base text-primary-secondary leading-relaxed max-w-sm">
