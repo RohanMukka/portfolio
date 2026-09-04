@@ -1,4 +1,5 @@
 import React from "react";
+import { useAmbient } from "../lib/ambient";
 import "./Background.css";
 
 /**
@@ -7,8 +8,11 @@ import "./Background.css";
  * --scroll variables that `startAmbient` writes, and theme changes are handled
  * by CSS attribute selectors rather than a MutationObserver.
  */
-const Background = () => (
-  <div className="bg-root" aria-hidden="true">
+const Background = () => {
+  const ref = useAmbient<HTMLDivElement>("pointer", "scroll");
+
+  return (
+    <div className="bg-root" aria-hidden="true" ref={ref}>
     <div className="bg-aurora" />
     <div className="bg-motes-far" />
     <div className="bg-motes" />
@@ -16,8 +20,9 @@ const Background = () => (
       <div className="bg-floor-grid" />
     </div>
     <div className="bg-horizon" />
-    <div className="bg-grain" />
-  </div>
-);
+      <div className="bg-grain" />
+    </div>
+  );
+};
 
 export default React.memo(Background);

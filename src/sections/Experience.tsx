@@ -126,7 +126,7 @@ const Experience = () => {
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-glass-border to-transparent opacity-50"></div>
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full pointer-events-none"
         style={{ background: "radial-gradient(circle, rgba(var(--accent-rgb), 0.08) 0%, transparent 70%)" }}
       ></div>
 

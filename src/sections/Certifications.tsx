@@ -77,7 +77,7 @@ const Certifications = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-glass-border to-transparent opacity-50"></div>
       
       {/* Background Accent */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.05) 0%, transparent 70%)'}}></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full pointer-events-none" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.05) 0%, transparent 70%)'}}></div>
       
       <div className="max-w-6xl w-full relative z-10 px-6">
         <Reveal className="text-center mb-8">

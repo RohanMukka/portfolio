@@ -39,10 +39,10 @@
   inherits: true;
   initial-value: 0;
 }
-@property --vh {
+@property --scrollp {
   syntax: "<number>";
   inherits: true;
-  initial-value: 800;
+  initial-value: 0;
 }
 
 @layer base {
@@ -282,7 +282,6 @@
       --lift 0.45s cubic-bezier(0.16, 1, 0.3, 1),
       box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
       transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform;
   }
 
   .lift:hover {
@@ -303,7 +302,6 @@
     transition:
       opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
       transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform, opacity;
   }
 
   .reveal[data-reveal="up"] {
@@ -325,7 +323,6 @@
   .reveal[data-shown] {
     opacity: 1;
     transform: none;
-    will-change: auto;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -362,7 +359,6 @@
     --my: 0px;
     transform: translate3d(var(--mx), var(--my), 0);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform;
   }
 
   .btn-cta.magnetic:hover,
@@ -371,15 +367,6 @@
   }
 
   /* 3D scene primitives */
-  .scene {
-    perspective: 1200px;
-    perspective-origin: calc(50% + var(--px) * 6%) calc(50% + var(--py) * 6%);
-  }
-
-  .scene-near {
-    perspective: 800px;
-  }
-
   .preserve-3d {
     transform-style: preserve-3d;
   }
@@ -396,20 +383,4 @@
     transform: rotateY(180deg);
   }
 
-  /* Parallax planes. `--depth` is how far back the layer sits: 0 is glued to
-     the page, 1 drifts a full step with the pointer. Composited only. */
-  .plane {
-    --depth: 0;
-    transform: translate3d(
-      calc(var(--px) * var(--depth) * -14px),
-      calc(var(--py) * var(--depth) * -14px),
-      0
-    );
-    will-change: transform;
-  }
-
-  .tilt-scene {
-    transform: rotateX(calc(var(--py) * -3deg)) rotateY(calc(var(--px) * 3deg));
-    transform-style: preserve-3d;
-  }
 }

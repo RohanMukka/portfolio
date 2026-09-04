@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUp } from "lucide-react";
+import { useAmbient } from "../lib/ambient";
 import "./BackToTop.css";
 
 /**
@@ -12,6 +13,7 @@ import "./BackToTop.css";
  */
 const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const ringRef = useAmbient<SVGCircleElement>("progress");
 
   useEffect(() => {
     const toggleVisibility = () => setIsVisible(window.scrollY > 300);
@@ -43,7 +45,7 @@ const BackToTop = () => {
         aria-hidden="true"
       >
         <circle cx="50" cy="50" r="46" className="back-to-top-track" />
-        <circle cx="50" cy="50" r="46" className="back-to-top-fill" />
+        <circle cx="50" cy="50" r="46" className="back-to-top-fill" ref={ringRef} />
       </svg>
       <ArrowUp size={22} strokeWidth={2.5} className="back-to-top-arrow" />
     </button>

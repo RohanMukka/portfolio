@@ -7,7 +7,8 @@ const Architecture = () => {
   return (
     <SectionContainer id="architecture">
       <Reveal
-  className="max-w-6xl mx-auto p-6 md:p-16 rounded-[2.5rem] glass-card backdrop-blur-3xl border border-white/10 relative overflow-hidden"
+  className="surface max-w-6xl mx-auto p-6 md:p-16 rounded-[2.5rem] relative overflow-hidden"
+  data-elev="2"
 >
         {/* Background Glow */}
         <div className="absolute top-0 right-0 w-64 h-64 -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
@@ -84,7 +85,8 @@ const Architecture = () => {
   variant="right"
   delay={0.2 + i * 0.1}
   key={stat.label}
-  className={`p-8 rounded-[2.5rem] bg-bg-elevated/60 backdrop-blur-xl border-2 ${stat.color} flex items-center justify-between group hover:bg-bg-elevated transition-all transform hover:-translate-y-2 shadow-lg shadow-black/5 mx-auto w-full`}
+  className={`surface lift p-8 rounded-[2.5rem] ${stat.color} flex items-center justify-between group mx-auto w-full`}
+  data-elev="3"
 >
                 <div>
                   <div className="text-3xl font-display font-black text-primary-text mb-1">

@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { useSectionSpy } from "../lib/useSectionSpy";
+import { useAmbient } from "../lib/ambient";
 import "./Navbar.css";
 
 const SECTION_IDS = [
@@ -34,6 +35,7 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
   const activeTab = useSectionSpy(SECTION_IDS);
 
   const listRef = useRef<HTMLDivElement>(null);
+  const progressRef = useAmbient<HTMLSpanElement>("progress");
   const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
 
   // The highlight is one element that slides between items. Its position is
@@ -74,7 +76,11 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
           className={`navbar-bar surface surface-glass${isScrolled ? " is-scrolled" : ""}`}
           data-elev={isScrolled ? "3" : "2"}
         >
-          <span className="navbar-progress scroll-progress" aria-hidden="true" />
+          <span
+            className="navbar-progress scroll-progress"
+            aria-hidden="true"
+            ref={progressRef}
+          />
 
           <a href="#hero" className="navbar-brand">
             Rohan Mukka

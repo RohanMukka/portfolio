@@ -1,6 +1,7 @@
 import React from "react";
 import MagneticButton from "../components/MagneticButton";
 import Reveal from "../components/Reveal";
+import { useAmbient } from "../lib/ambient";
 import "./Hero.css";
 
 const NAME = [
@@ -46,6 +47,8 @@ const CHIPS = [
 ] satisfies { label: string; dot: string; style: React.CSSProperties }[];
 
 const Hero = () => {
+  const rigRef = useAmbient<HTMLDivElement>("pointer");
+
   return (
     <section
       id="hero"
@@ -58,7 +61,7 @@ const Hero = () => {
           className="order-2 md:order-1 flex justify-center md:justify-end"
         >
           <div className="hero-stage">
-            <div className="hero-rig">
+            <div className="hero-rig" ref={rigRef}>
               <div className="hero-halo" />
               <div className="hero-slab hero-slab--3" />
               <div className="hero-slab hero-slab--2" />

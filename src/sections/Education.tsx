@@ -46,7 +46,7 @@ const Education = () => {
       className="py-32 px-6 relative overflow-hidden min-h-screen flex flex-col items-center"
     >
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-glass-border to-transparent opacity-50"></div>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full pointer-events-none" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
       <div className="max-w-5xl w-full relative z-10">
         <Reveal className="text-center mb-24">
           <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-text mb-6">
@@ -93,7 +93,7 @@ const Education = () => {
   variant="right"
   className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
 >
-              <div className="absolute -top-6 -right-6 w-20 h-20 bg-electric-cyan/5 rounded-full blur-2xl group-hover:bg-electric-cyan/10 transition-colors"></div>
+              <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full pointer-events-none" style={{background: "radial-gradient(circle, color-mix(in srgb, var(--hue-cyan) 14%, transparent) 0%, transparent 70%)"}}></div>
 
               <div className="flex flex-col gap-4 relative z-10">
                 <div className="flex items-start justify-between gap-4">
@@ -158,7 +158,7 @@ const Education = () => {
   delay={0.2}
   className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
 >
-              <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-primary-orange/5 rounded-full blur-2xl group-hover:bg-primary-orange/10 transition-colors"></div>
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full pointer-events-none" style={{background: "radial-gradient(circle, color-mix(in srgb, var(--hue-orange) 14%, transparent) 0%, transparent 70%)"}}></div>
 
               <div className="flex flex-col gap-4 relative z-10">
                 <div className="flex items-start justify-between gap-4">
