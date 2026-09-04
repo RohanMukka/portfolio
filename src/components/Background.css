@@ -1,0 +1,189 @@
+/*
+ * The ambient 3D space the whole site sits inside.
+ *
+ * Everything here is either painted once or animated purely through
+ * translate3d, so scrolling and moving the pointer cost a compositor pass and
+ * nothing more. Nothing in this file uses filter: blur() -- the soft washes
+ * are radial gradients, which are soft by construction and, unlike a blurred
+ * element, do not force a full-surface re-render every frame.
+ */
+
+.bg-root {
+  position: fixed;
+  inset: 0;
+  z-index: -50;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  transition: background-color 0.6s ease;
+  pointer-events: none;
+  contain: layout paint style;
+}
+
+/* --- Soft colour field ---------------------------------------------------- */
+
+.bg-aurora {
+  position: absolute;
+  inset: -25%;
+  background-image:
+    radial-gradient(
+      42% 38% at 78% 12%,
+      rgba(37, 99, 235, 0.3) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      46% 42% at 14% 84%,
+      rgba(192, 86, 33, 0.24) 0%,
+      transparent 66%
+    ),
+    radial-gradient(
+      38% 34% at 32% 22%,
+      rgba(3, 32, 99, 0.13) 0%,
+      transparent 70%
+    );
+  transform: translate3d(
+    calc(var(--px) * -22px),
+    calc(var(--py) * -18px),
+    0
+  );
+  will-change: transform;
+}
+
+[data-theme="dark"] .bg-aurora {
+  background-image:
+    radial-gradient(
+      44% 40% at 76% 10%,
+      rgba(37, 99, 235, 0.42) 0%,
+      transparent 66%
+    ),
+    radial-gradient(
+      48% 44% at 12% 82%,
+      rgba(124, 58, 237, 0.36) 0%,
+      transparent 64%
+    ),
+    radial-gradient(
+      36% 32% at 34% 26%,
+      rgba(251, 139, 60, 0.16) 0%,
+      transparent 68%
+    );
+}
+
+/* --- Depth field ---------------------------------------------------------- */
+
+/* Two sparse dot layers drifting at different rates. Parallax between them is
+   most of what reads as "there is space behind the page". */
+.bg-motes {
+  position: absolute;
+  inset: -10%;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, var(--grid-line), transparent),
+    radial-gradient(1.5px 1.5px at 68% 8%, var(--grid-line), transparent),
+    radial-gradient(1.5px 1.5px at 84% 44%, var(--grid-line), transparent),
+    radial-gradient(1.5px 1.5px at 26% 62%, var(--grid-line), transparent),
+    radial-gradient(1.5px 1.5px at 47% 34%, var(--grid-line), transparent),
+    radial-gradient(1.5px 1.5px at 92% 74%, var(--grid-line), transparent),
+    radial-gradient(1.5px 1.5px at 8% 88%, var(--grid-line), transparent),
+    radial-gradient(1.5px 1.5px at 58% 92%, var(--grid-line), transparent);
+  opacity: 0.28;
+  transform: translate3d(
+    calc(var(--px) * -46px),
+    calc(var(--py) * -38px + var(--scroll) * -0.04px),
+    0
+  );
+  will-change: transform;
+}
+
+.bg-motes-far {
+  position: absolute;
+  inset: -10%;
+  background-image:
+    radial-gradient(1px 1px at 34% 12%, var(--grid-line), transparent),
+    radial-gradient(1px 1px at 76% 28%, var(--grid-line), transparent),
+    radial-gradient(1px 1px at 18% 46%, var(--grid-line), transparent),
+    radial-gradient(1px 1px at 62% 68%, var(--grid-line), transparent),
+    radial-gradient(1px 1px at 88% 14%, var(--grid-line), transparent),
+    radial-gradient(1px 1px at 4% 30%, var(--grid-line), transparent);
+  opacity: 0.16;
+  transform: translate3d(
+    calc(var(--px) * -16px),
+    calc(var(--py) * -13px + var(--scroll) * -0.015px),
+    0
+  );
+  will-change: transform;
+}
+
+/* --- Ground plane --------------------------------------------------------- */
+
+/* A real plane laid back in Z, not a texture pretending to be one. The
+   container holds the perspective and the clip; the grid inside it is the only
+   thing that moves. */
+.bg-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64vh;
+  overflow: hidden;
+  perspective: 340px;
+  perspective-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 6%, transparent 88%);
+  mask-image: linear-gradient(to top, #000 6%, transparent 88%);
+}
+
+/* Pivoted about its own bottom edge so the plane lies away from the viewer:
+   near edge along the foot of the viewport, far edge converging to a horizon
+   partway up. */
+.bg-floor-grid {
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 220%;
+  transform-origin: 50% 100%;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.34;
+  /* Scroll walks the plane toward the viewer. The offset is clamped so the
+     translation stays inside the tile run no matter how far the page scrolls. */
+  transform: rotateX(68deg)
+    translate3d(
+      calc(var(--px) * -14px),
+      calc(min(var(--scroll), 6000) * 0.14px),
+      0
+    );
+  will-change: transform;
+}
+
+.bg-horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56vh;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--bg-primary) 55%, transparent) 0%,
+    transparent 42%
+  );
+}
+
+/* --- Grain ---------------------------------------------------------------- */
+
+.bg-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-aurora,
+  .bg-motes,
+  .bg-motes-far,
+  .bg-floor-grid {
+    transform: none;
+    will-change: auto;
+  }
+}

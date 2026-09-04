@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import Reveal from '../components/Reveal';
 import { MapPin, Calendar, Briefcase } from "lucide-react";
 
 interface ExperienceItem {
@@ -131,27 +131,18 @@ const Experience = () => {
       ></div>
 
       <div className="max-w-6xl w-full relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16 md:mb-20"
-        >
+        <Reveal className="text-center mb-16 md:mb-20">
           <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-text mb-6">
             Professional Path
           </h2>
           <p className="text-primary-secondary text-xl max-w-2xl mx-auto">
             Every role plotted as one continuous climb, not a list.
           </p>
-        </motion.div>
+        </Reveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="relative rounded-[2rem] glass-card p-6 md:p-10 overflow-hidden"
-        >
+        <Reveal
+  className="relative rounded-[2rem] glass-card p-6 md:p-10 overflow-hidden"
+>
           <div
             className="absolute -top-10 -right-10 w-56 h-56 rounded-full -z-10"
             style={{ background: "radial-gradient(circle, rgba(var(--accent-rgb), 0.12) 0%, transparent 70%)" }}
@@ -205,28 +196,20 @@ const Experience = () => {
                     ))}
                   </g>
 
-                  <motion.path
-                    d={areaPath}
-                    fill="url(#exp-terrain-fill)"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.3 }}
-                  />
+                  <path
+    d={areaPath}
+  fill="url(#exp-terrain-fill)"
+/>
 
-                  <motion.path
-                    d={linePath}
-                    fill="none"
-                    stroke="currentColor"
-                    className="text-accent"
-                    strokeWidth={3}
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
-                    whileInView={{ pathLength: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.4, ease: "easeInOut" }}
-                  />
+                  <path
+    d={linePath}
+  fill="none"
+  stroke="currentColor"
+  className="text-accent"
+  strokeWidth={3}
+  strokeLinejoin="round"
+  strokeLinecap="round"
+/>
 
                   {points.map((p) => {
                     const isActive = p.id === activeId;
@@ -295,12 +278,7 @@ const Experience = () => {
 
           {/* detail panel for the active point */}
           <div className="border-t border-glass-border mt-4 pt-8">
-            <motion.div
-              key={active.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
+            <Reveal key={active.id}>
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
                   <div className="flex items-start gap-4">
                     <div className="p-3 rounded-xl bg-surface-subtle border border-glass-border text-accent shrink-0">
@@ -345,9 +323,9 @@ const Experience = () => {
                     </span>
                   ))}
                 </div>
-            </motion.div>
+            </Reveal>
           </div>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

@@ -1,0 +1,264 @@
+/*
+ * Project deck.
+ *
+ * Each card is its own small 3D scene: the artwork sits at the back of the
+ * box, the text plates float forward on their own Z planes, and the whole rig
+ * turns toward the cursor. The depth is real, so the plates parallax against
+ * the artwork as the card turns instead of sliding as one flat picture.
+ */
+
+.pcard {
+  position: relative;
+  height: 420px;
+  width: 100%;
+  perspective: 1000px;
+}
+
+.pcard-rig {
+  --rx: 0deg;
+  --ry: 0deg;
+  --gx: 50%;
+  --gy: 50%;
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.pcard:hover .pcard-rig {
+  transition: transform 0.12s linear;
+}
+
+/* Artwork plane, furthest back inside the card. */
+.pcard-art {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--surface-3);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--elev-3);
+  transform: translateZ(0);
+  transition: box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pcard:hover .pcard-art {
+  box-shadow: var(--elev-5);
+}
+
+.pcard-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.04);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pcard:hover .pcard-art img {
+  transform: scale(1.11);
+}
+
+/* Scrim keeps the text legible whatever the artwork does. */
+.pcard-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    var(--bg-primary) 4%,
+    color-mix(in srgb, var(--bg-primary) 72%, transparent) 34%,
+    transparent 66%
+  );
+}
+
+/* Glare follows the cursor across the card face. */
+.pcard-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    38% 38% at var(--gx) var(--gy),
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 70%
+  );
+  transform: translateZ(2px);
+}
+
+.pcard:hover .pcard-glare {
+  opacity: 1;
+}
+
+[data-theme="dark"] .pcard-glare {
+  background: radial-gradient(
+    38% 38% at var(--gx) var(--gy),
+    rgba(190, 210, 255, 0.16) 0%,
+    transparent 70%
+  );
+}
+
+/* Text plates, lifted off the artwork. */
+.pcard-plate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.75rem;
+  transform: translateZ(46px);
+  pointer-events: none;
+}
+
+.pcard-rule {
+  height: 3px;
+  width: 44px;
+  border-radius: 999px;
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pcard:hover .pcard-rule {
+  width: 76px;
+}
+
+/* Description panel rises on hover. */
+.pcard-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s ease;
+}
+
+.pcard-detail > div {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.pcard:hover .pcard-detail,
+.pcard:focus-within .pcard-detail {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* Action row floats highest so it stays clearly on top of everything. */
+.pcard-actions {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  gap: 0.5rem;
+  transform: translateZ(70px);
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pcard:hover .pcard-actions,
+.pcard:focus-within .pcard-actions {
+  opacity: 1;
+}
+
+.pcard-badge {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  transform: translateZ(58px);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcard-rig,
+  .pcard-art img {
+    transform: none;
+    transition: none;
+  }
+  .pcard-detail {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .pcard-actions {
+    opacity: 1;
+  }
+}
+
+/* --- Generated cover art -------------------------------------------------- */
+
+/*
+ * Projects without a real screenshot get a cover built from their own accent
+ * colour instead of a hotlinked stock photo. Fourteen external images on one
+ * carousel was both the section's biggest network cost and its biggest failure
+ * mode -- a slow or blocked CDN left every card blank.
+ */
+.pcard-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      74% 56% at 18% 8%,
+      color-mix(in srgb, var(--art) 46%, transparent) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      64% 62% at 92% 24%,
+      color-mix(in srgb, var(--art) 24%, transparent) 0%,
+      transparent 70%
+    ),
+    linear-gradient(
+      158deg,
+      color-mix(in srgb, var(--art) 14%, var(--surface-3)) 0%,
+      var(--surface-3) 68%
+    );
+}
+
+/* Faint plotting grid, for texture at close range. */
+.pcard-canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--art) 22%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--art) 22%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(70% 60% at 30% 20%, #000, transparent 78%);
+  mask-image: radial-gradient(70% 60% at 30% 20%, #000, transparent 78%);
+}
+
+.pcard-glyph {
+  position: absolute;
+  top: 2.25rem;
+  left: 1.75rem;
+  font-family: "Syne", sans-serif;
+  font-weight: 800;
+  font-size: 5.5rem;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  color: color-mix(in srgb, var(--art) 42%, transparent);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pcard:hover .pcard-glyph {
+  transform: translate3d(0, -6px, 0);
+}

@@ -7,56 +7,161 @@
   --color-primary-secondary: var(--text-secondary);
   --color-primary-tertiary: var(--text-tertiary);
   --color-accent: var(--accent);
+  --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
+  --color-glass-shadow: var(--glass-shadow);
   --color-surface-subtle: var(--surface-subtle);
+
+  /* Accent family. These were referenced across the app but never defined,
+     so the icons using them rendered uncoloured. */
+  --color-primary-blue: var(--hue-blue);
+  --color-electric-cyan: var(--hue-cyan);
+  --color-primary-purple: var(--hue-purple);
+  --color-primary-pink: var(--hue-pink);
+  --color-primary-orange: var(--hue-orange);
+  --color-primary-green: var(--hue-green);
+}
+
+/* Registering the motion drivers as typed numbers lets the compositor treat
+   them as animatable scalars instead of re-parsing a string every frame. */
+@property --px {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --py {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --scroll {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --vh {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 800;
 }
 
 @layer base {
   :root {
-    /* Warm cream theme (Light) with Royal Blue Typography */
-    --bg-primary: #f8f6f2;
-    --bg-elevated: #ffffff;
-    --text-primary: #002366;
-    /* Royal Blue */
-    --text-secondary: #003399aa;
-    --text-tertiary: #00339977;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(0, 35, 102, 0.12);
-    --glass-shadow: rgba(0, 35, 102, 0.05);
-    --surface-subtle: rgba(0, 35, 102, 0.04);
-    --accent: #c45c26;
-    --accent-rgb: 196, 92, 38;
-    --accent-dim: rgba(196, 92, 38, 0.15);
+    /* Warm cream ground, royal blue ink, burnt orange accent. */
+    --bg-primary: #f6f3ed;
+    --bg-elevated: #fffdfa;
+    --text-primary: #032063;
+    --text-secondary: #2c4f96;
+    --text-tertiary: #7189b8;
+    --glass-bg: rgba(255, 253, 250, 0.72);
+    --glass-border: rgba(3, 32, 99, 0.12);
+    --glass-shadow: rgba(3, 32, 99, 0.08);
+    --surface-subtle: rgba(3, 32, 99, 0.04);
+    --accent: #c05621;
+    --accent-rgb: 192, 86, 33;
+    --accent-dim: rgba(192, 86, 33, 0.15);
+
+    --hue-blue: #2563eb;
+    --hue-cyan: #0891b2;
+    --hue-purple: #7c3aed;
+    --hue-pink: #db2777;
+    --hue-orange: #c05621;
+    --hue-green: #059669;
+
+    /* Light source. Shadows are tinted with the ink colour rather than pure
+       black -- untinted black is what makes a light UI look flat and cheap. */
+    --shadow-color: 219 89% 20%;
+    --shadow-strength: 1;
+    --rim-light: rgba(255, 255, 255, 0.9);
+    --rim-shade: rgba(3, 32, 99, 0.06);
+
+    /* Surfaces climb toward white as they rise. */
+    --surface-1: rgba(255, 253, 250, 0.6);
+    --surface-2: rgba(255, 253, 250, 0.75);
+    --surface-3: rgba(255, 255, 255, 0.86);
+    --surface-4: rgba(255, 255, 255, 0.94);
+    --surface-5: #ffffff;
+
+    --grid-line: rgba(3, 32, 99, 0.5);
+    --glass-blur: 10px;
+    color-scheme: light;
   }
 
-  [data-theme='dark'] {
-    --bg-primary: #0a0a0d;
-    --bg-elevated: #16161a;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-tertiary: #64748b;
-    --glass-bg: rgba(15, 23, 42, 0.8);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-shadow: rgba(0, 0, 0, 0.5);
-    --surface-subtle: rgba(255, 255, 255, 0.05);
-    --accent: #f97316;
-    --accent-rgb: 249, 115, 22;
-    --accent-dim: rgba(249, 115, 22, 0.2);
+  [data-theme="dark"] {
+    --bg-primary: #07080f;
+    --bg-elevated: #101322;
+    --text-primary: #eef2fb;
+    --text-secondary: #9fb0cf;
+    --text-tertiary: #6b7c9e;
+    --glass-bg: rgba(16, 19, 34, 0.7);
+    --glass-border: rgba(159, 176, 207, 0.14);
+    --glass-shadow: rgba(0, 0, 0, 0.55);
+    --surface-subtle: rgba(159, 176, 207, 0.06);
+    --accent: #fb8b3c;
+    --accent-rgb: 251, 139, 60;
+    --accent-dim: rgba(251, 139, 60, 0.2);
+
+    --hue-blue: #60a5fa;
+    --hue-cyan: #22d3ee;
+    --hue-purple: #a78bfa;
+    --hue-pink: #f472b6;
+    --hue-orange: #fb8b3c;
+    --hue-green: #34d399;
+
+    --shadow-color: 225 70% 2%;
+    --shadow-strength: 1.9;
+    --rim-light: rgba(190, 210, 255, 0.14);
+    --rim-shade: rgba(0, 0, 0, 0.5);
+
+    /* In a dark theme elevation reads as *lighter*, not as a bigger shadow.
+       Shadows still run underneath to seat each surface on the one below. */
+    --surface-1: rgba(24, 28, 46, 0.62);
+    --surface-2: rgba(30, 35, 56, 0.74);
+    --surface-3: rgba(38, 44, 68, 0.84);
+    --surface-4: rgba(47, 54, 82, 0.92);
+    --surface-5: #38405f;
+
+    --grid-line: rgba(159, 176, 207, 0.55);
+    color-scheme: dark;
   }
 
-  .glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px 0 var(--glass-shadow);
+  /* Elevation ladder. Each rung pairs a Z offset with a two-light shadow --
+     a tight contact shadow plus a wide ambient one -- so depth stays
+     consistent everywhere instead of every card inventing its own. */
+  :root,
+  [data-theme="dark"] {
+    --z-1: 0px;
+    --z-2: 14px;
+    --z-3: 32px;
+    --z-4: 56px;
+    --z-5: 88px;
+
+    --elev-1:
+      0 1px 2px -1px hsl(var(--shadow-color) / calc(0.05 * var(--shadow-strength))),
+      0 2px 8px -3px hsl(var(--shadow-color) / calc(0.06 * var(--shadow-strength)));
+    --elev-2:
+      0 2px 4px -2px hsl(var(--shadow-color) / calc(0.06 * var(--shadow-strength))),
+      0 8px 18px -6px hsl(var(--shadow-color) / calc(0.09 * var(--shadow-strength)));
+    --elev-3:
+      0 4px 8px -3px hsl(var(--shadow-color) / calc(0.07 * var(--shadow-strength))),
+      0 16px 32px -10px hsl(var(--shadow-color) / calc(0.12 * var(--shadow-strength)));
+    --elev-4:
+      0 8px 14px -6px hsl(var(--shadow-color) / calc(0.08 * var(--shadow-strength))),
+      0 28px 54px -16px hsl(var(--shadow-color) / calc(0.16 * var(--shadow-strength)));
+    --elev-5:
+      0 14px 22px -10px hsl(var(--shadow-color) / calc(0.1 * var(--shadow-strength))),
+      0 48px 88px -24px hsl(var(--shadow-color) / calc(0.22 * var(--shadow-strength)));
   }
 
+  /* The ground colour lives on <html> so it paints as the canvas background.
+     Putting it on <body> instead paints it as an ordinary block background,
+     which lands *above* negative-z-index layers in the painting order and
+     hides the entire ambient background. */
   html {
+    background-color: var(--bg-primary);
     font-family: "Inter", system-ui, sans-serif;
     line-height: 1.6;
     font-weight: 400;
-    color-scheme: light;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
@@ -66,7 +171,7 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background-color: var(--bg-primary);
+    background-color: transparent;
     color: var(--text-primary);
     overflow-x: hidden;
   }
@@ -80,29 +185,201 @@
     font-family: "Syne", sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 
   ::selection {
     background: var(--accent-dim);
     color: var(--text-primary);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Surface primitive. `data-elev` picks the rung; the rim highlight along the
+     top edge and the shade along the bottom are what actually sell the
+     thickness -- the shadow alone only sells the gap underneath. */
+  .surface {
+    background: var(--surface-2);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      var(--elev-2),
+      inset 0 1px 0 var(--rim-light),
+      inset 0 -1px 0 var(--rim-shade);
+    transition:
+      box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.4s ease;
+  }
+
+  .surface[data-elev="1"] {
+    background: var(--surface-1);
+    box-shadow:
+      var(--elev-1),
+      inset 0 1px 0 var(--rim-light),
+      inset 0 -1px 0 var(--rim-shade);
+  }
+  .surface[data-elev="3"] {
+    background: var(--surface-3);
+    box-shadow:
+      var(--elev-3),
+      inset 0 1px 0 var(--rim-light),
+      inset 0 -1px 0 var(--rim-shade);
+  }
+  .surface[data-elev="4"] {
+    background: var(--surface-4);
+    box-shadow:
+      var(--elev-4),
+      inset 0 1px 0 var(--rim-light),
+      inset 0 -1px 0 var(--rim-shade);
+  }
+  .surface[data-elev="5"] {
+    background: var(--surface-5);
+    box-shadow:
+      var(--elev-5),
+      inset 0 1px 0 var(--rim-light),
+      inset 0 -1px 0 var(--rim-shade);
+  }
+
+  /* Blur is the single most expensive thing a card can ask for, so it is
+     opt-in and capped rather than stacked on every surface. */
+  .surface-glass {
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  .glass-card {
+    background: var(--surface-2);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      var(--elev-2),
+      inset 0 1px 0 var(--rim-light),
+      inset 0 -1px 0 var(--rim-shade);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  /* A surface that rises toward the viewer on hover. `lift` is the only
+     property that animates, and it feeds a translate3d, so hovering costs a
+     compositor pass and nothing else. */
+  .lift {
+    --lift: 0;
+    transform: translate3d(0, calc(var(--lift) * -8px), 0)
+      scale(calc(1 + var(--lift) * 0.012));
+    transition:
+      --lift 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .lift:hover {
+    --lift: 1;
+    box-shadow:
+      var(--elev-4),
+      inset 0 1px 0 var(--rim-light),
+      inset 0 -1px 0 var(--rim-shade);
+  }
 }
 
 @layer utilities {
+  /* Entrance states for <Reveal>. The element starts offset and transparent and
+     transitions to rest once its observer fires. Transform and opacity only, so
+     each reveal is a compositor animation. */
+  .reveal {
+    opacity: 0;
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+
+  .reveal[data-reveal="up"] {
+    transform: translate3d(0, 24px, 0);
+  }
+  .reveal[data-reveal="fade"] {
+    transform: none;
+  }
+  .reveal[data-reveal="scale"] {
+    transform: scale(0.94);
+  }
+  .reveal[data-reveal="left"] {
+    transform: translate3d(-28px, 0, 0);
+  }
+  .reveal[data-reveal="right"] {
+    transform: translate3d(28px, 0, 0);
+  }
+
+  .reveal[data-shown] {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Scroll progress, straight off the ambient engine. */
+  .scroll-progress {
+    transform: scaleX(var(--scrollp, 0));
+    transform-origin: left center;
+  }
+
   .btn-cta {
     background: var(--text-primary);
     color: var(--bg-primary);
     font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--elev-2);
+    transition:
+      box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-cta:hover {
-    opacity: 0.95;
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 10px 20px -10px var(--text-primary);
+    transform: translate3d(0, -3px, 0);
+    box-shadow: var(--elev-4);
   }
 
-  /* 3D Transform Utilities */
+  .magnetic {
+    --mx: 0px;
+    --my: 0px;
+    transform: translate3d(var(--mx), var(--my), 0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .btn-cta.magnetic:hover,
+  .magnetic.lift:hover {
+    transform: translate3d(var(--mx), calc(var(--my) - 3px), 0);
+  }
+
+  /* 3D scene primitives */
+  .scene {
+    perspective: 1200px;
+    perspective-origin: calc(50% + var(--px) * 6%) calc(50% + var(--py) * 6%);
+  }
+
+  .scene-near {
+    perspective: 800px;
+  }
+
   .preserve-3d {
     transform-style: preserve-3d;
   }
@@ -117,5 +394,22 @@
 
   .rotate-y-180 {
     transform: rotateY(180deg);
+  }
+
+  /* Parallax planes. `--depth` is how far back the layer sits: 0 is glued to
+     the page, 1 drifts a full step with the pointer. Composited only. */
+  .plane {
+    --depth: 0;
+    transform: translate3d(
+      calc(var(--px) * var(--depth) * -14px),
+      calc(var(--py) * var(--depth) * -14px),
+      0
+    );
+    will-change: transform;
+  }
+
+  .tilt-scene {
+    transform: rotateX(calc(var(--py) * -3deg)) rotateY(calc(var(--px) * 3deg));
+    transform-style: preserve-3d;
   }
 }

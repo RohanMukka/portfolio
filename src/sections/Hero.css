@@ -1,0 +1,244 @@
+/*
+ * Hero stage.
+ *
+ * A genuine 3D composition: the rig carries `preserve-3d`, and every layer sits
+ * at a different translateZ under one shared perspective. Because the depth is
+ * real, the parallax between layers is computed by the compositor rather than
+ * faked with per-layer offsets -- which is both more convincing and cheaper.
+ *
+ * Constraint worth remembering: `overflow`, `filter` and `opacity < 1` all
+ * flatten a 3D context. None of them appear on any ancestor of a Z-positioned
+ * layer here.
+ */
+
+.hero-stage {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+}
+
+@media (min-width: 768px) {
+  .hero-stage {
+    width: 400px;
+    height: 520px;
+  }
+}
+
+/* The rest pose matters: with the pointer at centre both drivers are 0, so
+   without a base rotation the whole stage would sit face-on and read flat to
+   anyone who has not moved their mouse yet. */
+.hero-rig {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(calc(-7deg + var(--px) * 9deg))
+    rotateX(calc(2.5deg + var(--py) * -7deg));
+  will-change: transform;
+}
+
+/* --- Depth slabs ---------------------------------------------------------- */
+
+/* Stacked planes receding behind the portrait. They are what give the card
+   apparent thickness once the rig turns. */
+.hero-slab {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface-1);
+}
+
+.hero-slab--1 {
+  transform: translateZ(-30px) scale(1.035);
+  opacity: 0.75;
+}
+
+.hero-slab--2 {
+  transform: translateZ(-64px) scale(1.075);
+  opacity: 0.45;
+}
+
+.hero-slab--3 {
+  transform: translateZ(-104px) scale(1.12);
+  opacity: 0.22;
+}
+
+/* Halo sitting furthest back, so it separates the stack from the page. */
+.hero-halo {
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--accent-rgb), 0.22) 0%,
+    transparent 62%
+  );
+  transform: translateZ(-170px) scale(1.1);
+}
+
+/* --- Portrait ------------------------------------------------------------- */
+
+.hero-portrait {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--surface-3);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--elev-5);
+  transform: translateZ(0);
+}
+
+.hero-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Specular sweep. Tracking the pointer is what makes the surface read as a
+   physical, slightly glossy object rather than a flat picture. */
+.hero-portrait::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.32) 48%,
+    transparent 58%
+  );
+  transform: translate3d(calc(var(--px) * 34% - 4%), 0, 0);
+  opacity: 0.75;
+}
+
+[data-theme="dark"] .hero-portrait::after {
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(190, 210, 255, 0.16) 48%,
+    transparent 58%
+  );
+}
+
+/* Inner rim so the edge catches light like a bevel. */
+.hero-portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 24px;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16);
+}
+
+/* --- Floating chips ------------------------------------------------------- */
+
+/* Placement lives on the outer element and the idle float on the inner one, so
+   the animation never overwrites the Z position. */
+.hero-chip {
+  position: absolute;
+  transform: translate3d(var(--tx, 0), var(--ty, 0), var(--cz));
+  transform-style: preserve-3d;
+}
+
+.hero-chip-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-primary);
+  background: var(--surface-4);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--elev-3);
+  animation: chip-float 6s ease-in-out infinite;
+  animation-delay: var(--cd, 0s);
+}
+
+.hero-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--chip-dot, var(--accent));
+}
+
+@keyframes chip-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+/* --- Headline ------------------------------------------------------------- */
+
+.hero-title {
+  transform-style: preserve-3d;
+}
+
+.hero-letter {
+  display: inline-block;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.35s ease;
+  will-change: transform;
+}
+
+.hero-letter:hover {
+  transform: translate3d(0, -8px, 42px);
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rig {
+    transform: rotateY(-7deg) rotateX(2.5deg);
+  }
+  .hero-portrait::after {
+    transform: none;
+  }
+  .hero-chip-inner {
+    animation: none;
+  }
+  .hero-letter:hover {
+    transform: none;
+  }
+}
+
+/* Per-letter entrance. Runs as a CSS animation so the headline needs no
+   animation runtime at all -- it is the largest text on the page and the first
+   thing painted. */
+.hero-letter {
+  opacity: 0;
+  animation: letter-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0) rotateX(-60deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-letter {
+    opacity: 1;
+    animation: none;
+  }
+}

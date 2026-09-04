@@ -1,18 +1,14 @@
 import React from "react";
+import Reveal from '../components/Reveal';
 import SectionContainer from "../components/SectionContainer";
-import { motion } from "framer-motion";
 import { ExternalLink, Code2, Rocket, Calendar } from "lucide-react";
 
 const Architecture = () => {
   return (
     <SectionContainer id="architecture">
-      <motion.div
-        className="max-w-6xl mx-auto p-6 md:p-16 rounded-[2.5rem] glass-card backdrop-blur-3xl border border-white/10 relative overflow-hidden"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
+      <Reveal
+  className="max-w-6xl mx-auto p-6 md:p-16 rounded-[2.5rem] glass-card backdrop-blur-3xl border border-white/10 relative overflow-hidden"
+>
         {/* Background Glow */}
         <div className="absolute top-0 right-0 w-64 h-64 -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 -z-10" style={{background: 'radial-gradient(circle, rgba(0, 80, 255, 0.1) 0%, transparent 70%)'}}></div>
@@ -84,14 +80,12 @@ const Architecture = () => {
                 color: "border-purple-500/10",
               },
             ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
-                className={`p-8 rounded-[2.5rem] bg-bg-elevated/60 backdrop-blur-xl border-2 ${stat.color} flex items-center justify-between group hover:bg-bg-elevated transition-all transform hover:-translate-y-2 shadow-lg shadow-black/5 mx-auto w-full`}
-              >
+              <Reveal
+  variant="right"
+  delay={0.2 + i * 0.1}
+  key={stat.label}
+  className={`p-8 rounded-[2.5rem] bg-bg-elevated/60 backdrop-blur-xl border-2 ${stat.color} flex items-center justify-between group hover:bg-bg-elevated transition-all transform hover:-translate-y-2 shadow-lg shadow-black/5 mx-auto w-full`}
+>
                 <div>
                   <div className="text-3xl font-display font-black text-primary-text mb-1">
                     {stat.value}
@@ -103,11 +97,11 @@ const Architecture = () => {
                 <div className="p-4 rounded-2xl bg-accent/5 group-hover:bg-accent/10 transition-colors shadow-inner border border-accent/5">
                   {stat.icon}
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </div>
-      </motion.div>
+      </Reveal>
     </SectionContainer>
   );
 };

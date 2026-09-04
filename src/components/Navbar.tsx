@@ -1,7 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { MousePointer2, ChevronDown, Menu, X as CloseIcon } from "lucide-react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
+import { useSectionSpy } from "../lib/useSectionSpy";
+import "./Navbar.css";
+
+const SECTION_IDS = [
+  "architecture",
+  "projects",
+  "skills",
+  "education",
+  "certifications",
+  "contact",
+];
+
+const links = [
+  { name: "About", href: "#architecture" },
+  { name: "Work", href: "#projects" },
+  { name: "Skills", href: "#skills" },
+  { name: "Education", href: "#education" },
+  { name: "Certifications", href: "#certifications" },
+  { name: "Contact", href: "#contact" },
+];
 
 interface NavbarProps {
   isScrolled?: boolean;
@@ -10,46 +28,37 @@ interface NavbarProps {
 const Navbar = ({ isScrolled = false }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
-  const [isNavHovered, setIsNavHovered] = useState(false);
-  const [theme, setTheme] = useState("light");
-  const [activeTab, setActiveTab] = useState("");
+  const [theme, setTheme] = useState(
+    () => document.documentElement.getAttribute("data-theme") || "light",
+  );
+  const activeTab = useSectionSpy(SECTION_IDS);
 
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const listRef = useRef<HTMLDivElement>(null);
+  const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
+
+  // The highlight is one element that slides between items. Its position is
+  // measured only when the target changes, never on scroll or hover frames.
+  const target = hovered ?? links.find((l) => l.href === `#${activeTab}`)?.name;
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list || !target) {
+      setPill(null);
+      return;
+    }
+    const el = list.querySelector<HTMLElement>(`[data-nav="${target}"]`);
+    if (!el) {
+      setPill(null);
+      return;
+    }
+    setPill({ x: el.offsetLeft, w: el.offsetWidth });
+  }, [target]);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-    document.documentElement.setAttribute("data-theme", savedTheme);
-
-    const handleScroll = () => {
-      const sections = [
-        "architecture",
-        "experience",
-        "projects",
-        "skills",
-        "education",
-        "certifications",
-        "contact",
-      ];
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) setActiveTab(current);
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [mobileOpen]);
 
   const toggleTheme = () => {
     const nextTheme = theme === "light" ? "dark" : "light";
@@ -58,94 +67,56 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
     localStorage.setItem("theme", nextTheme);
   };
 
-  const links = [
-    { name: "About", href: "#architecture" },
-    // { name: "Experience", href: "#experience" },
-    { name: "Work", href: "#projects" },
-    { name: "Skills", href: "#skills" },
-    { name: "Education", href: "#education" },
-    { name: "Certifications", href: "#certifications" },
-    { name: "Contact", href: "#contact" },
-  ];
-
   return (
     <>
-      <motion.nav
-        className={`fixed top-4 left-0 right-0 z-50 flex justify-center`}
-        initial={{ y: -20, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          scale: isNavHovered ? 1.05 : 1,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-        }}
-        onMouseEnter={() => setIsNavHovered(true)}
-        onMouseLeave={() => setIsNavHovered(false)}
-      >
+      <nav className="navbar">
         <div
-          className={`w-full max-w-5xl transition-all duration-500 bg-glass-bg backdrop-blur-xl rounded-full border border-glass-border shadow-2xl shadow-glass-shadow mx-4 px-6 flex justify-between items-center relative overflow-hidden ${
-            isScrolled ? "py-3" : "py-5"
-          } ${isNavHovered ? "shadow-accent/20 border-accent/20" : ""}`}
+          className={`navbar-bar surface surface-glass${isScrolled ? " is-scrolled" : ""}`}
+          data-elev={isScrolled ? "3" : "2"}
         >
-          {/* Scroll Progress Bar */}
-          <motion.div
-            className="absolute bottom-0 left-0 h-0.5 bg-accent origin-left w-full"
-            style={{ scaleX }}
-          />
+          <span className="navbar-progress scroll-progress" aria-hidden="true" />
 
-          <a
-            href="#"
-            className="text-lg font-display font-semibold text-primary-text hover:opacity-80 transition-opacity tracking-tight"
-          >
+          <a href="#hero" className="navbar-brand">
             Rohan Mukka
           </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-2">
-            {links.map((link) => {
-              const isActive = activeTab === link.href.replace("#", "");
-              return (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  className={`relative px-4 py-2 text-sm font-medium transition-colors ${isActive ? "text-primary-text" : "text-primary-secondary hover:text-primary-text"}`}
-                  onMouseEnter={() => setHovered(link.name)}
-                  onMouseLeave={() => setHovered(null)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {(hovered === link.name || isActive) && (
-                    <motion.span
-                      layoutId="nav-item-active"
-                      className={`absolute inset-0 border rounded-full -z-10 ${isActive ? "bg-surface-subtle border-accent/20" : "bg-surface-subtle/50 border-glass-border"}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    />
-                  )}
-                  {link.name}
-                </motion.a>
-              );
-            })}
-
-            <div className="ml-4 flex items-center gap-4">
-              <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-            </div>
+          <div className="navbar-links" ref={listRef}>
+            {pill && (
+              <span
+                className="navbar-pill"
+                aria-hidden="true"
+                style={{
+                  transform: `translate3d(${pill.x}px, 0, 0)`,
+                  width: `${pill.w}px`,
+                }}
+              />
+            )}
+            {links.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                data-nav={link.name}
+                className={`navbar-link${
+                  activeTab === link.href.slice(1) ? " is-active" : ""
+                }`}
+                onMouseEnter={() => setHovered(link.name)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                {link.name}
+              </a>
+            ))}
+            <span className="navbar-divider" />
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
           </div>
 
-          {/* Mobile Menu Button Controls */}
-          <div className="flex items-center gap-4 md:hidden">
+          <div className="navbar-mobile-controls">
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
             <button
               type="button"
-              className="p-2 text-primary-text"
-              onClick={() => setMobileOpen((o) => !o)}
+              className="navbar-burger"
+              onClick={() => setMobileOpen((open) => !open)}
               aria-label="Menu"
+              aria-expanded={mobileOpen}
             >
               <svg
                 width="24"
@@ -164,81 +135,49 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
             </button>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              className="md:hidden fixed inset-0 z-50 bg-background/95 backdrop-blur-2xl flex flex-col items-center justify-center p-8 overflow-hidden"
-              initial={{ opacity: 0, x: "100%" }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      <div
+        className={`navbar-sheet${mobileOpen ? " is-open" : ""}`}
+        hidden={!mobileOpen}
+      >
+        <div className="navbar-sheet-glow" aria-hidden="true" />
+        <button
+          type="button"
+          className="navbar-sheet-close surface"
+          data-elev="3"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Close menu"
+        >
+          <svg
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        <nav className="navbar-sheet-links">
+          {links.map((link, i) => (
+            <a
+              key={link.name}
+              href={link.href}
+              style={{ transitionDelay: `${0.05 + i * 0.05}s` }}
+              onClick={() => setMobileOpen(false)}
             >
-              {/* Background Accent Blobs */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-[100px]"></div>
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-blue/10 rounded-full blur-[100px]"></div>
+              {link.name}
+            </a>
+          ))}
+        </nav>
 
-              {/* Close Button Header */}
-              <div className="absolute top-8 right-8">
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  className="p-3 rounded-full bg-surface-subtle text-primary-text border border-glass-border shadow-lg"
-                >
-                  <svg
-                    width="24"
-                    height="24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <nav className="flex flex-col items-center gap-8 w-full max-w-xs">
-                {links.map((link, i) => (
-                  <motion.a
-                    key={link.name}
-                    href={link.href}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 + i * 0.1 }}
-                    className="text-4xl font-display font-bold text-primary-text hover:text-accent transition-colors relative group"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <span className="relative z-10">{link.name}</span>
-                    <motion.span
-                      className="absolute -bottom-2 left-0 h-1 bg-accent rounded-full -z-10"
-                      initial={{ width: 0 }}
-                      whileHover={{ width: "100%" }}
-                    />
-                  </motion.a>
-                ))}
-              </nav>
-
-              <motion.div
-                className="mt-20 flex flex-col items-center gap-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-              >
-                <div className="flex items-center gap-4 text-primary-text">
-                  <span className="text-sm font-bold uppercase tracking-widest opacity-60">
-                    Theme
-                  </span>
-                  <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-                </div>
-                <div className="text-xs text-primary-secondary font-medium tracking-wide">
-                  © {new Date().getFullYear()} ROHAN MUKKA
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.nav>
+        <div className="navbar-sheet-foot">
+          © {new Date().getFullYear()} Rohan Mukka
+        </div>
+      </div>
     </>
   );
 };

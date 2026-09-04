@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import Reveal from '../components/Reveal';
 import { GraduationCap, Calendar, MapPin, Award, ArrowUp } from "lucide-react";
 
 const educationData = [
@@ -48,19 +48,14 @@ const Education = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-glass-border to-transparent opacity-50"></div>
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
       <div className="max-w-5xl w-full relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-24"
-        >
+        <Reveal className="text-center mb-24">
           <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-text mb-6">
             Academic Journey
           </h2>
           <p className="text-primary-secondary text-xl max-w-2xl mx-auto">
             From foundational principles to advanced specialization.
           </p>
-        </motion.div>
+        </Reveal>
 
         <div className="relative flex flex-col items-center gap-20 w-full max-w-5xl mx-auto py-10">
           {/* SVG Spiral Connecting Line (Desktop) - Absolutely positioned ON TOP of cards for arrow visibility */}
@@ -72,43 +67,32 @@ const Education = () => {
               style={{ overflow: "visible" }}
             >
               {/* Spiral Path: Lands exactly on the left border of the Masters card */}
-              <motion.path
-                d="M 460 500 
+              <path
+    d="M 460 500 
                        C 600 500, 700 400, 512 400
                        C 350 400, 400 250, 563 250"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                fill="transparent"
-                strokeDasharray="10 5"
-                className="text-primary-text drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 2.5, ease: "easeInOut" }}
-              />
+  stroke="currentColor"
+  strokeWidth="2.5"
+  fill="transparent"
+  strokeDasharray="10 5"
+  className="text-primary-text drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
+/>
 
               {/* Manually drawn Arrowhead - Larger Size */}
-              <motion.path
-                d="M 548 244 L 563 250 L 548 256 Z"
-                fill="currentColor"
-                className="text-primary-text drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 2.4, duration: 0.2 }}
-              />
+              <path
+    d="M 548 244 L 563 250 L 548 256 Z"
+  fill="currentColor"
+  className="text-primary-text drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]"
+/>
             </svg>
           </div>
 
           {/* Masters Card (Top Right) */}
           <div className="relative w-full flex md:justify-end justify-center z-10 pr-4 md:pr-0 pl-4 md:pl-0">
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
-            >
+            <Reveal
+  variant="right"
+  className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
+>
               <div className="absolute -top-6 -right-6 w-20 h-20 bg-electric-cyan/5 rounded-full blur-2xl group-hover:bg-electric-cyan/10 transition-colors"></div>
 
               <div className="flex flex-col gap-4 relative z-10">
@@ -154,29 +138,26 @@ const Education = () => {
                         <Calendar size={12} />
                         {educationData[1].period}
                       </span>
-                      <motion.span
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-extrabold bg-accent text-white shadow-lg shadow-accent/30"
-                        whileHover={{ scale: 1.05 }}
-                      >
+                      <span
+  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-extrabold bg-accent text-white shadow-lg shadow-accent/30"
+>
                         <Award size={14} />
                         GPA: {educationData[1].gpa}
-                      </motion.span>
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
           </div>
 
           {/* Undergrad Card (Bottom Left) */}
           <div className="relative w-full flex md:justify-start justify-center z-10 pr-4 md:pr-0 pl-4 md:pl-0">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
-            >
+            <Reveal
+  variant="left"
+  delay={0.2}
+  className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
+>
               <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-primary-orange/5 rounded-full blur-2xl group-hover:bg-primary-orange/10 transition-colors"></div>
 
               <div className="flex flex-col gap-4 relative z-10">
@@ -233,7 +214,7 @@ const Education = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
           </div>
         </div>
       </div>

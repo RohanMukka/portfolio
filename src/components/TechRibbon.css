@@ -1,0 +1,78 @@
+.ribbon {
+  position: relative;
+  padding: 3rem 0;
+  overflow: hidden;
+  background: var(--surface-subtle);
+  border-block: 1px solid var(--glass-border);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+}
+
+.ribbon-track {
+  display: flex;
+  width: max-content;
+  animation: ribbon-scroll 42s linear infinite;
+  will-change: transform;
+}
+
+.ribbon:hover .ribbon-track {
+  animation-play-state: paused;
+}
+
+.ribbon-run {
+  display: flex;
+  align-items: center;
+}
+
+.ribbon-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2rem;
+  margin-inline: 1rem;
+  font-family: "Syne", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  color: var(--text-primary);
+  opacity: 0.12;
+  transition: opacity 0.35s ease;
+}
+
+.ribbon-item:hover {
+  opacity: 0.85;
+}
+
+.ribbon-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+@keyframes ribbon-scroll {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ribbon-track {
+    animation: none;
+  }
+}

@@ -1,0 +1,76 @@
+.back-to-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  color: var(--text-primary);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 14px, 0) scale(0.85);
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.35s,
+    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.back-to-top.is-visible:hover {
+  box-shadow:
+    var(--elev-4),
+    inset 0 1px 0 var(--rim-light),
+    inset 0 -1px 0 var(--rim-shade);
+  transform: translate3d(0, -2px, 0);
+}
+
+.back-to-top-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.back-to-top-track,
+.back-to-top-fill {
+  fill: none;
+  stroke-width: 4px;
+  stroke-linecap: round;
+}
+
+.back-to-top-track {
+  stroke: color-mix(in srgb, var(--text-primary) 18%, transparent);
+}
+
+/* 2 * PI * r, with r = 46. Offsetting by the unfilled remainder turns the
+   ambient engine's 0..1 scroll progress straight into a filled arc. */
+.back-to-top-fill {
+  stroke: var(--text-primary);
+  stroke-dasharray: 289.03;
+  stroke-dashoffset: calc(289.03 * (1 - var(--scrollp, 0)));
+}
+
+.back-to-top-arrow {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.back-to-top:hover .back-to-top-arrow {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top,
+  .back-to-top-arrow {
+    transition: none;
+  }
+}

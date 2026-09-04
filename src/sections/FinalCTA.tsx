@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import Reveal from '../components/Reveal';
 import SectionContainer from '../components/SectionContainer';
 import { Send, CheckCircle2, Mail, ExternalLink, Linkedin, Github } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const FinalCTA = () => {
   const [formState, setFormState] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
@@ -42,12 +42,7 @@ const FinalCTA = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
           {/* Left: Contact Info & Status */}
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col justify-center"
-          >
+          <Reveal variant="left" className="flex flex-col justify-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-500 border border-green-500/20 text-xs font-bold uppercase tracking-widest mb-6 w-fit">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -83,22 +78,19 @@ const FinalCTA = () => {
                 </a>
               </div>
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* Right: Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="glass-card p-8 md:p-10 rounded-[2rem] border border-white/10 relative"
-          >
-            <AnimatePresence mode="wait">
+          <Reveal
+  variant="right"
+  className="glass-card p-8 md:p-10 rounded-[2rem] border border-white/10 relative"
+>
+            <>
               {formState === 'success' ? (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="h-full flex flex-col items-center justify-center text-center py-10"
-                >
+                <Reveal
+  variant="scale"
+  className="h-full flex flex-col items-center justify-center text-center py-10"
+>
                   <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6 text-green-500">
                     <CheckCircle2 size={40} />
                   </div>
@@ -110,13 +102,12 @@ const FinalCTA = () => {
                   >
                     Send another message
                   </button>
-                </motion.div>
+                </Reveal>
               ) : formState === 'error' ? (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="h-full flex flex-col items-center justify-center text-center py-10"
-                >
+                <Reveal
+  variant="scale"
+  className="h-full flex flex-col items-center justify-center text-center py-10"
+>
                   <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mb-6 text-red-500">
                     <CheckCircle2 size={40} />
                   </div>
@@ -128,15 +119,9 @@ const FinalCTA = () => {
                   >
                     Try again
                   </button>
-                </motion.div>
+                </Reveal>
               ) : (
-                <motion.form 
-                  onSubmit={handleSubmit}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-6"
-                >
+                <Reveal as="form" variant="fade" onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label className="text-sm font-bold text-primary-text uppercase tracking-wider px-1">Full Name</label>
@@ -169,10 +154,10 @@ const FinalCTA = () => {
                       </>
                     )}
                   </button>
-                </motion.form>
+                </Reveal>
               )}
-            </AnimatePresence>
-          </motion.div>
+            </>
+          </Reveal>
         </div>
       </div>
     </SectionContainer>

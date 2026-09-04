@@ -1,56 +1,75 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from "react";
+import { useReducedMotion } from "../lib/useReducedMotion";
 
-interface MagneticButtonProps {
+interface MagneticButtonProps
+  extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;
   href?: string;
 }
 
-const MagneticButton = ({ children, className = '', onClick, href }: MagneticButtonProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+/**
+ * Button that leans toward the cursor.
+ *
+ * The offset is written straight to two custom properties on the node, so a
+ * mouse move costs one style write instead of a React render. The element's
+ * rect is measured once on enter rather than on every move, which keeps the
+ * handler off the layout path entirely.
+ */
+const MagneticButton = ({
+  children,
+  className = "",
+  href,
+  ...rest
+}: MagneticButtonProps) => {
+  const ref = useRef<HTMLElement>(null);
+  const rect = useRef<DOMRect | null>(null);
+  const reduceMotion = useReducedMotion();
 
-  const handleMouseLine = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { clientX, clientY } = e;
-    const { height, width, left, top } = ref.current?.getBoundingClientRect() || { height: 0, width: 0, left: 0, top: 0 };
-    const middleX = clientX - (left + width / 2);
-    const middleY = clientY - (top + height / 2);
-    setPosition({ x: middleX * 0.1, y: middleY * 0.1 });
+  const handleEnter = () => {
+    if (reduceMotion) return;
+    rect.current = ref.current?.getBoundingClientRect() ?? null;
   };
 
-  const reset = () => {
-    setPosition({ x: 0, y: 0 });
-  };
-
-  const { x, y } = position;
-
-  const content = (
-    <motion.div
-      style={{ position: 'relative' }}
-      ref={ref}
-      onMouseMove={handleMouseLine}
-      onMouseLeave={reset}
-      animate={{ x, y }}
-      transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
-    >
-      {children}
-    </motion.div>
-  );
-
-  if (href) {
-    return (
-      <a href={href} className={`inline-block ${className}`} onClick={onClick}>
-        {content}
-      </a>
+  const handleMove = (event: React.MouseEvent) => {
+    const box = rect.current;
+    const el = ref.current;
+    if (!box || !el || reduceMotion) return;
+    el.style.setProperty(
+      "--mx",
+      `${(event.clientX - (box.left + box.width / 2)) * 0.22}px`,
     );
-  }
+    el.style.setProperty(
+      "--my",
+      `${(event.clientY - (box.top + box.height / 2)) * 0.22}px`,
+    );
+  };
 
-  return (
-    <div className={`inline-block ${className}`} onClick={onClick}>
-      {content}
-    </div>
+  const handleLeave = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--mx", "0px");
+    el.style.setProperty("--my", "0px");
+    rect.current = null;
+  };
+
+  const props = {
+    ref: ref as React.Ref<never>,
+    className: `magnetic inline-flex items-center justify-center gap-2 ${className}`,
+    onMouseEnter: handleEnter,
+    onMouseMove: handleMove,
+    onMouseLeave: handleLeave,
+    ...rest,
+  };
+
+  return href ? (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ) : (
+    <button type="button" {...props}>
+      {children}
+    </button>
   );
 };
 
