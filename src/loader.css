@@ -107,3 +107,26 @@
         opacity: 0.7;
     }
 }
+/* Boot overlay -- covers the already-rendered page, then fades itself out. */
+.boot-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-primary);
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.boot-veil--done {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .boot-veil {
+        transition: none;
+    }
+}

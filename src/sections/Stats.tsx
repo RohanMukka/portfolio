@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import Reveal from '../components/Reveal';
 import { GitHubCalendar } from 'react-github-calendar';
 import { ActivityCalendar } from 'react-activity-calendar';
 import { Activity, Trophy, BrainCircuit, Calendar as CalendarIcon } from 'lucide-react';
@@ -107,28 +107,21 @@ const Stats = () => {
   return (
     <section id="stats" className="py-32 px-6 relative overflow-hidden flex items-center justify-center">
       <div className="max-w-7xl mx-auto w-full relative z-10">
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-        >
+        <Reveal className="text-center mb-20">
             <h2 className="text-4xl md:text-6xl font-display font-bold text-primary-text mb-6">
               Activity & Stats
             </h2>
             <p className="text-primary-secondary text-xl max-w-2xl mx-auto">
               A glimpse into my daily coding activity and problem-solving milestones.
             </p>
-        </motion.div>
+        </Reveal>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* GitHub Heatmap */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className={`p-8 rounded-xl border bg-transparent flex flex-col h-full col-span-1 ${theme === 'dark' ? 'border-[#30363d]' : 'border-gray-200 shadow-sm'}`}
-            >
+            <Reveal
+  variant="left"
+  className={`p-8 rounded-xl border bg-transparent flex flex-col h-full col-span-1 ${theme === 'dark' ? 'border-[#30363d]' : 'border-gray-200 shadow-sm'}`}
+>
               <div className="w-full h-full flex items-center justify-center overflow-x-auto pb-4">
                 <div className="min-w-fit px-4">
                   <GitHubCalendar 
@@ -145,15 +138,13 @@ const Stats = () => {
                   />
                 </div>
               </div>
-            </motion.div>
+            </Reveal>
 
             {/* LeetCode Stats */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className={`p-8 rounded-3xl glass-card border flex flex-col h-full transition-all duration-300 ${theme === 'dark' ? 'bg-[#282828] border-gray-700/50 hover:border-gray-500/50' : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'}`}
-            >
+            <Reveal
+  variant="right"
+  className={`p-8 rounded-3xl glass-card border flex flex-col h-full transition-all duration-300 ${theme === 'dark' ? 'bg-[#282828] border-gray-700/50 hover:border-gray-500/50' : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'}`}
+>
               <div className="flex items-center gap-4 mb-6">
                 <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>Solved Problems</h3>
               </div>
@@ -264,7 +255,7 @@ const Stats = () => {
                   </div>
                 </div>
               )}
-            </motion.div>
+            </Reveal>
         </div>
       </div>
     </section>

@@ -1,22 +1,21 @@
-import React from 'react';
-import '../loader.css';
+import React from "react";
+import "../loader.css";
 
-const Loader = () => {
-    return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
-            <div className="ai-matrix-loader">
-                <div className="digit">0</div>
-                <div className="digit">1</div>
-                <div className="digit">0</div>
-                <div className="digit">1</div>
-                <div className="digit">1</div>
-                <div className="digit">0</div>
-                <div className="digit">0</div>
-                <div className="digit">1</div>
-                <div className="glow"></div>
-            </div>
+/**
+ * Boot overlay. Sits on top of the fully rendered page and fades out, so it
+ * never delays first contentful paint the way a render gate would.
+ */
+const Loader = ({ done }: { done: boolean }) => (
+  <div className={`boot-veil${done ? " boot-veil--done" : ""}`} aria-hidden="true">
+    <div className="ai-matrix-loader">
+      {["0", "1", "0", "1", "1", "0", "0", "1"].map((digit, i) => (
+        <div className="digit" key={i}>
+          {digit}
         </div>
-    );
-};
+      ))}
+      <div className="glow" />
+    </div>
+  </div>
+);
 
 export default Loader;

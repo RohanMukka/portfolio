@@ -7,13 +7,48 @@
     <meta name="description" content="Portfolio of Rohan Mukka, a Software Engineer specializing in scalable web systems and intelligent automation." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Loaded without blocking the first paint: the sheet is fetched at print
+         priority and promoted to all media once it arrives, so text renders
+         immediately in the fallback stack and swaps when the webfont lands. -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap"
+      />
+    </noscript>
     <style>
-      html { scroll-behavior: smooth; }
-      ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #f8f6f2; }
-      ::-webkit-scrollbar-thumb { background: #c4b8a8; border-radius: 3px; }
+      html { scroll-behavior: smooth; background-color: #f6f3ed; }
+      html[data-theme="dark"] { background-color: #07080f; }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, currentColor 22%, transparent);
+        border-radius: 4px;
+      }
     </style>
+    <script>
+      // Applied before first paint so a dark-mode visitor never sees a flash of
+      // the light theme. The React tree reads this attribute back on mount.
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t !== "dark" && t !== "light") {
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          }
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
