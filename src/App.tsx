@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
 import Architecture from "./sections/Architecture";
+import Experience from "./sections/Experience";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
 import Education from "./sections/Education";
@@ -11,47 +12,60 @@ import FinalCTA from "./sections/FinalCTA";
 import Loader from "./components/Loader";
 import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
+import CustomCursor, { CursorType } from "./components/CustomCursor";
+import CursorCustomizer from "./components/CursorCustomizer";
 import Background from "./components/Background";
 import TechRibbon from "./components/TechRibbon";
-import { startAmbient } from "./lib/ambient";
+import SystemHUD from "./components/SystemHUD";
 
 const App = () => {
-  const [booting, setBooting] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [cursorType, setCursorType] = useState<CursorType>("default");
 
   useEffect(() => {
-    const stopAmbient = startAmbient();
-
-    // The loader is an overlay over already-rendered content, not a gate in
-    // front of it, so the real hero is what gets measured as the largest paint.
-    // It leaves as soon as webfonts settle, with a hard ceiling so a slow font
-    // CDN can never hold the page.
-    let done = false;
-    const dismiss = () => {
-      if (done) return;
-      done = true;
-      setBooting(false);
-    };
-    const ceiling = window.setTimeout(dismiss, 900);
-    document.fonts?.ready.then(dismiss).catch(dismiss);
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
 
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
+    const savedCursor = localStorage.getItem("cursorType") as CursorType;
+    if (savedCursor) setCursorType(savedCursor);
+
     return () => {
-      stopAmbient();
-      window.clearTimeout(ceiling);
+      clearTimeout(timer);
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
+  const handleCursorChange = (type: CursorType) => {
+    setCursorType(type);
+    localStorage.setItem("cursorType", type);
+  };
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
-    <div className="bg-transparent text-primary-text relative min-h-screen">
-      <Loader done={!booting} />
+    <div
+      className={`bg-transparent text-primary-text relative min-h-screen ${cursorType !== "default" ? "cursor-none" : ""}`}
+    >
+      <SystemHUD />
+      <CustomCursor type={cursorType} />
       <Background />
       <Navbar isScrolled={isScrolled} />
 
+      <CursorCustomizer
+        currentType={cursorType}
+        onChange={handleCursorChange}
+      />
+
+      {/* Fixed UI Elements */}
       <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] flex flex-col gap-4 items-center">
         <BackToTop />
         <ResumeButton isCompact={isScrolled} />
@@ -61,6 +75,7 @@ const App = () => {
         <Hero />
         <TechRibbon />
         <Architecture />
+        {/* <Experience /> */}
         <Projects />
         <Skills />
         <Education />

@@ -1,5 +1,5 @@
 import React from 'react';
-import Reveal from './Reveal';
+import { motion } from 'framer-motion';
 
 interface SectionContainerProps {
   children: React.ReactNode;
@@ -10,11 +10,18 @@ interface SectionContainerProps {
 
 const SectionContainer: React.FC<SectionContainerProps> = ({ children, id, className = '', delay = 0 }) => {
   return (
-    <section
-      id={id}
+    <section 
+      id={id} 
       className={`relative w-full max-w-7xl mx-auto px-6 py-20 md:py-32 ${className}`}
     >
-      <Reveal delay={delay}>{children}</Reveal>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.7, ease: "easeOut", delay }}
+      >
+        {children}
+      </motion.div>
     </section>
   );
 };

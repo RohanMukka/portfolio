@@ -8,8 +8,8 @@ import {
   CheckCircle2,
   Terminal,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import Reveal from './Reveal';
 import { siLeetcode, siMonkeytype, siDevpost } from "simple-icons";
 
 const Footer = () => {
@@ -400,21 +400,26 @@ const Footer = () => {
               and AI.
             </p>
             <div className="relative h-[42px]">
-              <>
+              <AnimatePresence mode="wait">
                 {newsletterStatus === "success" ? (
-                  <Reveal
-  key="success"
-  className="flex items-center gap-2 text-green-500 h-full px-2 font-medium"
->
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="flex items-center gap-2 text-green-500 h-full px-2 font-medium"
+                  >
                     <CheckCircle2 size={20} />
                     <span className="text-sm">Thanks for subscribing!</span>
-                  </Reveal>
+                  </motion.div>
                 ) : (
-                  <Reveal
-  as="form"
-  key="form"
-  className="flex gap-2 h-full"
-  onSubmit={async (e) => {
+                  <motion.form
+                    key="form"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className="flex gap-2 h-full"
+                    onSubmit={async (e) => {
                       e.preventDefault();
                       setNewsletterStatus("sending");
                       try {
@@ -444,7 +449,7 @@ const Footer = () => {
                         setNewsletterStatus("idle");
                       }
                     }}
->
+                  >
                     <input
                       type="email"
                       required
@@ -464,9 +469,9 @@ const Footer = () => {
                         <Send size={18} />
                       )}
                     </button>
-                  </Reveal>
+                  </motion.form>
                 )}
-              </>
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -504,12 +509,24 @@ const Footer = () => {
                           ./get_views
                         </span>
                         {!viewsRevealed && (
-                          <div className="w-2 h-3.5 bg-green-500 ml-0.5"/>
+                          <motion.div
+                            animate={{ opacity: [1, 0, 1] }}
+                            transition={{ repeat: Infinity, duration: 0.8 }}
+                            className="w-2 h-3.5 bg-green-500 ml-0.5"
+                          />
                         )}
                       </div>
-                      <>
+                      <AnimatePresence>
                         {viewsRevealed && (
-                          <Reveal variant="fade" className="flex items-center gap-2 overflow-hidden">
+                          <motion.div
+                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                            animate={{
+                              opacity: 1,
+                              height: "auto",
+                              marginTop: 4,
+                            }}
+                            className="flex items-center gap-2 overflow-hidden"
+                          >
                             <span className="text-accent font-bold">{">"}</span>
                             <span className="font-bold text-primary-text tracking-wider">
                               {visitorCount}
@@ -517,10 +534,14 @@ const Footer = () => {
                             <span className="text-primary-secondary ml-1 tracking-widest text-[10px] uppercase">
                               Views
                             </span>
-                            <div className="w-2 h-3.5 bg-green-500 ml-1"/>
-                          </Reveal>
+                            <motion.div
+                              animate={{ opacity: [1, 0, 1] }}
+                              transition={{ repeat: Infinity, duration: 0.8 }}
+                              className="w-2 h-3.5 bg-green-500 ml-1"
+                            />
+                          </motion.div>
                         )}
-                      </>
+                      </AnimatePresence>
                     </div>
                   </div>
                 </div>
