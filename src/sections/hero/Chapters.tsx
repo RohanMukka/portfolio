@@ -73,8 +73,9 @@ const useClock = () => {
   return time;
 };
 
-// USAvionix-style frame around the stage: a chapter indicator up top and
-// small readouts in the upper corners (the lower ones hold fixed buttons).
+// USAvionix-style frame around the stage: a chapter indicator up top and a
+// small time / availability readout in the upper-right corner (the lower
+// corners hold fixed buttons).
 export const ChapterFrame = ({ progress }: { progress: MotionValue<number> }) => {
   const [active, setActive] = useState(-1);
   const time = useClock();
@@ -99,11 +100,6 @@ export const ChapterFrame = ({ progress }: { progress: MotionValue<number> }) =>
         <div className="w-64 h-px bg-primary-text/15 overflow-hidden">
           <motion.div className="h-full bg-accent origin-left" style={{ scaleX: bar }} />
         </div>
-      </div>
-      <div className="absolute top-28 left-8 text-[11px] uppercase tracking-[0.25em] text-primary-secondary leading-relaxed">
-        Norman, Oklahoma
-        <br />
-        35.22° N · 97.44° W
       </div>
       <div className="absolute top-28 right-8 text-right text-[11px] uppercase tracking-[0.25em] text-primary-secondary leading-relaxed">
         {time} CT
