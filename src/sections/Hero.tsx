@@ -1,7 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useAnimation, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useSpring, useMotionValue, useScroll, useTransform } from 'framer-motion';
 import FloatingParticles from '../components/FloatingParticles';
 import TiltedCard from '../components/TiltedCard';
+
+const useMediaQuery = (query: string) => {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const onChange = () => setMatches(mql.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, [query]);
+  return matches;
+};
 
 const MagneticButton = ({ children, className, href }: { children: React.ReactNode, className?: string, href: string }) => {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -47,6 +58,33 @@ const MagneticButton = ({ children, className, href }: { children: React.ReactNo
 };
 
 const Hero = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  // On desktop the hero pins for an extra screen of scroll and plays a short
+  // scene: the copy lifts away, the portrait turns, the name drifts apart,
+  // then the whole stage recedes as the next section rises over it.
+  // Deliberately not gated on prefers-reduced-motion (owner's decision): the
+  // scene is driven by the visitor's own scroll and should play for everyone.
+  const pinned = isDesktop;
+
+  const { scrollYProgress: p } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
+
+  const copyOpacity = useTransform(p, [0, 0.3], [1, 0]);
+  const copyY = useTransform(p, [0, 0.3], [0, -60]);
+  const hintOpacity = useTransform(p, [0, 0.08], [1, 0]);
+
+  const nameY = useTransform(p, [0, 0.6], [0, -40]);
+  const nameScale = useTransform(p, [0, 0.6], [1, 1.12]);
+  const firstNameX = useTransform(p, [0, 0.6], [0, -36]);
+  const lastNameX = useTransform(p, [0, 0.6], [0, 56]);
+
+  const cardRotateY = useTransform(p, [0, 0.6], [0, -22]);
+  const cardRotateX = useTransform(p, [0, 0.6], [0, 6]);
+  const cardScale = useTransform(p, [0, 0.6], [1, 1.08]);
+
+  const stageScale = useTransform(p, [0.55, 1], [1, 0.9]);
+  const stageOpacity = useTransform(p, [0.55, 1], [1, 0.25]);
+
   const [words, setWords] = useState([
     [
       { char: 'R', id: 'swap-1', needsShake: true },
@@ -100,9 +138,12 @@ const Hero = () => {
   };
 
   return (
-    <section id="hero" className="relative flex items-center justify-center min-h-[100dvh] px-6 overflow-hidden py-24 md:py-0">
+    <section ref={sectionRef} id="hero" className={pinned ? 'relative h-[220vh]' : 'relative'}>
+      <motion.div
+        className={`sticky top-0 flex items-center justify-center px-6 overflow-hidden py-24 md:py-0 ${pinned ? 'h-[100dvh] will-change-transform' : 'min-h-[100dvh]'}`}
+        style={pinned ? { scale: stageScale, opacity: stageOpacity } : undefined}
+      >
       <FloatingParticles count={30} />
-      
 
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center">
         
@@ -113,7 +154,10 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="relative w-[300px] h-[400px] md:w-[400px] md:h-[500px]">
+          <motion.div
+            className="relative w-[300px] h-[400px] md:w-[400px] md:h-[500px]"
+            style={pinned ? { rotateY: cardRotateY, rotateX: cardRotateX, scale: cardScale, transformPerspective: 1200 } : undefined}
+          >
              <TiltedCard
                imageSrc={`${import.meta.env.BASE_URL}hero-profile.png`}
                altText="Rohan Mukka - Software Engineer"
@@ -139,11 +183,12 @@ const Hero = () => {
              ></motion.div>
              <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary-blue/10 rounded-full blur-3xl animate-pulse delay-700 pointer-events-none"></div>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Right Column: Content */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-2 z-10 w-full">
+          <motion.div style={pinned ? { opacity: copyOpacity, y: copyY } : undefined}>
           <motion.p
             className="text-primary-secondary text-sm uppercase tracking-[0.2em] mb-4"
             initial={{ opacity: 0, y: 20 }}
@@ -151,13 +196,22 @@ const Hero = () => {
           >
             Software Engineer
           </motion.p>
-          
+          </motion.div>
+
+          <motion.div
+            className="w-full origin-left"
+            style={pinned ? { y: nameY, scale: nameScale } : undefined}
+          >
           <motion.h1
             className="text-5xl sm:text-6xl lg:text-[7rem] font-display font-bold tracking-tighter text-primary-text leading-[0.9] mb-8 flex flex-wrap justify-center md:justify-start gap-x-4 w-full"
             layout
           >
             {words.map((word, wordIndex) => (
-              <span key={wordIndex} className="inline-block whitespace-nowrap">
+              <motion.span
+                key={wordIndex}
+                className="inline-block whitespace-nowrap"
+                style={pinned ? { x: wordIndex === 0 ? firstNameX : lastNameX } : undefined}
+              >
                 {word.map((item, letterIndex) => {
                   const uniqueIndex = wordIndex * 10 + letterIndex;
                   return (
@@ -175,10 +229,12 @@ const Hero = () => {
                     </motion.span>
                   );
                 })}
-              </span>
+              </motion.span>
             ))}
           </motion.h1>
+          </motion.div>
 
+          <motion.div style={pinned ? { opacity: copyOpacity, y: copyY } : undefined}>
           <motion.p
             className="text-lg md:text-xl text-primary-secondary max-w-lg mb-10 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
@@ -207,9 +263,28 @@ const Hero = () => {
               Get in touch
             </MagneticButton>
           </motion.div>
+          </motion.div>
         </div>
 
       </div>
+
+      {pinned && (
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-primary-secondary pointer-events-none"
+          style={{ opacity: hintOpacity }}
+          aria-hidden="true"
+        >
+          <span className="text-[10px] uppercase tracking-[0.35em]">Scroll</span>
+          <span className="relative block w-px h-10 overflow-hidden bg-primary-text/10">
+            <motion.span
+              className="absolute inset-x-0 top-0 h-1/2 bg-primary-text/60"
+              animate={{ y: ['-100%', '200%'] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </span>
+        </motion.div>
+      )}
+      </motion.div>
     </section>
   );
 };

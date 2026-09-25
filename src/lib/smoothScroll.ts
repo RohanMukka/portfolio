@@ -5,12 +5,12 @@ let lenis: Lenis | null = null;
 
 // Page-wide eased, inertial scrolling. The window still scrolls natively
 // underneath, so framer-motion's useScroll and scroll listeners keep working.
+// Runs for everyone, including visitors whose OS asks for reduced motion
+// (owner's decision; Lenis would otherwise switch itself off for them).
 export const startSmoothScroll = () => {
-  if (lenis || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return () => {};
-  }
+  if (lenis) return () => {};
 
-  const instance = new Lenis({ lerp: 0.09, wheelMultiplier: 1, autoRaf: true });
+  const instance = new Lenis({ lerp: 0.09, wheelMultiplier: 1, autoRaf: true, respectReducedMotion: false });
   lenis = instance;
 
   // In-page links (#projects, #contact, "#" for top) glide instead of jumping.

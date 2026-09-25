@@ -77,7 +77,9 @@ const App = () => {
         <ResumeButton isCompact={isScrolled} />
       </div>
 
-      <main className="relative w-full overflow-x-hidden">
+      {/* overflow-x-clip, not -hidden: hidden makes <main> a scroll container,
+          which silently breaks position: sticky (the pinned hero) inside it. */}
+      <main className="relative w-full overflow-x-clip">
         <Hero />
         <TechRibbon />
         <Architecture />
