@@ -506,31 +506,34 @@ const Footer = () => {
                   title={viewsRevealed ? "Click or press Enter to hide" : "Click or press Enter to run"}
                 >
                   <div className="flex flex-col bg-transparent border border-glass-border rounded-lg overflow-hidden w-56 hover:border-accent/50 transition-colors backdrop-blur-sm">
-                    <div className="p-4 text-green-500 flex flex-col gap-2">
+                    <div className="p-4 text-green-500 flex flex-col">
                       <div className="flex items-center gap-2 opacity-80">
                         <span className="text-accent">~/auth</span>
                         <span className="text-primary-text">$</span>
                         <span className="text-primary-secondary group-hover:text-green-500 transition-colors">
                           ./get_views
                         </span>
-                        {!viewsRevealed && (
-                          <motion.div
-                            animate={{ opacity: [1, 0, 1] }}
-                            transition={{ repeat: Infinity, duration: 0.8 }}
-                            className="w-2 h-3.5 bg-green-500 ml-0.5"
-                          />
-                        )}
+                        <motion.div
+                          animate={{ opacity: viewsRevealed ? 0 : [1, 0, 1] }}
+                          transition={
+                            viewsRevealed
+                              ? { duration: 0.2 }
+                              : { repeat: Infinity, duration: 0.8 }
+                          }
+                          className="w-2 h-3.5 bg-green-500 ml-0.5"
+                        />
                       </div>
-                      <AnimatePresence>
+                      <AnimatePresence initial={false}>
                         {viewsRevealed && (
                           <motion.div
                             initial={{ opacity: 0, height: 0, marginTop: 0 }}
                             animate={{
                               opacity: 1,
                               height: "auto",
-                              marginTop: 4,
+                              marginTop: 12,
                             }}
                             exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                             className="flex items-center gap-2 overflow-hidden"
                           >
                             <span className="text-accent font-bold">{">"}</span>
