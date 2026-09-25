@@ -4,6 +4,13 @@ import FloatingParticles from '../components/FloatingParticles';
 import TiltedCard from '../components/TiltedCard';
 import { useMediaQuery } from '../lib/useMediaQuery';
 import { NAME_WORDS, NAME_TYPE } from '../lib/heroName';
+import { ChapterCaptions, ChapterFrame } from './hero/Chapters';
+
+// Scroll ranges, as fractions of the pinned hero (see CHAPTER_RANGES for the
+// captions in between).
+const COPY_OUT: [number, number] = [0, 0.12];
+const MOVE: [number, number] = [0, 0.3];
+const RECEDE: [number, number] = [0.92, 1];
 
 const LETTER_VARIANTS = {
   rest: { scaleY: 1, scaleX: 1, y: 0, color: 'var(--text-primary)', transition: { duration: 0.3 } },
@@ -56,39 +63,40 @@ const MagneticButton = ({ children, className, href }: { children: React.ReactNo
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  // On desktop the hero pins for an extra screen of scroll and plays a short
-  // scene: the copy lifts away, the portrait turns, the name drifts apart,
-  // then the whole stage recedes as the next section rises over it.
-  // Deliberately not gated on prefers-reduced-motion (owner's decision): the
-  // scene is driven by the visitor's own scroll and should play for everyone.
+  // On desktop the hero pins and plays a chaptered scene: the intro copy lifts
+  // away, the portrait turns and the name drifts apart, then three captions
+  // (Build / Ship / Learn) take turns before the stage recedes. Phones get the
+  // static hero. Deliberately not gated on prefers-reduced-motion (owner's
+  // decision): the scene follows the visitor's own scroll.
   const pinned = isDesktop;
 
   const { scrollYProgress: p } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
 
-  const copyOpacity = useTransform(p, [0, 0.3], [1, 0]);
-  const copyY = useTransform(p, [0, 0.3], [0, -60]);
-  const hintOpacity = useTransform(p, [0, 0.08], [1, 0]);
+  const copyOpacity = useTransform(p, COPY_OUT, [1, 0]);
+  const copyY = useTransform(p, COPY_OUT, [0, -60]);
+  const hintOpacity = useTransform(p, [0, 0.06], [1, 0]);
 
-  const nameY = useTransform(p, [0, 0.6], [0, -40]);
-  const nameScale = useTransform(p, [0, 0.6], [1, 1.12]);
-  const firstNameX = useTransform(p, [0, 0.6], [0, -36]);
-  const lastNameX = useTransform(p, [0, 0.6], [0, 56]);
+  const nameY = useTransform(p, MOVE, [0, -40]);
+  const nameScale = useTransform(p, MOVE, [1, 1.12]);
+  const firstNameX = useTransform(p, MOVE, [0, -36]);
+  const lastNameX = useTransform(p, MOVE, [0, 56]);
 
-  const cardRotateY = useTransform(p, [0, 0.6], [0, -22]);
-  const cardRotateX = useTransform(p, [0, 0.6], [0, 6]);
-  const cardScale = useTransform(p, [0, 0.6], [1, 1.08]);
+  const cardRotateY = useTransform(p, MOVE, [0, -22]);
+  const cardRotateX = useTransform(p, MOVE, [0, 6]);
+  const cardScale = useTransform(p, MOVE, [1, 1.08]);
 
-  const stageScale = useTransform(p, [0.55, 1], [1, 0.9]);
-  const stageOpacity = useTransform(p, [0.55, 1], [1, 0.25]);
+  const stageScale = useTransform(p, RECEDE, [1, 0.9]);
+  const stageOpacity = useTransform(p, RECEDE, [1, 0.25]);
 
   return (
-    <section ref={sectionRef} id="hero" className={pinned ? 'relative h-[220vh]' : 'relative'}>
+    <section ref={sectionRef} id="hero" className={pinned ? 'relative h-[340vh]' : 'relative'}>
       <motion.div
         className={`sticky top-0 flex items-center justify-center px-6 overflow-hidden py-24 md:py-0 ${pinned ? 'h-[100dvh] will-change-transform' : 'min-h-[100dvh]'}`}
         style={pinned ? { scale: stageScale, opacity: stageOpacity } : undefined}
       >
       <FloatingParticles count={30} />
 
+      {pinned && <ChapterFrame progress={p} />}
 
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center">
         
@@ -178,6 +186,8 @@ const Hero = () => {
           </motion.h1>
           </motion.div>
 
+          <div className="relative w-full">
+          {pinned && <ChapterCaptions progress={p} />}
           <motion.div style={pinned ? { opacity: copyOpacity, y: copyY } : undefined}>
           <motion.p
             className="text-lg md:text-xl text-primary-secondary max-w-lg mb-10 leading-relaxed"
@@ -208,6 +218,7 @@ const Hero = () => {
             </MagneticButton>
           </motion.div>
           </motion.div>
+          </div>
         </div>
 
       </div>
