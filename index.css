@@ -33,19 +33,19 @@
   }
 
   [data-theme='dark'] {
-    --bg-primary: #0b0b0c;
-    --bg-elevated: #151517;
-    --text-primary: #ededed;
-    --text-secondary: #9a9aa0;
-    --text-tertiary: #6b6b70;
-    --glass-bg: rgba(21, 21, 23, 0.86);
+    --bg-primary: #0a0a0d;
+    --bg-elevated: #16161a;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    --glass-bg: rgba(15, 23, 42, 0.86);
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-shadow: rgba(0, 0, 0, 0.5);
     --surface-subtle: rgba(255, 255, 255, 0.05);
     --accent: #f97316;
     --accent-rgb: 249, 115, 22;
     --accent-dim: rgba(249, 115, 22, 0.2);
-    --card-fill: linear-gradient(180deg, rgba(30, 30, 33, 0.8) 0%, rgba(19, 19, 21, 0.9) 100%);
+    --card-fill: linear-gradient(180deg, rgba(30, 41, 59, 0.78) 0%, rgba(15, 23, 42, 0.9) 100%);
     --card-edge: rgba(255, 255, 255, 0.08);
     --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 56px -20px rgba(0, 0, 0, 0.7);
   }

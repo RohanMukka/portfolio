@@ -63,15 +63,16 @@ const Background = () => {
   // Memoize gradients to prevent unnecessary string computation
   const gradients = useMemo(
     () => ({
-      // Warm neutrals only, so the one orange accent stays the only colour.
+      // Light: warm neutrals. Dark: the royal-blue / indigo glows the owner
+      // prefers behind the orange accent.
       top: isDark
-        ? "radial-gradient(circle, #2a2622 0%, transparent 70%)"
+        ? "radial-gradient(circle, #1e3a8a 0%, transparent 70%)"
         : "radial-gradient(circle, #ffffff 0%, transparent 70%)",
       bottom: isDark
-        ? "radial-gradient(circle, #1f1c19 0%, transparent 70%)"
+        ? "radial-gradient(circle, #312e81 0%, transparent 70%)"
         : "radial-gradient(circle, #eadfcd 0%, transparent 75%)",
       center: isDark
-        ? "radial-gradient(circle, rgba(249, 115, 22, 0.12) 0%, transparent 70%)"
+        ? "radial-gradient(circle, #5b21b6 0%, transparent 70%)"
         : "radial-gradient(circle, rgba(196, 92, 38, 0.06) 0%, transparent 70%)",
     }),
     [isDark],
