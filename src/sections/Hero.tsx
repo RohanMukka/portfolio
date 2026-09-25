@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useSpring, useMotionValue, useScroll, useTransform } from 'framer-motion';
 import FloatingParticles from '../components/FloatingParticles';
 import TiltedCard from '../components/TiltedCard';
+import { useMediaQuery } from '../lib/useMediaQuery';
+import { NAME_WORDS, NAME_TYPE } from '../lib/heroName';
 
-const useMediaQuery = (query: string) => {
-  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    const onChange = () => setMatches(mql.matches);
-    mql.addEventListener('change', onChange);
-    return () => mql.removeEventListener('change', onChange);
-  }, [query]);
-  return matches;
+const LETTER_VARIANTS = {
+  rest: { scaleY: 1, scaleX: 1, y: 0, color: 'var(--text-primary)', transition: { duration: 0.3 } },
+  hover: { scaleY: 1.5, scaleX: 0.9, y: -10, color: 'var(--accent)' },
 };
 
 const MagneticButton = ({ children, className, href }: { children: React.ReactNode, className?: string, href: string }) => {
@@ -85,58 +81,6 @@ const Hero = () => {
   const stageScale = useTransform(p, [0.55, 1], [1, 0.9]);
   const stageOpacity = useTransform(p, [0.55, 1], [1, 0.25]);
 
-  const [words, setWords] = useState([
-    [
-      { char: 'R', id: 'swap-1', needsShake: true },
-      { char: 'o', id: 'o-1' },
-      { char: 'h', id: 'h-1' },
-      { char: 'a', id: 'a-1' },
-      { char: 'n', id: 'n-1' },
-    ],
-    [
-      { char: 'M', id: 'swap-2', needsShake: true },
-      { char: 'u', id: 'u-1' },
-      { char: 'k', id: 'k-1' },
-      { char: 'k', id: 'k-2' },
-      { char: 'a', id: 'a-2' },
-    ]
-  ]);
-
-  const [stage, setStage] = useState('swapped');
-
-  const letterAnimation = {
-    whileHover: { 
-      scaleY: 1.5,
-      scaleX: 0.9,
-      y: -10,
-      color: "var(--accent)"
-    }
-  };
-
-  const variants = {
-    initial: (i: number) => {
-       const startX = (i % 2 === 0 ? -150 : 150) + (i * 10);
-       const startY = (i % 3 === 0 ? -150 : 150) + (i * 5);
-       const startRotate = (i % 2 === 0 ? -45 : 45);
-       return { opacity: 0, x: startX, y: startY, scale: 2, rotate: startRotate, filter: "blur(10px)" };
-    },
-    entry: (i: number) => ({
-      opacity: 1, x: 0, y: 0, scale: 1, rotate: 0, filter: "blur(0px)",
-      transition: { duration: 0.8, delay: 0.1 + (i * 0.08), type: "spring", bounce: 0.5 }
-    }),
-    shake: (i: number) => ({
-      x: [0, -5, 5, -5, 5, 0],
-      opacity: 1,
-      color: "#ef4444",
-      transition: { duration: 0.5 }
-    }),
-    swapped: {
-      x: 0, y: 0, scale: 1, rotate: 0, filter: "blur(0px)", opacity: 1,
-      color: "var(--text-primary)",
-      transition: { duration: 0.5 }
-    }
-  };
-
   return (
     <section ref={sectionRef} id="hero" className={pinned ? 'relative h-[220vh]' : 'relative'}>
       <motion.div
@@ -144,6 +88,7 @@ const Hero = () => {
         style={pinned ? { scale: stageScale, opacity: stageOpacity } : undefined}
       >
       <FloatingParticles count={30} />
+
 
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center">
         
@@ -203,32 +148,31 @@ const Hero = () => {
             style={pinned ? { y: nameY, scale: nameScale } : undefined}
           >
           <motion.h1
-            className="text-5xl sm:text-6xl lg:text-[7.5rem] font-extrabold tracking-[-0.055em] text-primary-text leading-[0.9] mb-8 flex flex-wrap justify-center md:justify-start gap-x-4 w-full"
+            className={`${NAME_TYPE} mb-8 flex flex-wrap justify-center md:justify-start gap-x-4 w-full`}
             layout
           >
-            {words.map((word, wordIndex) => (
+            {NAME_WORDS.map((word, wordIndex) => (
               <motion.span
                 key={wordIndex}
                 className="inline-block whitespace-nowrap"
                 style={pinned ? { x: wordIndex === 0 ? firstNameX : lastNameX } : undefined}
               >
-                {word.map((item, letterIndex) => {
-                  const uniqueIndex = wordIndex * 10 + letterIndex;
-                  return (
-                    <motion.span
-                      layoutId={item.id}
-                      key={item.id}
-                      className="inline-block cursor-default relative"
-                      custom={uniqueIndex}
-                      initial="initial"
-                      animate={stage === 'swapped' ? 'swapped' : 'entry'}
-                      variants={variants}
-                      whileHover={letterAnimation.whileHover}
-                    >
-                      {item.char}
-                    </motion.span>
-                  );
-                })}
+                {word.map((item, letterIndex) => (
+                  // Shares its layoutId with the intro's letter, so on mount it
+                  // flies here from wherever the intro left it.
+                  <motion.span
+                    layoutId={item.id}
+                    key={item.id}
+                    className="inline-block cursor-default relative"
+                    initial={false}
+                    animate="rest"
+                    whileHover="hover"
+                    variants={LETTER_VARIANTS}
+                    transition={{ layout: { duration: 1.1, ease: [0.76, 0, 0.24, 1], delay: (wordIndex * 5 + letterIndex) * 0.02 } }}
+                  >
+                    {item.char}
+                  </motion.span>
+                ))}
               </motion.span>
             ))}
           </motion.h1>

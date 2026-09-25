@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
@@ -21,20 +22,18 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const finishIntro = useCallback(() => setLoading(false), []);
+
   useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2500);
+    // The intro hands its letters to the hero at the top of the page, so
+    // always start there rather than at a restored scroll position.
+    history.scrollRestoration = "manual";
 
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Start after the loader so Lenis measures the real page, not the splash.
@@ -42,11 +41,19 @@ const App = () => {
     if (!loading) return startSmoothScroll();
   }, [loading]);
 
-  if (loading) {
-    return <Loader />;
-  }
-
   return (
+    <>
+    {/* AnimatePresence keeps the intro mounted for one more render as it
+        leaves, which lets framer-motion measure its letters and fly them
+        into the hero's matching layoutIds. */}
+    <AnimatePresence>
+      {loading && (
+        <div key="intro">
+          <Loader onDone={finishIntro} />
+        </div>
+      )}
+    </AnimatePresence>
+    {!loading && (
     <div className="bg-transparent text-primary-text relative min-h-screen">
       <SystemHUD />
       <Background />
@@ -73,6 +80,8 @@ const App = () => {
         <Footer />
       </main>
     </div>
+    )}
+    </>
   );
 };
 
