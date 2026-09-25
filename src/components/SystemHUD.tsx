@@ -42,7 +42,7 @@ const SystemHUD = () => {
       dragMomentum={false}
       initial={{ opacity: 0, x: 20, y: 100 }}
       animate={{ opacity: 1, x: 0, y: 100 }}
-      className="fixed top-20 right-6 z-[70] hidden md:block"
+      className="fixed top-20 right-6 z-[70] hidden min-[1720px]:block"
     >
       <div className={`glass-card p-2.5 w-44 backdrop-blur-2xl border-accent/20 transition-all duration-300 ${isMinimized ? 'h-9 overflow-hidden' : 'h-auto'}`}>
         {/* Header */}
