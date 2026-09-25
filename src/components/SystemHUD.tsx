@@ -44,32 +44,32 @@ const SystemHUD = () => {
       animate={{ opacity: 1, x: 0, y: 100 }}
       className="fixed top-20 right-6 z-[70] hidden md:block"
     >
-      <div className={`glass-card p-4 w-64 backdrop-blur-2xl border-accent/20 transition-all duration-300 ${isMinimized ? 'h-12 overflow-hidden' : 'h-auto'}`}>
+      <div className={`glass-card p-2.5 w-44 backdrop-blur-2xl border-accent/20 transition-all duration-300 ${isMinimized ? 'h-9 overflow-hidden' : 'h-auto'}`}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 cursor-grab active:cursor-grabbing">
+        <div className="flex items-center justify-between mb-2 cursor-grab active:cursor-grabbing">
           <div className="flex items-center gap-2">
-            <Terminal size={14} className="text-accent" />
-            <span className="text-[10px] font-black tracking-widest uppercase text-primary-text opacity-70">Core_Sys_Monitor</span>
+            <Terminal size={12} className="text-accent" />
+            <span className="text-[9px] font-black tracking-widest uppercase text-primary-text opacity-70">Core_Sys_Monitor</span>
           </div>
           <button 
             onClick={() => setIsMinimized(!isMinimized)}
-            className="w-3 h-3 rounded-full bg-accent/20 hover:bg-accent/40 transition-colors"
+            className="w-2.5 h-2.5 rounded-full bg-accent/20 hover:bg-accent/40 transition-colors"
           />
         </div>
 
         {/* HUD Content */}
         {!isMinimized && (
-          <div className="space-y-4 font-mono">
+          <div className="space-y-1.5 font-mono">
             {/* Live Stats */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-[8px] opacity-40 uppercase mb-1 flex items-center gap-1">
+            <div className="grid grid-cols-2 gap-1.5">
+              <div className="px-2 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                <div className="text-[8px] opacity-40 uppercase mb-0.5 flex items-center gap-1">
                   <Activity size={8} /> Status
                 </div>
                 <div className="text-[10px] text-green-500 font-bold animate-pulse">ACTIVE</div>
               </div>
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-[8px] opacity-40 uppercase mb-1 flex items-center gap-1">
+              <div className="px-2 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                <div className="text-[8px] opacity-40 uppercase mb-0.5 flex items-center gap-1">
                   <Box size={8} /> Section
                 </div>
                 <div className="text-[10px] text-primary-text font-bold truncate">{currentSection}</div>
@@ -77,8 +77,8 @@ const SystemHUD = () => {
             </div>
 
             {/* Mouse Trace */}
-            <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-              <div className="text-[8px] opacity-40 uppercase mb-1 flex items-center gap-1">
+            <div className="px-2 py-1.5 rounded-lg bg-white/5 border border-white/10">
+              <div className="text-[8px] opacity-40 uppercase mb-0.5 flex items-center gap-1">
                 <MousePointer2 size={8} /> Mouse_Vector
               </div>
               <div className="text-[10px] text-primary-text opacity-80">
@@ -91,7 +91,7 @@ const SystemHUD = () => {
       
       {/* Draggable indicator */}
       {!isMinimized && (
-        <div className="text-center mt-2">
+        <div className="text-center mt-1">
           <span className="text-[8px] font-bold text-accent opacity-30 uppercase tracking-[0.3em]">Hold to Drag</span>
         </div>
       )}
