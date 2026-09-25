@@ -16,6 +16,7 @@ import BackToTop from "./components/BackToTop";
 import Background from "./components/Background";
 import TechRibbon from "./components/TechRibbon";
 import SystemHUD from "./components/SystemHUD";
+import DemoSwitcher from "./components/DemoSwitcher";
 import { startSmoothScroll } from "./lib/smoothScroll";
 
 const App = () => {
@@ -58,6 +59,8 @@ const App = () => {
       <SystemHUD />
       <Background />
       <Navbar isScrolled={isScrolled} />
+      {/* Local review only: never shipped in a production build. */}
+      {import.meta.env.DEV && <DemoSwitcher />}
 
       {/* Fixed UI Elements */}
       <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] flex flex-col gap-4 items-center">
