@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
+import { scrollToTop } from '../lib/smoothScroll';
 
 const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -22,13 +23,6 @@ const BackToTop = () => {
     window.addEventListener('scroll', toggleVisibility);
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
 
   return (
     <AnimatePresence>

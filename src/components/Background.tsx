@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
   motion,
-  useScroll,
   useTransform,
   useSpring,
   useMotionValue,
 } from "framer-motion";
 
+// The glows and grid only drift with the mouse. They used to follow the scroll
+// too, which re-ran springs and re-composited huge blurred layers on every
+// scroll frame and made scrolling judder on ordinary laptops.
 const Background = () => {
-  const { scrollY } = useScroll();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [theme, setTheme] = useState("light");
@@ -46,13 +47,8 @@ const Background = () => {
   // Movement springs
   const springMouseX = useSpring(mouseX, { stiffness: 40, damping: 30 });
   const springMouseY = useSpring(mouseY, { stiffness: 40, damping: 30 });
-  const scrollYDelayed = useSpring(scrollY, { stiffness: 50, damping: 40 });
-
-  // Transforms
-  const yParallax = useTransform(scrollYDelayed, [0, 2000], [0, -300]);
 
   // Grid Transforms
-  const gridY = useTransform(scrollYDelayed, [0, 5000], [-300, 700]); // Moves grid "forward" (down) on scroll
   const gridX = useTransform(springMouseX, [-50, 50], [20, -20]); // Parallax opposite to mouse
 
   // Orb Parallax
@@ -61,8 +57,6 @@ const Background = () => {
 
   const xDeep = useTransform(springMouseX, [-25, 25], [-37.5, 37.5]);
   const yDeep = useTransform(springMouseY, [-25, 25], [30, -30]);
-
-  const yParallaxHalf = useTransform(yParallax, (v: number) => v * 0.5);
 
   const isDark = theme === "dark";
 
@@ -87,29 +81,27 @@ const Background = () => {
       <div className="absolute inset-0 pointer-events-none">
         {/* Main Accent Orb (Top Right) */}
         <motion.div
-          className="absolute -top-[10%] -right-[10%] w-[80vw] h-[80vw] rounded-full blur-[120px] opacity-[0.45]"
+          className="absolute -top-[10%] -right-[10%] w-[80vw] h-[80vw] rounded-full blur-[120px] opacity-[0.45] will-change-transform"
           style={{
             background: gradients.top,
             x: springMouseX,
             y: springMouseY,
-            translateY: yParallax,
           }}
         />
 
         {/* Secondary Accent Orb (Bottom Left) */}
         <motion.div
-          className="absolute -bottom-[20%] -left-[10%] w-[90vw] h-[90vw] rounded-full blur-[150px] opacity-[0.35]"
+          className="absolute -bottom-[20%] -left-[10%] w-[90vw] h-[90vw] rounded-full blur-[150px] opacity-[0.35] will-change-transform"
           style={{
             background: gradients.bottom,
             x: xInverse,
             y: yInverse,
-            translateY: yParallaxHalf,
           }}
         />
 
         {/* Center Dynamic Glow */}
         <motion.div
-          className="absolute top-[20%] left-[20%] w-[60vw] h-[60vw] rounded-full blur-[180px] opacity-[0.1]"
+          className="absolute top-[20%] left-[20%] w-[60vw] h-[60vw] rounded-full blur-[180px] opacity-[0.1] will-change-transform"
           style={{
             background: gradients.center,
             x: xDeep,
@@ -135,7 +127,7 @@ const Background = () => {
         }}
       >
         <motion.div
-          className="w-full h-full origin-center"
+          className="w-full h-full origin-center will-change-transform"
           style={{
             backgroundImage: `
               linear-gradient(to right, var(--text-secondary) 1px, transparent 1px),
@@ -143,7 +135,7 @@ const Background = () => {
             `,
             backgroundSize: "100px 100px",
             rotateX: 60,
-            y: gridY,
+            y: -300,
             x: gridX,
             opacity: 0.8,
           }}

@@ -17,6 +17,7 @@ import CursorCustomizer from "./components/CursorCustomizer";
 import Background from "./components/Background";
 import TechRibbon from "./components/TechRibbon";
 import SystemHUD from "./components/SystemHUD";
+import { startSmoothScroll } from "./lib/smoothScroll";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,11 @@ const App = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // Start after the loader so Lenis measures the real page, not the splash.
+  useEffect(() => {
+    if (!loading) return startSmoothScroll();
+  }, [loading]);
 
   const handleCursorChange = (type: CursorType) => {
     setCursorType(type);

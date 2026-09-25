@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Terminal, Activity, MousePointer2, Box } from 'lucide-react';
+import { useActiveSection } from '../lib/useActiveSection';
+
+const HUD_SECTIONS = ['hero', 'architecture', 'projects', 'skills', 'education', 'contact'];
 
 const SystemHUD = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [currentSection, setCurrentSection] = useState('HERO');
+  const currentSection = (useActiveSection(HUD_SECTIONS, 200) || 'hero').toUpperCase();
   const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
@@ -12,29 +15,9 @@ const SystemHUD = () => {
       setMousePos({ x: e.clientX, y: e.clientY });
     };
 
-    const handleScroll = () => {
-      const sections = ['hero', 'architecture', 'projects', 'skills', 'education', 'contact'];
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 200 && rect.bottom >= 200) {
-            if (currentSection !== section.toUpperCase()) {
-              setCurrentSection(section.toUpperCase());
-            }
-            break;
-          }
-        }
-      }
-    };
-
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [currentSection]);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
     <motion.div 

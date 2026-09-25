@@ -119,7 +119,7 @@ const Certifications = () => {
               <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[2px] h-4 bg-glass-border z-10 group-hover:bg-accent/50 transition-colors"></div>
               
               {/* The Card */}
-              <div className="glass-card rounded-2xl p-6 h-full border border-glass-border relative mt-4 flex flex-col hover:border-accent/40 transition-colors shadow-lg shadow-black/10 hover:shadow-accent/5 bg-glass-bg/90 backdrop-blur-md">
+              <div className="glass-card rounded-2xl p-6 h-full border border-glass-border relative mt-4 flex flex-col hover:border-accent/40 transition-colors shadow-lg shadow-black/10 hover:shadow-accent/5 bg-glass-bg/90">
                 
                 {/* Subtle highlight */}
                 <div className="absolute -inset-px bg-gradient-to-b from-white/5 to-transparent rounded-2xl pointer-events-none" />

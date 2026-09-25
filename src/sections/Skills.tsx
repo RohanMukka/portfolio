@@ -159,7 +159,7 @@ const Skills = () => {
                     {/* Left Button */}
                     <button 
                         onClick={prevSlide}
-                        className="absolute left-4 md:left-0 z-30 p-4 rounded-full bg-glass-bg border border-glass-border text-primary-text hover:bg-glass-shadow transition-all backdrop-blur-md hover:scale-110 active:scale-95 shadow-xl"
+                        className="absolute left-4 md:left-0 z-30 p-4 rounded-full bg-glass-bg border border-glass-border text-primary-text hover:bg-glass-shadow transition-all hover:scale-110 active:scale-95 shadow-xl"
                         aria-label="Previous Skill"
                     >
                         <ChevronLeft size={32} />
@@ -168,7 +168,7 @@ const Skills = () => {
                     {/* Right Button */}
                     <button 
                         onClick={nextSlide}
-                        className="absolute right-4 md:right-0 z-30 p-4 rounded-full bg-glass-bg border border-glass-border text-primary-text hover:bg-glass-shadow transition-all backdrop-blur-md hover:scale-110 active:scale-95 shadow-xl"
+                        className="absolute right-4 md:right-0 z-30 p-4 rounded-full bg-glass-bg border border-glass-border text-primary-text hover:bg-glass-shadow transition-all hover:scale-110 active:scale-95 shadow-xl"
                         aria-label="Next Skill"
                     >
                         <ChevronRight size={32} />

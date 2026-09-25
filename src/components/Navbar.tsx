@@ -2,6 +2,17 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { MousePointer2, ChevronDown, Menu, X as CloseIcon } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { useActiveSection } from "../lib/useActiveSection";
+
+const NAV_SECTIONS = [
+  "architecture",
+  "experience",
+  "projects",
+  "skills",
+  "education",
+  "certifications",
+  "contact",
+];
 
 interface NavbarProps {
   isScrolled?: boolean;
@@ -12,7 +23,7 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
   const [hovered, setHovered] = useState<string | null>(null);
   const [isNavHovered, setIsNavHovered] = useState(false);
   const [theme, setTheme] = useState("light");
-  const [activeTab, setActiveTab] = useState("");
+  const activeTab = useActiveSection(NAV_SECTIONS, 100);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -25,30 +36,6 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.setAttribute("data-theme", savedTheme);
-
-    const handleScroll = () => {
-      const sections = [
-        "architecture",
-        "experience",
-        "projects",
-        "skills",
-        "education",
-        "certifications",
-        "contact",
-      ];
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) setActiveTab(current);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const toggleTheme = () => {

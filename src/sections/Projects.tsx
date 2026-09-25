@@ -360,14 +360,14 @@ const Projects = () => {
           <div className="hidden lg:flex gap-3">
             <button 
               onClick={() => scroll('left')}
-              className="p-4 rounded-full border border-glass-border bg-glass-bg backdrop-blur-md hover:border-accent transition-all text-primary-text hover:scale-110 active:scale-95 shadow-lg"
+              className="p-4 rounded-full border border-glass-border bg-glass-bg hover:border-accent transition-all text-primary-text hover:scale-110 active:scale-95 shadow-lg"
               aria-label="Scroll left"
             >
               <ChevronLeft size={24} />
             </button>
             <button 
               onClick={() => scroll('right')}
-              className="p-4 rounded-full border border-glass-border bg-glass-bg backdrop-blur-md hover:border-accent transition-all text-primary-text hover:scale-110 active:scale-95 shadow-lg"
+              className="p-4 rounded-full border border-glass-border bg-glass-bg hover:border-accent transition-all text-primary-text hover:scale-110 active:scale-95 shadow-lg"
               aria-label="Scroll right"
             >
               <ChevronRight size={24} />

@@ -78,7 +78,7 @@ const ProjectPoster = ({
       className="group relative h-[500px] w-full cursor-pointer rounded-[2.5rem] perspective-1000"
     >
       {/* Main Card Container with Semantic Glass */}
-      <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden bg-glass-bg border border-glass-border backdrop-blur-md shadow-2xl transition-all duration-500 group-hover:border-electric-cyan/20 group-hover:shadow-[0_0_50px_var(--glass-shadow)]">
+      <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden bg-glass-bg border border-glass-border shadow-2xl transition-all duration-500 group-hover:border-electric-cyan/20 group-hover:shadow-[0_0_50px_var(--glass-shadow)]">
         {/* Top Section: Visual / Icon / Abstract art */}
         <div className="h-[55%] w-full relative p-8 flex flex-col justify-between overflow-hidden">
           {/* Abstract Gradient Blob - Darker opacity */}
@@ -90,10 +90,10 @@ const ProjectPoster = ({
           />
 
           <div className="relative z-10 flex justify-between items-start">
-            <div className="p-4 rounded-full bg-glass-bg backdrop-blur-md border border-glass-border shadow-lg">
+            <div className="p-4 rounded-full bg-glass-bg border border-glass-border shadow-lg">
               <Github className="text-primary-text w-6 h-6" />
             </div>
-            <span className="px-4 py-2 rounded-full bg-glass-bg text-xs font-bold text-primary-text uppercase tracking-widest border border-glass-border backdrop-blur-md">
+            <span className="px-4 py-2 rounded-full bg-glass-bg text-xs font-bold text-primary-text uppercase tracking-widest border border-glass-border">
               Featured
             </span>
           </div>
@@ -105,7 +105,7 @@ const ProjectPoster = ({
         </div>
 
         {/* Bottom Section: Details */}
-        <div className="h-[45%] w-full bg-glass-bg p-8 flex flex-col justify-between backdrop-blur-md">
+        <div className="h-[45%] w-full bg-glass-bg p-8 flex flex-col justify-between">
           <p className="text-primary-secondary text-base leading-relaxed line-clamp-4 font-light">
             {description}
           </p>

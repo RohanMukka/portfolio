@@ -151,7 +151,7 @@ const Footer = () => {
                 </a>
                 {/* LeetCode Hover Stats */}
                 <div className="absolute bottom-full left-0 mb-4 opacity-0 invisible group-hover/lc:opacity-100 group-hover/lc:visible transition-all duration-300 z-50 pointer-events-none w-[90vw] max-w-[450px]">
-                  <div className="p-2 rounded-2xl bg-bg-elevated backdrop-blur-xl border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/lc:translate-y-0 transition-transform duration-300">
+                  <div className="p-2 rounded-2xl bg-bg-elevated border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/lc:translate-y-0 transition-transform duration-300">
                     <img
                       src={`https://leetcard.jacoblin.cool/rohan_mukka?theme=${theme === "dark" ? "dark" : "light"}&font=Syne&ext=activity`}
                       alt="LeetCode Stats"
@@ -174,7 +174,7 @@ const Footer = () => {
                 </a>
                 {/* GitHub Hover Stats */}
                 <div className="absolute bottom-full left-0 mb-4 opacity-0 invisible group-hover/gh:opacity-100 group-hover/gh:visible transition-all duration-300 z-50 pointer-events-none w-[90vw] max-w-[450px]">
-                  <div className="p-2 rounded-2xl bg-bg-elevated backdrop-blur-xl border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/gh:translate-y-0 transition-transform duration-300 flex flex-col gap-2">
+                  <div className="p-2 rounded-2xl bg-bg-elevated border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/gh:translate-y-0 transition-transform duration-300 flex flex-col gap-2">
                     <img
                       src={`https://github-readme-stats.vercel.app/api?username=rohanmukka&show_icons=true&theme=${theme === "dark" ? "transparent" : "default"}&hide_border=true&title_color=00B8FF&text_color=${theme === "dark" ? "a3a3a3" : "333333"}&icon_color=8b5cf6`}
                       alt="GitHub Stats"
@@ -239,7 +239,7 @@ const Footer = () => {
                 <div className="absolute bottom-full left-0 mb-4 opacity-0 invisible group-hover/mt:opacity-100 group-hover/mt:visible transition-all duration-300 z-50 pointer-events-none w-[90vw] md:w-[350px]">
                   {monkeyStats && (
                     <div
-                      className={`p-5 rounded-2xl backdrop-blur-xl border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/mt:translate-y-0 transition-transform duration-300 flex flex-col gap-4 font-sans ${theme === "dark" ? "bg-[#0d1117]/95 border-glass-border" : "bg-white/95 border-gray-200"}`}
+                      className={`p-5 rounded-2xl border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/mt:translate-y-0 transition-transform duration-300 flex flex-col gap-4 font-sans ${theme === "dark" ? "bg-[#0d1117]/95 border-glass-border" : "bg-white/95 border-gray-200"}`}
                     >
                       <div
                         className={`flex items-center gap-3 border-b pb-3 ${theme === "dark" ? "border-white/10" : "border-gray-100"}`}
@@ -505,7 +505,7 @@ const Footer = () => {
                   tabIndex={0}
                   title={viewsRevealed ? "Click or press Enter to hide" : "Click or press Enter to run"}
                 >
-                  <div className="flex flex-col bg-transparent border border-glass-border rounded-lg overflow-hidden w-56 hover:border-accent/50 transition-colors backdrop-blur-sm">
+                  <div className="flex flex-col bg-transparent border border-glass-border rounded-lg overflow-hidden w-56 hover:border-accent/50 transition-colors">
                     <div className="p-4 text-green-500 flex flex-col">
                       <div className="flex items-center gap-2 opacity-80">
                         <span className="text-accent">~/auth</span>
