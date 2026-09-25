@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { GraduationCap, Calendar, MapPin, Award, ArrowUp } from "lucide-react";
+import SectionHeader from "../components/SectionHeader";
 
 const educationData = [
   {
@@ -48,19 +49,13 @@ const Education = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-glass-border to-transparent opacity-50"></div>
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
       <div className="max-w-5xl w-full relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-24"
-        >
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-text mb-6">
-            Academic Journey
-          </h2>
-          <p className="text-primary-secondary text-xl max-w-2xl mx-auto">
-            From foundational principles to advanced specialization.
-          </p>
-        </motion.div>
+        <SectionHeader
+          className="mb-24"
+          index="04"
+          label="Education"
+          title={<>Academic<br />Journey</>}
+          subtitle="From foundational principles to advanced specialization."
+        />
 
         <div className="relative flex flex-col items-center gap-20 w-full max-w-5xl mx-auto py-10">
           {/* SVG Spiral Connecting Line (Desktop) - Absolutely positioned ON TOP of cards for arrow visibility */}

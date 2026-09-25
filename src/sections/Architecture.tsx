@@ -1,11 +1,18 @@
 import React from "react";
 import SectionContainer from "../components/SectionContainer";
+import SectionHeader from "../components/SectionHeader";
 import { motion } from "framer-motion";
 import { ExternalLink, Code2, Rocket, Calendar } from "lucide-react";
 
 const Architecture = () => {
   return (
     <SectionContainer id="architecture">
+      <SectionHeader
+        className="max-w-6xl mx-auto mb-16"
+        index="01"
+        label="About"
+        title="Journey"
+      />
       <motion.div
         className="max-w-6xl mx-auto p-6 md:p-16 rounded-[2.5rem] glass-card border border-white/10 relative overflow-hidden"
         initial={{ opacity: 0, y: 50 }}
@@ -15,11 +22,6 @@ const Architecture = () => {
       >
         {/* Background Glow */}
         <div className="absolute top-0 right-0 w-64 h-64 -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 -z-10" style={{background: 'radial-gradient(circle, rgba(0, 80, 255, 0.1) 0%, transparent 70%)'}}></div>
-
-        <h2 className="text-4xl md:text-6xl font-display font-bold text-primary-text mb-12 tracking-tight">
-          <span className="text-accent italic">Journey</span>
-        </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
           <div className="lg:col-span-8 space-y-8">
@@ -69,19 +71,19 @@ const Architecture = () => {
                 label: "Experience",
                 value: "4+ Yrs",
                 icon: <Calendar className="text-accent" />,
-                color: "border-accent/10",
+                color: "border-glass-border",
               },
               {
                 label: "Built",
                 value: "15+ Proj",
-                icon: <Rocket className="text-primary-blue" />,
-                color: "border-blue-500/10",
+                icon: <Rocket className="text-accent" />,
+                color: "border-glass-border",
               },
               {
                 label: "Mastered",
                 value: "12+ Tech",
-                icon: <Code2 className="text-primary-purple" />,
-                color: "border-purple-500/10",
+                icon: <Code2 className="text-accent" />,
+                color: "border-glass-border",
               },
             ].map((stat, i) => (
               <motion.div

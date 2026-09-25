@@ -317,7 +317,7 @@ const Footer = () => {
                           <span
                             className={`text-sm font-bold ${theme === "dark" ? "text-white" : "text-gray-800"}`}
                           >
-                            {monkeyStats.stats.startedTests.toLocaleString()}
+                            {(monkeyStats.stats.startedTests ?? 0).toLocaleString()}
                           </span>
                         </div>
                         <div className="flex flex-col text-right">
@@ -329,7 +329,7 @@ const Footer = () => {
                           <span
                             className={`text-sm font-bold ${theme === "dark" ? "text-white" : "text-gray-800"}`}
                           >
-                            {monkeyStats.stats.completedTests.toLocaleString()}
+                            {(monkeyStats.stats.completedTests ?? 0).toLocaleString()}
                           </span>
                         </div>
                       </div>

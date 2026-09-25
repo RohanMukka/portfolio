@@ -12,8 +12,6 @@ import FinalCTA from "./sections/FinalCTA";
 import Loader from "./components/Loader";
 import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
-import CustomCursor, { CursorType } from "./components/CustomCursor";
-import CursorCustomizer from "./components/CursorCustomizer";
 import Background from "./components/Background";
 import TechRibbon from "./components/TechRibbon";
 import SystemHUD from "./components/SystemHUD";
@@ -22,7 +20,6 @@ import { startSmoothScroll } from "./lib/smoothScroll";
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [cursorType, setCursorType] = useState<CursorType>("default");
 
   useEffect(() => {
     // Simulate initial loading
@@ -33,9 +30,6 @@ const App = () => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-
-    const savedCursor = localStorage.getItem("cursorType") as CursorType;
-    if (savedCursor) setCursorType(savedCursor);
 
     return () => {
       clearTimeout(timer);
@@ -48,28 +42,15 @@ const App = () => {
     if (!loading) return startSmoothScroll();
   }, [loading]);
 
-  const handleCursorChange = (type: CursorType) => {
-    setCursorType(type);
-    localStorage.setItem("cursorType", type);
-  };
-
   if (loading) {
     return <Loader />;
   }
 
   return (
-    <div
-      className={`bg-transparent text-primary-text relative min-h-screen ${cursorType !== "default" ? "cursor-none" : ""}`}
-    >
+    <div className="bg-transparent text-primary-text relative min-h-screen">
       <SystemHUD />
-      <CustomCursor type={cursorType} />
       <Background />
       <Navbar isScrolled={isScrolled} />
-
-      <CursorCustomizer
-        currentType={cursorType}
-        onChange={handleCursorChange}
-      />
 
       {/* Fixed UI Elements */}
       <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] flex flex-col gap-4 items-center">

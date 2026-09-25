@@ -203,7 +203,7 @@ const Hero = () => {
             style={pinned ? { y: nameY, scale: nameScale } : undefined}
           >
           <motion.h1
-            className="text-5xl sm:text-6xl lg:text-[7rem] font-display font-bold tracking-tighter text-primary-text leading-[0.9] mb-8 flex flex-wrap justify-center md:justify-start gap-x-4 w-full"
+            className="text-5xl sm:text-6xl lg:text-[7.5rem] font-extrabold tracking-[-0.055em] text-primary-text leading-[0.9] mb-8 flex flex-wrap justify-center md:justify-start gap-x-4 w-full"
             layout
           >
             {words.map((word, wordIndex) => (

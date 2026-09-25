@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Code, Database, Globe, Server, Terminal, Cpu, Layers } from 'lucide-react';
+import SectionHeader from '../components/SectionHeader';
 
 const skillsData = [
   {
@@ -91,20 +92,13 @@ const Skills = () => {
   return (
     <section id="skills" className="py-32 px-6 relative overflow-hidden min-h-[800px] flex items-center justify-center">
       <div className="max-w-7xl mx-auto w-full relative z-10">
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
+        <SectionHeader
+            className="mb-20"
+            index="03"
+            label="Skills"
+            title={<>Technical<br />Arsenal</>}
+            subtitle="A curated selection of technologies I've mastered."
         >
-            <h2 className="text-4xl md:text-6xl font-display font-bold text-primary-text mb-6">
-            Technical Arsenal
-            </h2>
-            <p className="text-primary-secondary text-xl max-w-2xl mx-auto mb-10">
-                A curated selection of technologies I've mastered.
-            </p>
-
-            <div className="flex justify-center mb-8">
                 <div className="flex bg-surface-subtle/50 p-1.5 rounded-2xl border border-glass-border">
                     <button 
                         onClick={() => setIsGridView(false)}
@@ -119,8 +113,7 @@ const Skills = () => {
                         Grid
                     </button>
                 </div>
-            </div>
-        </motion.div>
+        </SectionHeader>
 
         {/* Content Area */}
         <div className="relative min-h-[500px]">

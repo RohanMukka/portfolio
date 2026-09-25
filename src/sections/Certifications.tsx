@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Award, Calendar, ShieldCheck } from "lucide-react";
+import SectionHeader from "../components/SectionHeader";
 
 const certificationsData = [
   {
@@ -80,19 +81,13 @@ const Certifications = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.05) 0%, transparent 70%)'}}></div>
       
       <div className="max-w-6xl w-full relative z-10 px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-8"
-        >
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-primary-text mb-6">
-            Certifications
-          </h2>
-          <p className="text-primary-secondary text-xl max-w-2xl mx-auto">
-            Continuous learning and professional credentials.
-          </p>
-        </motion.div>
+        <SectionHeader
+          className="mb-8"
+          index="05"
+          label="Certifications"
+          title="Credentials"
+          subtitle="Continuous learning and professional credentials."
+        />
       </div>
 
       {/* The Clothesline Section */}

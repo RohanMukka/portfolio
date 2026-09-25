@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Github, ExternalLink } from 'lucide-react';
+import SectionHeader from '../components/SectionHeader';
 
 interface Project {
   title: string;
@@ -326,21 +327,14 @@ const Projects = () => {
   return (
     <section id="projects" className="py-24 md:py-32 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+        <SectionHeader
+          className="mb-10"
+          index="02"
+          label="Work"
+          title={<>Selected<br />Projects</>}
+          subtitle="Experimental work, open source contributions, and personal tools."
         >
-          <div className="flex-1">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-primary-text mb-4">
-              Featured Projects
-            </h2>
-            <p className="text-primary-secondary max-w-xl text-lg">
-              Experimental work, open source contributions, and personal tools.
-            </p>
-          </div>
-
+          <div className="flex flex-col items-start md:items-end gap-4">
           <div className="flex flex-wrap gap-2 bg-surface-subtle p-1.5 rounded-2xl border border-glass-border">
             {['All', 'Web', 'ML', 'System', 'Blockchain'].map((cat) => (
               <button
@@ -373,7 +367,8 @@ const Projects = () => {
               <ChevronRight size={24} />
             </button>
           </div>
-        </motion.div>
+          </div>
+        </SectionHeader>
 
         <div className="relative w-full">
           <AnimatePresence mode="popLayout" initial={false}>

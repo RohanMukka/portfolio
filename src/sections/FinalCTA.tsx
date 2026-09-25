@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SectionContainer from '../components/SectionContainer';
+import SectionHeader from '../components/SectionHeader';
 import { Send, CheckCircle2, Mail, ExternalLink, Linkedin, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -39,6 +40,13 @@ const FinalCTA = () => {
   return (
     <SectionContainer id="contact" className="!py-0 pb-24">
       <div className="max-w-6xl mx-auto">
+        <SectionHeader
+          className="mb-16"
+          index="06"
+          label="Contact"
+          title={<>Let’s build something <span className="text-accent">extraordinary.</span></>}
+          subtitle="Whether you have a question, a project idea, or just want to say hi—my inbox is always open."
+        />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
           {/* Left: Contact Info & Status */}
@@ -55,13 +63,6 @@ const FinalCTA = () => {
               </span>
               Available for New Opportunities
             </div>
-
-            <h2 className="text-4xl md:text-6xl font-display font-bold text-primary-text mb-6">
-              Let’s build something <span className="text-accent italic">extraordinary</span>.
-            </h2>
-            <p className="text-xl text-primary-secondary mb-10 leading-relaxed">
-              Whether you have a question, a project idea, or just want to say hi—my inbox is always open.
-            </p>
 
             <div className="space-y-6">
               <a href="mailto:rohanmukka07@gmail.com" className="flex items-center gap-4 group p-5 rounded-[2rem] bg-bg-elevated/50 border-2 border-glass-border hover:border-accent/40 hover:bg-bg-elevated transition-all duration-300 w-fit pr-12 shadow-sm hover:shadow-2xl hover:-translate-y-1">
