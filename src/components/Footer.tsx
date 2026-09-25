@@ -493,12 +493,17 @@ const Footer = () => {
                 {/* Terminal Hacker View Counter */}
                 <div
                   className="group font-mono text-xs cursor-pointer outline-none"
-                  onClick={() => setViewsRevealed(true)}
+                  onClick={() => setViewsRevealed((v) => !v)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") setViewsRevealed(true);
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setViewsRevealed((v) => !v);
+                    }
                   }}
+                  role="button"
+                  aria-expanded={viewsRevealed}
                   tabIndex={0}
-                  title="Click or press Enter to run"
+                  title={viewsRevealed ? "Click or press Enter to hide" : "Click or press Enter to run"}
                 >
                   <div className="flex flex-col bg-transparent border border-glass-border rounded-lg overflow-hidden w-56 hover:border-accent/50 transition-colors backdrop-blur-sm">
                     <div className="p-4 text-green-500 flex flex-col gap-2">
@@ -525,6 +530,7 @@ const Footer = () => {
                               height: "auto",
                               marginTop: 4,
                             }}
+                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
                             className="flex items-center gap-2 overflow-hidden"
                           >
                             <span className="text-accent font-bold">{">"}</span>
