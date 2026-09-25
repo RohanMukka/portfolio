@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Terminal, Activity, MousePointer2, Box } from 'lucide-react';
 
 const SystemHUD = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [currentSection, setCurrentSection] = useState('HERO');
-  const [logs, setLogs] = useState<string[]>(['SYSTEM_INIT // 200 OK', 'LOAD_ASSETS // COMPLETE']);
   const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
@@ -22,7 +21,6 @@ const SystemHUD = () => {
           if (rect.top <= 200 && rect.bottom >= 200) {
             if (currentSection !== section.toUpperCase()) {
               setCurrentSection(section.toUpperCase());
-              addLog(`NAV_TO: ${section.toUpperCase()}`);
             }
             break;
           }
@@ -37,10 +35,6 @@ const SystemHUD = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [currentSection]);
-
-  const addLog = (message: string) => {
-    setLogs(prev => [message, ...prev.slice(0, 4)]);
-  };
 
   return (
     <motion.div 
@@ -90,23 +84,6 @@ const SystemHUD = () => {
               <div className="text-[10px] text-primary-text opacity-80">
                 X: {mousePos.x} | Y: {mousePos.y}
               </div>
-            </div>
-
-            {/* Live Logs */}
-            <div className="space-y-1 mt-4 border-t border-white/10 pt-4">
-              <AnimatePresence mode="popLayout">
-                {logs.map((log, i) => (
-                  <motion.div
-                    key={`${log}-${i}`}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    className="text-[9px] text-accent font-bold opacity-60 leading-none"
-                  >
-                    {`> ${log}`}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
             </div>
           </div>
         )}
