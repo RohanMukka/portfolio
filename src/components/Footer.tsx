@@ -11,6 +11,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { siLeetcode, siMonkeytype, siDevpost } from "simple-icons";
+import { GitHubCalendar } from "react-github-calendar";
 
 const Footer = () => {
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
@@ -180,11 +181,21 @@ const Footer = () => {
                       alt="GitHub Stats"
                       className={`w-full rounded-xl ${theme === "dark" ? "bg-[#0d1117]" : "bg-transparent"}`}
                     />
-                    <img
-                      src={`https://github-readme-activity-graph.vercel.app/graph?username=rohanmukka&bg_color=${theme === "dark" ? "0d1117" : "ffffff"}&color=00B8FF&line=00B8FF&point=8b5cf6&area=true&hide_border=true`}
-                      alt="GitHub Activity Graph"
-                      className="w-full rounded-xl"
-                    />
+                    <div
+                      className={`flex justify-center rounded-xl p-3 ${theme === "dark" ? "bg-[#0d1117] text-[#a3a3a3]" : "bg-transparent text-[#333333]"}`}
+                    >
+                      <GitHubCalendar
+                        username="rohanmukka"
+                        colorScheme={theme}
+                        theme={{
+                          light: ["#ebedf0", "#00B8FF"],
+                          dark: ["#161b22", "#00B8FF"],
+                        }}
+                        fontSize={11}
+                        blockSize={5}
+                        blockMargin={2}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
