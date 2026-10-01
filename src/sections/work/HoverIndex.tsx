@@ -5,9 +5,11 @@ import type { Project } from "../../data/projects";
 import { useMediaQuery } from "../../lib/useMediaQuery";
 import { EASE, pad, ProjectLinks, TagList } from "./shared";
 import ProjectVisual, { factFor } from "./ProjectVisual";
+import { hasCaseStudy, openCaseStudy } from "./CaseStudy";
 
 // An editorial list. Hovering a row floats that project's diagram by
-// the cursor; clicking a row opens its details inline. Plain scrolling, no pin.
+// the cursor; clicking a row opens its case study, or its details inline
+// for projects without one. Plain scrolling, no pin.
 const HoverIndex = ({ items }: { items: Project[] }) => {
   const [hovered, setHovered] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
@@ -42,8 +44,8 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
                 setShown(p);
               }}>
               <button
-                onClick={() => setOpen(isOpen ? null : p.title)}
-                aria-expanded={isOpen}
+                onClick={() => (hasCaseStudy(p.title) ? openCaseStudy(p.title) : setOpen(isOpen ? null : p.title))}
+                aria-expanded={hasCaseStudy(p.title) ? undefined : isOpen}
                 className={`w-full grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_1fr_15rem_7rem_2rem] items-center gap-4 py-6 md:py-7 text-left transition-opacity duration-300 ${dim ? "opacity-35" : "opacity-100"}`}
               >
                 <span className="text-xs tabular-nums tracking-widest text-accent">{pad(i + 1)}</span>

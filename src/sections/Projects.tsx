@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SectionHeader from '../components/SectionHeader';
 import { projects, orderedProjects, CATEGORIES, type Category } from '../data/projects';
 import HoverIndex from './work/HoverIndex';
+import CaseStudy from './work/CaseStudy';
 
 // With no filter, lead with the featured projects and keep the rest a click away.
 const FEATURED_COUNT = 6;
@@ -42,6 +43,7 @@ const Projects = () => {
         </SectionHeader>
 
         <HoverIndex items={items} />
+        <CaseStudy />
 
         {collapsible && (
           <div className="mt-12 flex justify-center">

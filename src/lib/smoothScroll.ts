@@ -39,3 +39,10 @@ export const scrollToTop = () => {
   if (lenis) lenis.scrollTo(0);
   else window.scrollTo({ top: 0, behavior: "smooth" });
 };
+
+// Freeze the page behind an overlay; the overlay scrolls itself (data-lenis-prevent).
+export const setPageScrollPaused = (paused: boolean) => {
+  if (paused) lenis?.stop();
+  else lenis?.start();
+  document.documentElement.style.overflow = paused ? "hidden" : "";
+};

@@ -130,7 +130,7 @@ export const diagrams: Record<string, Diagram> = {
     ],
   },
   "EduLens AI": {
-    fact: "Feedback in under 2 seconds on Llama 3.1",
+    fact: "83.3% misconception accuracy against human grading",
     nodes: [
       { id: "student", label: "Student", sub: "explains it", col: 0, row: 0.5 },
       { id: "gate", label: "Gatekeeper", sub: "agent", col: 1, row: 0.5 },
@@ -166,11 +166,11 @@ export const diagrams: Record<string, Diagram> = {
   "Fake Review Detection": {
     fact: "0.805 AUC on businesses it never saw",
     nodes: [
-      { id: "text", label: "Review text", sub: "Yelp", col: 0, row: 1 },
-      { id: "sem", label: "Transformer", sub: "semantics", col: 1, row: 1 },
-      { id: "user", label: "Reviewer", sub: "history", col: 0, row: 2 },
-      { id: "beh", label: "Behavior", sub: "features", col: 1, row: 2 },
-      { id: "fusion", label: "ReviewGuard", sub: "fusion", col: 2, row: 1.5 },
+      { id: "text", label: "Review text", sub: "YelpCHI", col: 0, row: 1 },
+      { id: "sem", label: "Text branch", sub: "TF-IDF · SVD 256", col: 1, row: 1 },
+      { id: "user", label: "Reviewer", sub: "+ business", col: 0, row: 2 },
+      { id: "beh", label: "Behavior", sub: "19 features", col: 1, row: 2 },
+      { id: "fusion", label: "Fusion MLP", sub: "focal loss", col: 2, row: 1.5 },
     ],
     edges: [
       { from: "text", to: "sem" },

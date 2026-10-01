@@ -112,7 +112,7 @@ export const projects: Project[] = [
   },
   {
     title: 'Fake Review Detection',
-    tagline: 'Transformer Semantics',
+    tagline: 'Text + Behavior Fusion',
     description: 'Fake Review Detection on Yelp using a combination of Transformer Semantics and Reviewer Behavior modeling.',
     tags: ['Python', 'NLP', 'Transformers'],
     category: 'ML',
