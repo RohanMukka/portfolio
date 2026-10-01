@@ -4,12 +4,15 @@ import { ArrowUpRight } from "lucide-react";
 import type { Project } from "../../data/projects";
 import { useMediaQuery } from "../../lib/useMediaQuery";
 import { EASE, pad, ProjectLinks, TagList } from "./shared";
+import ProjectVisual, { factFor } from "./ProjectVisual";
 
-// An editorial list. Hovering a row floats that project's image by
+// An editorial list. Hovering a row floats that project's diagram by
 // the cursor; clicking a row opens its details inline. Plain scrolling, no pin.
 const HoverIndex = ({ items }: { items: Project[] }) => {
   const [hovered, setHovered] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
+  // Keeps the preview's content while it fades out after the cursor leaves.
+  const [shown, setShown] = useState<Project | null>(null);
   const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
 
   const x = useMotionValue(0);
@@ -34,7 +37,10 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
           const isHovered = hovered === p.title;
           const dim = hovered !== null && !isHovered && !isOpen;
           return (
-            <li key={p.title} className="border-b border-primary-text/10" onMouseEnter={() => setHovered(p.title)}>
+            <li key={p.title} className="border-b border-primary-text/10" onMouseEnter={() => {
+                setHovered(p.title);
+                setShown(p);
+              }}>
               <button
                 onClick={() => setOpen(isOpen ? null : p.title)}
                 aria-expanded={isOpen}
@@ -70,9 +76,14 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
                   >
                     <div className="grid md:grid-cols-[4rem_minmax(0,1fr)_minmax(0,1.1fr)] gap-6 md:gap-8 pb-10">
                       <span className="hidden md:block" />
-                      <img src={p.image} alt={p.title} loading="lazy" className="w-full aspect-[16/10] object-cover rounded-2xl" />
+                      <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-primary-text/10">
+                        <ProjectVisual project={p} />
+                      </div>
                       <div className="flex flex-col gap-5">
                         <p className="text-xs font-bold uppercase tracking-[0.3em] text-accent">{p.tagline}</p>
+                        {factFor(p) && (
+                          <p className="font-display text-2xl md:text-3xl font-bold tracking-[-0.03em] leading-tight text-primary-text">{factFor(p)}</p>
+                        )}
                         <p className="text-lg text-primary-secondary leading-relaxed">{p.description}</p>
                         <TagList tags={p.tags} />
                         <ProjectLinks project={p} />
@@ -86,25 +97,25 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
         })}
       </ol>
 
-      {/* Cursor-following preview (mouse only). All images are stacked and
-          switched by opacity, so moving between rows is instant. */}
+      {/* Cursor-following preview (mouse only). */}
       {canHover && (
         <motion.div
-          className="pointer-events-none fixed left-0 top-0 z-40 -ml-[170px] -mt-[128px] w-[340px] h-[255px] rounded-2xl overflow-hidden shadow-2xl"
+          className="pointer-events-none fixed left-0 top-0 z-40 -ml-[180px] -mt-[150px] w-[360px] rounded-2xl overflow-hidden shadow-2xl border border-primary-text/10 bg-background"
           style={{ x: sx, y: sy }}
           animate={{ opacity: showPreview ? 1 : 0, scale: showPreview ? 1 : 0.85 }}
           transition={{ duration: 0.3, ease: EASE }}
           aria-hidden="true"
         >
-          {items.map((p) => (
-            <img
-              key={p.title}
-              src={p.image}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
-              style={{ opacity: hovered === p.title ? 1 : 0 }}
-            />
-          ))}
+          {shown && (
+            <>
+              <div className="aspect-[4/3]">
+                <ProjectVisual project={shown} />
+              </div>
+              <p className="px-4 py-3 border-t border-primary-text/10 text-xs font-semibold text-primary-text">
+                {factFor(shown) ?? shown.tagline}
+              </p>
+            </>
+          )}
         </motion.div>
       )}
     </div>

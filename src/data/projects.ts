@@ -5,7 +5,7 @@ export interface Project {
   tags: string[];
   category: 'Web' | 'ML' | 'System' | 'Blockchain';
   links: { github?: string; demo?: string };
-  image: string;
+  image?: string; // screenshot of a live UI, for projects without a diagram
   color: string;
 }
 
@@ -17,7 +17,6 @@ export const projects: Project[] = [
     tags: ['Ethereum', 'Web3', 'React', 'Solidity'],
     category: 'Blockchain',
     links: { github: 'https://github.com/RohanMukka/BEneFIT' },
-    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop',
     color: '#627EEA'
   },
   {
@@ -27,7 +26,6 @@ export const projects: Project[] = [
     tags: ['TypeScript', 'Firebase', 'React'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/spendsmart', demo: 'https://spendsmart-three.vercel.app/' },
-    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1626&auto=format&fit=crop',
     color: '#2ecc71'
   },
   {
@@ -37,7 +35,6 @@ export const projects: Project[] = [
     tags: ['Python', 'ML', 'Diagnostics'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/A-Robust-Diagnostic-System-Leveraging-Explicit-Domain-Knowledge-and-Learned-Data-Patterns' },
-    image: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1480&auto=format&fit=crop',
     color: '#3776ab'
   },
   {
@@ -47,7 +44,7 @@ export const projects: Project[] = [
     tags: ['React', 'Health', 'TypeScript'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/fitprep', demo: 'https://fitprep.vercel.app' },
-    image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=1453&auto=format&fit=crop',
+    image: '/projects/fitprep.png',
     color: '#1abc9c'
   },
   {
@@ -57,7 +54,6 @@ export const projects: Project[] = [
     tags: ['JavaScript', 'System', 'Teamwork'],
     category: 'System',
     links: { github: 'https://github.com/IPMS-Project/IPMS' },
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1470&auto=format&fit=crop',
     color: '#3498db'
   },
   {
@@ -67,7 +63,6 @@ export const projects: Project[] = [
     tags: ['TypeScript', 'AI', 'JavaScript'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/JAI' },
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1632&auto=format&fit=crop',
     color: '#f7df1e'
   },
   {
@@ -77,7 +72,6 @@ export const projects: Project[] = [
     tags: ['TypeScript', 'Vercel', 'Responsive'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/portfolio', demo: 'https://portfolio-rohan03.vercel.app/' },
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop',
     color: '#3178c6'
   },
   {
@@ -87,7 +81,6 @@ export const projects: Project[] = [
     tags: ['Python', 'DL', 'Biosensor'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/Multiclass-Emotion-Recognition-from-EEG-Signals' },
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1530&auto=format&fit=crop',
     color: '#9b59b6'
   },
   {
@@ -97,7 +90,6 @@ export const projects: Project[] = [
     tags: ['JavaScript', 'Finance', 'Automation'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/FeeAutomation' },
-    image: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?q=80&w=1548&auto=format&fit=crop',
     color: '#f1c40f'
   },
   {
@@ -107,7 +99,6 @@ export const projects: Project[] = [
     tags: ['Java', 'Database', 'Healthcare', 'SQL'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/Patient-Assistant-Network-Database-System' },
-    image: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?q=80&w=1470&auto=format&fit=crop',
     color: '#e74c3c'
   },
   {
@@ -117,7 +108,6 @@ export const projects: Project[] = [
     tags: ['Python', 'NLP', 'Machine Learning'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/Multilingual-Polarization-Detection' },
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1470&auto=format&fit=crop',
     color: '#3498db'
   },
   {
@@ -127,7 +117,6 @@ export const projects: Project[] = [
     tags: ['Python', 'NLP', 'Transformers'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/Combining-Transformer-Semantics-and-Reviewer-Behavior-for-Fake-Review-Detection-on-Yelp' },
-    image: '/fake_review_project.png',
     color: '#c0392b'
   },
   {
@@ -137,7 +126,6 @@ export const projects: Project[] = [
     tags: ['TypeScript', 'NLP', 'AI'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/edulens-ai', demo: 'https://edulens-ai-lep9.onrender.com' },
-    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1600&auto=format&fit=crop',
     color: '#9b59b6'
   },
   {
@@ -147,7 +135,6 @@ export const projects: Project[] = [
     tags: ['Python', 'Redis', 'React'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/JobForge' },
-    image: 'https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=1600&auto=format&fit=crop',
     color: '#e67e22'
   },
   {
@@ -157,7 +144,6 @@ export const projects: Project[] = [
     tags: ['Airflow', 'MLflow', 'PyTorch'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/MLFlowForge' },
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop',
     color: '#2980b9'
   },
   {
@@ -167,7 +153,6 @@ export const projects: Project[] = [
     tags: ['Python', 'Agents', 'Microservices'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/multi-agent-course-builder', demo: 'https://course-creator-205520880647.us-west1.run.app/' },
-    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1600&auto=format&fit=crop',
     color: '#e74c3c'
   },
   {
@@ -177,7 +162,6 @@ export const projects: Project[] = [
     tags: ['LLM', 'ChromaDB', 'NextJS'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/NexusRAG' },
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop',
     color: '#16a085'
   },
   {
@@ -187,7 +171,6 @@ export const projects: Project[] = [
     tags: ['Python', 'Pipeline', 'Safety'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/SafeFlow', demo: 'https://safeflow-frontend-2trn3wwwia-uc.a.run.app/' },
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop',
     color: '#3498db'
   },
   {
@@ -197,7 +180,6 @@ export const projects: Project[] = [
     tags: ['Kafka', 'Redis', 'Python'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/StreamSense' },
-    image: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=1600&auto=format&fit=crop',
     color: '#8e44ad'
   }
 ];
