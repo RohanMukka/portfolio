@@ -16,9 +16,11 @@ const NAV_SECTIONS = [
 
 interface NavbarProps {
   isScrolled?: boolean;
+  /** Sitting over the hero's colour panel: frosted white instead of paper. */
+  overHero?: boolean;
 }
 
-const Navbar = ({ isScrolled = false }: NavbarProps) => {
+const Navbar = ({ isScrolled = false, overHero = false }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   const [isNavHovered, setIsNavHovered] = useState(false);
@@ -74,7 +76,9 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
         onMouseLeave={() => setIsNavHovered(false)}
       >
         <div
-          className={`w-full max-w-5xl transition-all duration-500 bg-glass-bg backdrop-blur-xl rounded-full border border-glass-border shadow-2xl shadow-glass-shadow mx-4 px-6 flex justify-between items-center relative overflow-hidden ${
+          className={`w-full max-w-5xl transition-all duration-500 backdrop-blur-xl rounded-full border mx-4 px-6 flex justify-between items-center relative overflow-hidden ${
+            overHero ? "bg-white/10 border-white/25 shadow-none" : "bg-glass-bg border-glass-border shadow-2xl shadow-glass-shadow"
+          } ${
             isScrolled ? "py-3" : "py-5"
           } ${isNavHovered ? "shadow-accent/20 border-accent/20" : ""}`}
         >
@@ -86,7 +90,7 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
 
           <a
             href="#"
-            className="text-lg font-display font-semibold text-primary-text hover:opacity-80 transition-opacity tracking-tight"
+            className={`text-lg font-display font-semibold hover:opacity-80 transition-[opacity,color] duration-500 tracking-tight ${overHero ? "text-white" : "text-primary-text"}`}
           >
             Rohan Mukka
           </a>
@@ -99,7 +103,11 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  className={`relative px-4 py-2 text-sm font-medium transition-colors ${isActive ? "text-primary-text" : "text-primary-secondary hover:text-primary-text"}`}
+                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-500 ${
+                    overHero
+                      ? isActive ? "text-white" : "text-white/80 hover:text-white"
+                      : isActive ? "text-primary-text" : "text-primary-secondary hover:text-primary-text"
+                  }`}
                   onMouseEnter={() => setHovered(link.name)}
                   onMouseLeave={() => setHovered(null)}
                   whileHover={{ scale: 1.05 }}
@@ -108,7 +116,11 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
                   {(hovered === link.name || isActive) && (
                     <motion.span
                       layoutId="nav-item-active"
-                      className={`absolute inset-0 border rounded-full -z-10 ${isActive ? "bg-surface-subtle border-accent/20" : "bg-surface-subtle/50 border-glass-border"}`}
+                      className={`absolute inset-0 border rounded-full -z-10 ${
+                        overHero
+                          ? "bg-white/15 border-white/25"
+                          : isActive ? "bg-surface-subtle border-accent/20" : "bg-surface-subtle/50 border-glass-border"
+                      }`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -130,7 +142,7 @@ const Navbar = ({ isScrolled = false }: NavbarProps) => {
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
             <button
               type="button"
-              className="p-2 text-primary-text"
+              className={`p-2 transition-colors duration-500 ${overHero ? "text-white" : "text-primary-text"}`}
               onClick={() => setMobileOpen((o) => !o)}
               aria-label="Menu"
             >

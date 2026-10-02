@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { animate, motion, useMotionValue, usePresence, useTransform } from "framer-motion";
 import { NAME_WORDS, NAME_TYPE } from "../lib/heroName";
+import { loadStage } from "../stage/Stage";
 
 const MIN_MS = 1400; // long enough to read as an intro, not a wait
 const MAX_MS = 4000; // never hold visitors hostage to a slow asset
@@ -21,7 +22,8 @@ const pageLoaded = () =>
     ? Promise.resolve()
     : new Promise<void>((r) => window.addEventListener("load", () => r(), { once: true }));
 
-// Intro: a counter that follows real loading (fonts, the portrait, the page)
+// Intro: a counter that follows real loading (fonts, the portrait, the 3D
+// stage, the page)
 // while the name rises letter by letter from behind a mask. When it unmounts,
 // each letter's layoutId hands it to the hero, so intro and page are one shot.
 const Loader = ({ onDone }: { onDone: () => void }) => {
@@ -47,6 +49,7 @@ const Loader = ({ onDone }: { onDone: () => void }) => {
     const tasks = [
       document.fonts.ready,
       imageReady(`${import.meta.env.BASE_URL}hero-profile.png`),
+      loadStage(),
       pageLoaded(),
     ].map(withCap);
 
