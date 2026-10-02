@@ -14,7 +14,6 @@ import Loader from "./components/Loader";
 import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
 import Stage from "./stage/Stage";
-import SystemHUD from "./components/SystemHUD";
 import { startSmoothScroll } from "./lib/smoothScroll";
 
 const App = () => {
@@ -72,7 +71,6 @@ const App = () => {
     </AnimatePresence>
     {!loading && (
     <div className="bg-transparent text-primary-text relative min-h-screen">
-      <SystemHUD />
       <Stage />
       <Navbar isScrolled={isScrolled} overPanel={overPanel} />
 
