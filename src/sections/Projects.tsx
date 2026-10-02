@@ -19,26 +19,36 @@ const Projects = () => {
     <section id="projects" className="py-24 md:py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <SectionHeader
-          className="mb-10"
+          className="mb-2"
           index="02"
           label="Work"
           title={"Selected\nProjects"}
           subtitle="Experimental work, open source contributions, and personal tools."
         >
-          <div className="flex flex-wrap gap-2 bg-surface-subtle p-1.5 rounded-2xl border border-glass-border">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
-                  filter === cat
-                  ? 'bg-primary-text text-background shadow-lg scale-105'
-                  : 'text-primary-secondary hover:text-primary-text hover:bg-bg-elevated/50'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          {/* Editorial filters: label, count, and an underline on the active one. */}
+          <div className="flex flex-wrap gap-x-7 gap-y-3">
+            {CATEGORIES.map((cat) => {
+              const active = filter === cat;
+              const count = cat === 'All' ? projects.length : projects.filter((p) => p.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  aria-pressed={active}
+                  className={`group relative py-1 text-xs md:text-sm font-medium uppercase tracking-[0.22em] transition-colors ${
+                    active ? 'text-primary-text' : 'text-primary-tertiary hover:text-primary-text'
+                  }`}
+                >
+                  {cat}
+                  <sup className="ml-1 text-[9px] tabular-nums tracking-normal text-accent">{String(count).padStart(2, '0')}</sup>
+                  <span
+                    className={`absolute left-0 -bottom-0.5 h-px w-full bg-primary-text transition-transform duration-500 ${
+                      active ? 'scale-x-100 origin-left' : 'scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left'
+                    }`}
+                  />
+                </button>
+              );
+            })}
           </div>
         </SectionHeader>
 
