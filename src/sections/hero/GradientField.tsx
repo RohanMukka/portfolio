@@ -28,6 +28,9 @@ const GradientField = () => {
         <div className="hero-blob hero-blob-c" />
       </motion.div>
       <div className="hero-grain absolute inset-0" />
+      {/* A soft shade along the top and bottom edges, where the small white
+          labels sit, so they stay readable over the brightest colours. */}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,10,40,0.28)_0%,transparent_22%,transparent_70%,rgba(0,10,40,0.3)_100%)]" />
     </div>
   );
 };
