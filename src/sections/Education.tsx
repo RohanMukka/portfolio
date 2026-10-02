@@ -53,7 +53,7 @@ const Education = () => {
           className="mb-24"
           index="04"
           label="Education"
-          title={<>Academic<br />Journey</>}
+          title={"Academic\nJourney"}
           subtitle="From foundational principles to advanced specialization."
         />
 

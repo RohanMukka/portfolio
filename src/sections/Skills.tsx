@@ -9,7 +9,7 @@ const Skills = () => (
         className="mb-16 md:mb-20"
         index="03"
         label="Skills"
-        title={<>Technical<br />Arsenal</>}
+        title={"Technical\nArsenal"}
         subtitle="A curated selection of technologies I've mastered."
       />
       <Sentence />

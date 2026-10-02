@@ -22,7 +22,7 @@ const Projects = () => {
           className="mb-10"
           index="02"
           label="Work"
-          title={<>Selected<br />Projects</>}
+          title={"Selected\nProjects"}
           subtitle="Experimental work, open source contributions, and personal tools."
         >
           <div className="flex flex-wrap gap-2 bg-surface-subtle p-1.5 rounded-2xl border border-glass-border">

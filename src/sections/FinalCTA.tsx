@@ -44,7 +44,7 @@ const FinalCTA = () => {
           className="mb-16"
           index="06"
           label="Contact"
-          title={<>Let’s build something <span className="text-accent">extraordinary.</span></>}
+          title={"Let’s build something\n*extraordinary.*"}
           subtitle="Whether you have a question, a project idea, or just want to say hi—my inbox is always open."
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
