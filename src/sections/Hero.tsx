@@ -28,13 +28,14 @@ const Corner = ({ className }: { className: string }) => (
 );
 
 // The hero is a rounded panel of drifting colour with the name huge in the
-// middle and a crosshair tracking the cursor. Scrolling away, the panel eases
-// back a little.
+// middle and a crosshair tracking the cursor. Scrolling away, the panel tips
+// back in 3D, as if laying down onto the grid floor behind the page.
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: p } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
-  const panelScale = useTransform(p, [0, 1], [1, 0.94]);
+  const panelScale = useTransform(p, [0, 1], [1, 0.9]);
+  const panelTilt = useTransform(p, [0, 1], [0, 16]);
   const fade = useTransform(p, [0, 0.6], [1, 0]);
 
   return (
@@ -42,7 +43,7 @@ const Hero = () => {
       <motion.div
         ref={panelRef}
         data-nav-light
-        style={{ scale: panelScale }}
+        style={{ scale: panelScale, rotateX: panelTilt, originY: 1, transformPerspective: 1400 }}
         className="relative h-full w-full overflow-hidden rounded-[22px] md:rounded-[28px] text-white flex flex-col"
       >
         <GradientField />

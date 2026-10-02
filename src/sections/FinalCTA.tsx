@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Send, CheckCircle2, ArrowUpRight, Copy, Check } from 'lucide-react';
 import GradientField from './hero/GradientField';
 import { RevealLines, SECTION_COUNT } from '../components/SectionHeader';
@@ -33,6 +33,11 @@ const FinalCTA = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [copied, setCopied] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  // The mirror of the hero: the panel stands up from the floor as it arrives.
+  const { scrollYProgress: arrive } = useScroll({ target: sectionRef, offset: ['start end', 'start 25%'] });
+  const panelTilt = useTransform(arrive, [0, 1], [16, 0]);
+  const panelScale = useTransform(arrive, [0, 1], [0.9, 1]);
   const { scrollYProgress: p } = useScroll({ target: headingRef, offset: ['start 95%', 'start 45%'] });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,8 +80,12 @@ const FinalCTA = () => {
   };
 
   return (
-    <section id="contact" className="relative p-2.5 md:p-3.5 mt-16 md:mt-24">
-      <div data-nav-light className="relative overflow-hidden rounded-[22px] md:rounded-[28px] text-white">
+    <section ref={sectionRef} id="contact" className="relative p-2.5 md:p-3.5 mt-4">
+      <motion.div
+        data-nav-light
+        style={{ rotateX: panelTilt, scale: panelScale, originY: 1, transformPerspective: 1400 }}
+        className="relative overflow-hidden rounded-[22px] md:rounded-[28px] text-white"
+      >
         <GradientField />
 
         <Corner className="top-4 md:top-6 left-4 md:left-7 border-t border-l" />
@@ -237,7 +246,7 @@ const FinalCTA = () => {
             </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };
