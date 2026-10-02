@@ -41,6 +41,7 @@ const Hero = () => {
     <section ref={sectionRef} id="hero" className="relative h-[100dvh] min-h-[640px] p-2.5 md:p-3.5">
       <motion.div
         ref={panelRef}
+        data-nav-light
         style={{ scale: panelScale }}
         className="relative h-full w-full overflow-hidden rounded-[22px] md:rounded-[28px] text-white flex flex-col"
       >

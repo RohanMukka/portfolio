@@ -30,19 +30,54 @@ const parse = (title: string): Glyph[][] =>
   });
 
 // One letter rising from behind its line's mask, driven by scroll progress.
-const Letter = ({ glyph, progress, start }: { glyph: Glyph; progress: MotionValue<number>; start: number }) => {
+const Letter = ({ glyph, progress, start, accentClassName }: {
+  glyph: Glyph;
+  progress: MotionValue<number>;
+  start: number;
+  accentClassName: string;
+}) => {
   const y = useTransform(progress, [start, start + 0.35], ["105%", "0%"]);
   const rotate = useTransform(progress, [start, start + 0.35], [8, 0]);
   if (glyph.char === " ") return <span className="inline-block w-[0.25em]" />;
   return (
     <motion.span
-      className={`inline-block origin-bottom-left ${glyph.accent ? "font-serif italic font-normal tracking-normal text-accent pr-[0.04em]" : ""}`}
+      className={`inline-block origin-bottom-left ${glyph.accent ? `font-serif italic font-normal tracking-normal pr-[0.04em] ${accentClassName}` : ""}`}
       style={{ y, rotate }}
     >
       {glyph.char}
     </motion.span>
   );
 };
+
+// A title's lines, each letter rising into place as `progress` goes 0 -> 1.
+// "\n" breaks a line; *stars* set words in the accent serif.
+export const RevealLines = ({ title, progress, accentClassName = "text-accent" }: {
+  title: string;
+  progress: MotionValue<number>;
+  accentClassName?: string;
+}) => {
+  const lines = parse(title);
+  const total = lines.reduce((n, l) => n + l.length, 0);
+  let n = 0;
+  return (
+    <>
+      {lines.map((line, li) => (
+        <span key={li} className="block overflow-hidden pb-[0.08em] -mb-[0.08em]" aria-hidden="true">
+          {line.map((glyph, gi) => {
+            const start = (n++ / Math.max(1, total)) * 0.65;
+            return (
+              <React.Fragment key={gi}>
+                <Letter glyph={glyph} progress={progress} start={start} accentClassName={accentClassName} />
+              </React.Fragment>
+            );
+          })}
+        </span>
+      ))}
+    </>
+  );
+};
+
+export const plainTitle = (title: string) => title.replace(/\*/g, "").replace(/\n/g, " ");
 
 // Editorial section opener: "02 — Work" with a "( 02 / 06 )" counter, a very
 // large title whose letters rise into place as the section scrolls in, an
@@ -51,10 +86,6 @@ const SectionHeader = ({ index, label, title, subtitle, children, className = ""
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start 92%", "start 38%"] });
   const rule = useTransform(p, [0.3, 1], [0, 1]);
-
-  const lines = parse(title);
-  const total = lines.reduce((n, l) => n + l.length, 0);
-  let n = 0;
 
   return (
     <header ref={ref} className={`w-full text-left ${className}`}>
@@ -77,21 +108,10 @@ const SectionHeader = ({ index, label, title, subtitle, children, className = ""
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>
           <h2
-            aria-label={title.replace(/\*/g, "").replace(/\n/g, " ")}
+            aria-label={plainTitle(title)}
             className="text-[clamp(2.75rem,7vw,6.5rem)] font-bold leading-[0.92] tracking-[-0.045em] text-primary-text"
           >
-            {lines.map((line, li) => (
-              <span key={li} className="block overflow-hidden pb-[0.08em] -mb-[0.08em]" aria-hidden="true">
-                {line.map((glyph, gi) => {
-                  const start = (n++ / Math.max(1, total)) * 0.65;
-                  return (
-                    <React.Fragment key={gi}>
-                      <Letter glyph={glyph} progress={p} start={start} />
-                    </React.Fragment>
-                  );
-                })}
-              </span>
-            ))}
+            <RevealLines title={title} progress={p} />
           </h2>
           {subtitle && (
             <motion.p
