@@ -15,13 +15,13 @@ const Certifications = () => {
     <section id="certifications" className="py-32 px-6 relative">
       <div className="max-w-6xl mx-auto w-full">
         <SectionHeader
-          className="mb-12 md:mb-16"
+          className="mb-2"
           index="05"
           label="Certifications"
           title="Credentials"
           subtitle="Continuous learning and professional credentials."
         />
-        <ol className="border-t border-primary-text/10" onMouseLeave={() => setHovered(null)}>
+        <ol onMouseLeave={() => setHovered(null)}>
           {certificationsByDate.map((c) => {
             const isHovered = hovered === c.name;
             const dim = hovered !== null && !isHovered;
@@ -29,8 +29,16 @@ const Certifications = () => {
               <li
                 key={c.name}
                 onMouseEnter={() => setHovered(c.name)}
-                className={`border-b border-primary-text/10 transition-opacity duration-300 ${dim ? "opacity-35" : ""}`}
+                className={`relative border-b border-primary-text/10 transition-opacity duration-300 ${dim ? "opacity-35" : ""}`}
               >
+                {/* Gradient underline that sweeps across the hovered row. */}
+                <motion.span
+                  className="pointer-events-none absolute left-0 right-0 -bottom-px h-px origin-left"
+                  style={{ background: "linear-gradient(90deg, #1d3fbf, #e0457b, #ff7a3d)" }}
+                  initial={false}
+                  animate={{ scaleX: isHovered ? 1 : 0 }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                />
                 <div className="grid grid-cols-[3.5rem_1fr_auto] md:grid-cols-[5rem_1fr_14rem_2rem] items-center gap-4 py-6 md:py-7">
                   <span className="font-display text-sm md:text-base font-bold tabular-nums text-accent">{yearOf(c)}</span>
                   <div className="min-w-0">
