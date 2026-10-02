@@ -1,236 +1,101 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { GraduationCap, Calendar, MapPin, Award, ArrowUp } from "lucide-react";
+import React, { useRef } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import SectionHeader from "../components/SectionHeader";
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+const GRADIENT = "linear-gradient(180deg, #1d3fbf, #e0457b 55%, #ff7a3d)";
+
+// Newest first.
 const educationData = [
   {
-    id: 1,
+    school: "University of Oklahoma",
+    location: "Oklahoma, United States",
+    degree: "Master of Science in Computer Science",
+    gpa: "4.0",
+    scale: "4.0",
+    period: "Aug 2024 – May 2026",
+    coursework: ["Advanced Algorithms", "AI Infrastructure", "Deep Learning", "Software Architecture", "Quantum Computing"],
+  },
+  {
     school: "CVR College of Engineering",
     location: "Hyderabad, India",
     degree: "Bachelor of Technology in Computer Science",
     minor: "Minor in AI/ML",
-    gpa: "9.1/10.0",
+    gpa: "9.1",
+    scale: "10.0",
     period: "Aug 2020 – May 2024",
-    color: "#FF9933",
-    coursework: [
-      "Data Structures",
-      "Algorithms",
-      "Operating Systems",
-      "Computer Networks",
-      "DBMS",
-      "Machine Learning",
-    ],
-  },
-  {
-    id: 2,
-    school: "University of Oklahoma",
-    location: "Oklahoma, United States",
-    degree: "Master of Science in Computer Science",
-    gpa: "4.0/4.0",
-    period: "Aug 2024 – May 2026",
-    color: "#830000",
-    coursework: [
-      "Advanced Algorithms",
-      "AI Infrastructure",
-      "Deep Learning",
-      "Software Architecture",
-      "Quantum Computing",
-    ],
+    coursework: ["Data Structures", "Algorithms", "Operating Systems", "Computer Networks", "DBMS", "Machine Learning"],
   },
 ];
 
+// An editorial timeline: a rail that fills with the hero's colours as you
+// scroll, then one row per school with the GPA set large on the right.
 const Education = () => {
+  const listRef = useRef<HTMLOListElement>(null);
+  const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 80%", "end 60%"] });
+  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
+
   return (
-    <section
-      id="education"
-      className="py-32 px-6 relative overflow-hidden min-h-screen flex flex-col items-center"
-    >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-glass-border to-transparent opacity-50"></div>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full -z-10" style={{background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, transparent 70%)'}}></div>
-      <div className="max-w-5xl w-full relative z-10">
+    <section id="education" className="py-24 md:py-32 px-6 relative">
+      <div className="max-w-6xl mx-auto w-full">
         <SectionHeader
-          className="mb-24"
+          className="mb-2"
           index="04"
           label="Education"
           title={"Academic\nJourney"}
           subtitle="From foundational principles to advanced specialization."
         />
 
-        <div className="relative flex flex-col items-center gap-20 w-full max-w-5xl mx-auto py-10">
-          {/* SVG Spiral Connecting Line (Desktop) - Absolutely positioned ON TOP of cards for arrow visibility */}
-          <div className="absolute inset-0 pointer-events-none hidden md:block z-20 overflow-visible">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 1024 800"
-              fill="none"
-              style={{ overflow: "visible" }}
+        <ol ref={listRef} className="relative">
+          <span className="absolute left-[7px] top-0 bottom-0 w-px bg-primary-text/10" aria-hidden="true" />
+          <motion.span
+            className="absolute left-[7px] top-0 bottom-0 w-px origin-top"
+            style={{ scaleY: fill, background: GRADIENT }}
+            aria-hidden="true"
+          />
+
+          {educationData.map((e, i) => (
+            <motion.li
+              key={e.school}
+              className="group relative grid grid-cols-[1.5rem_1fr] md:grid-cols-[1.5rem_13rem_1fr_9rem] gap-x-6 md:gap-x-8 gap-y-5 py-12 md:py-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-15%" }}
+              transition={{ duration: 0.8, ease: EASE, delay: i * 0.1 }}
             >
-              {/* Spiral Path: Lands exactly on the left border of the Masters card */}
-              <motion.path
-                d="M 460 500 
-                       C 600 500, 700 400, 512 400
-                       C 350 400, 400 250, 563 250"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                fill="transparent"
-                strokeDasharray="10 5"
-                className="text-primary-text drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 2.5, ease: "easeInOut" }}
-              />
+              <span className="relative z-[1] mt-2 w-[15px] h-[15px] rounded-full border-2 border-accent bg-background" aria-hidden="true" />
 
-              {/* Manually drawn Arrowhead - Larger Size */}
-              <motion.path
-                d="M 548 244 L 563 250 L 548 256 Z"
-                fill="currentColor"
-                className="text-primary-text drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 2.4, duration: 0.2 }}
-              />
-            </svg>
-          </div>
-
-          {/* Masters Card (Top Right) */}
-          <div className="relative w-full flex md:justify-end justify-center z-10 pr-4 md:pr-0 pl-4 md:pl-0">
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
-            >
-              <div className="absolute -top-6 -right-6 w-20 h-20 bg-electric-cyan/5 rounded-full blur-2xl group-hover:bg-electric-cyan/10 transition-colors"></div>
-
-              <div className="flex flex-col gap-4 relative z-10">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-2xl font-display font-bold text-primary-text mb-1">
-                      {educationData[1].school}
-                    </h3>
-                    <div className="flex items-center gap-2 text-primary-secondary text-sm">
-                      <MapPin size={14} />
-                      <span>{educationData[1].location}</span>
-                    </div>
-                  </div>
-                  <div className="p-2 rounded-lg bg-surface-subtle/50 border border-white/5">
-                    <GraduationCap className="text-electric-cyan w-6 h-6" />
-                  </div>
-                </div>
-                <div className="border-t border-glass-border my-2"></div>
-                <div>
-                  <h4 className="text-lg font-semibold text-primary-text leading-tight mb-3">
-                    {educationData[1].degree}
-                  </h4>
-
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-wider text-primary-secondary font-bold mb-2">
-                        Core Coursework
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {educationData[1].coursework?.map((course) => (
-                          <span
-                            key={course}
-                            className="px-2 py-1 rounded-md bg-surface-subtle text-[11px] text-primary-secondary border border-glass-border"
-                          >
-                            {course}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-primary-blue/10 text-primary-blue border border-primary-blue/20">
-                        <Calendar size={12} />
-                        {educationData[1].period}
-                      </span>
-                      <motion.span
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-extrabold bg-accent text-white shadow-lg shadow-accent/30"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <Award size={14} />
-                        GPA: {educationData[1].gpa}
-                      </motion.span>
-                    </div>
-                  </div>
-                </div>
+              <div className="col-start-2 md:col-start-auto">
+                <p className="text-xs font-medium uppercase tracking-[0.22em] tabular-nums text-accent">{e.period}</p>
+                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-primary-tertiary">{e.location}</p>
               </div>
-            </motion.div>
-          </div>
 
-          {/* Undergrad Card (Bottom Left) */}
-          <div className="relative w-full flex md:justify-start justify-center z-10 pr-4 md:pr-0 pl-4 md:pl-0">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-full md:w-[45%] p-8 rounded-2xl glass-card transition-all relative group"
-            >
-              <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-primary-orange/5 rounded-full blur-2xl group-hover:bg-primary-orange/10 transition-colors"></div>
-
-              <div className="flex flex-col gap-4 relative z-10">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-2xl font-display font-bold text-primary-text mb-1">
-                      {educationData[0].school}
-                    </h3>
-                    <div className="flex items-center gap-2 text-primary-secondary text-sm">
-                      <MapPin size={14} />
-                      <span>{educationData[0].location}</span>
-                    </div>
-                  </div>
-                  <div className="p-2 rounded-lg bg-surface-subtle/50 border border-white/5">
-                    <GraduationCap className="text-primary-orange w-6 h-6" />
-                  </div>
-                </div>
-                <div className="border-t border-glass-border my-2"></div>
-                <div>
-                  <h4 className="text-lg font-semibold text-primary-text leading-tight mb-1">
-                    {educationData[0].degree}
-                  </h4>
-                  <p className="text-sm text-accent italic mb-3">
-                    {educationData[0].minor}
-                  </p>
-
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-wider text-primary-secondary font-bold mb-2">
-                        Key Modules
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {educationData[0].coursework?.map((course) => (
-                          <span
-                            key={course}
-                            className="px-2 py-1 rounded-md bg-surface-subtle text-[11px] text-primary-secondary border border-glass-border"
-                          >
-                            {course}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-primary-blue/10 text-primary-blue border border-primary-blue/20">
-                        <Calendar size={12} />
-                        {educationData[0].period}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-extrabold bg-accent text-white shadow-lg shadow-accent/30">
-                        <Award size={14} />
-                        GPA: {educationData[0].gpa}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              <div className="col-start-2 md:col-start-auto min-w-0">
+                <h3 className="font-display font-bold text-3xl md:text-5xl tracking-[-0.04em] leading-[0.95] text-primary-text transition-transform duration-500 group-hover:translate-x-3">
+                  {e.school}
+                </h3>
+                <p className="mt-4 text-lg md:text-xl text-primary-text">
+                  {e.degree}
+                  {e.minor && <span className="font-serif italic text-accent"> · {e.minor}</span>}
+                </p>
+                <p className="mt-4 text-sm md:text-base text-primary-secondary leading-relaxed">{e.coursework.join("  ·  ")}</p>
               </div>
-            </motion.div>
-          </div>
-        </div>
+
+              <div className="col-start-2 md:col-start-auto md:text-right">
+                <p className="font-display font-extrabold text-5xl md:text-7xl tracking-[-0.05em] leading-none text-primary-text">{e.gpa}</p>
+                <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.22em] text-primary-secondary">GPA / {e.scale}</p>
+              </div>
+
+              {/* Row rule, with the gradient sweeping across it on hover. */}
+              <span className="absolute left-10 right-0 bottom-0 h-px bg-primary-text/10" aria-hidden="true" />
+              <span
+                className="absolute left-10 right-0 bottom-0 h-px origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700"
+                style={{ background: "linear-gradient(90deg, #1d3fbf, #e0457b, #ff7a3d)" }}
+                aria-hidden="true"
+              />
+            </motion.li>
+          ))}
+        </ol>
       </div>
     </section>
   );
