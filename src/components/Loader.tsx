@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { animate, motion, useMotionValue, usePresence, useTransform } from "framer-motion";
 import { NAME_WORDS, NAME_TYPE } from "../lib/heroName";
+import GradientField from "../sections/hero/GradientField";
 import { loadStage } from "../stage/Stage";
 
 const MIN_MS = 1400; // long enough to read as an intro, not a wait
@@ -76,12 +77,16 @@ const Loader = ({ onDone }: { onDone: () => void }) => {
   }, [onDone, progress]);
 
   return (
+    // The intro plays inside the same colour panel the hero sits in, so when
+    // it fades the hero is already there underneath.
     <motion.div
-      className="fixed inset-0 z-[100] bg-background flex items-center justify-center px-6"
+      className="fixed inset-0 z-[100] bg-background p-2.5 md:p-3.5"
       aria-label="Loading"
       style={{ opacity: fade, pointerEvents: isPresent ? "auto" : "none" }}
     >
-      <h1 className={`${NAME_TYPE} flex flex-wrap justify-center gap-x-4`} aria-label="Rohan Mukka">
+      <div className="relative h-full w-full overflow-hidden rounded-[22px] md:rounded-[28px] text-white flex items-center justify-center px-6">
+      <GradientField />
+      <h1 className={`${NAME_TYPE} relative z-[1] text-white flex flex-wrap justify-center gap-x-4`} aria-label="Rohan Mukka">
         {NAME_WORDS.map((word, w) => (
           <span key={w} className="inline-block whitespace-nowrap" aria-hidden="true">
             {word.map((item, i) => (
@@ -102,15 +107,16 @@ const Loader = ({ onDone }: { onDone: () => void }) => {
         ))}
       </h1>
 
-      <div className="absolute inset-x-6 bottom-8 md:inset-x-10 md:bottom-10 flex items-end justify-between text-xs uppercase tracking-[0.3em] text-primary-secondary">
+      <div className="absolute z-[1] inset-x-6 bottom-8 md:inset-x-14 md:bottom-12 flex items-end justify-between text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/75">
         <span>Portfolio</span>
-        <motion.span className="font-display text-sm tabular-nums tracking-[0.1em] text-primary-text">{counter}</motion.span>
+        <motion.span className="font-display text-sm tabular-nums tracking-[0.1em] text-white">{counter}</motion.span>
         <span>Software Engineer</span>
       </div>
       <motion.div
-        className="absolute left-0 bottom-0 h-[2px] w-full bg-accent origin-left"
+        className="absolute z-[1] left-0 bottom-0 h-[2px] w-full bg-white origin-left"
         style={{ scaleX: bar }}
       />
+      </div>
     </motion.div>
   );
 };

@@ -20,4 +20,4 @@ export const NAME_WORDS = [
 
 // Type styling both copies share, so the hand-off doesn't jump in size.
 export const NAME_TYPE =
-  "text-5xl sm:text-6xl lg:text-[7.5rem] font-extrabold tracking-[-0.055em] leading-[0.9] text-primary-text";
+  "text-5xl sm:text-6xl lg:text-[7.5rem] font-extrabold tracking-[-0.055em] leading-[0.9]";
