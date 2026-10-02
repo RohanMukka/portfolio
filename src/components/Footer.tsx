@@ -8,10 +8,40 @@ import {
   CheckCircle2,
   Terminal,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 import { siLeetcode, siMonkeytype, siDevpost } from "simple-icons";
 import { GitHubCalendar } from "react-github-calendar";
+import { RevealLines } from "./SectionHeader";
+
+const RESUME_URL = `${import.meta.env.BASE_URL}Rohan_Mukka_Resume.pdf`;
+
+const SITEMAP = [
+  { name: "About", href: "#architecture" },
+  { name: "Work", href: "#projects" },
+  { name: "Skills", href: "#skills" },
+  { name: "Education", href: "#education" },
+  { name: "Certifications", href: "#certifications" },
+  { name: "Contact", href: "#contact" },
+];
+
+// The name set edge to edge along the bottom of the page, its letters rising
+// in as the end of the page scrolls into view. Decorative: the copyright line
+// carries the name for screen readers.
+const Wordmark = () => {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start end", "end end"] });
+  return (
+    <div className="mt-16 md:mt-24 px-4 md:px-6 overflow-hidden" aria-hidden="true">
+      <p
+        ref={ref}
+        className="font-display font-extrabold leading-[0.8] tracking-[-0.055em] whitespace-nowrap text-primary-text text-[calc((100vw-2rem)*0.165)] md:text-[calc((100vw-3rem)*0.165)]"
+      >
+        <RevealLines title="Rohan Mukka" progress={p} />
+      </p>
+    </div>
+  );
+};
 
 const Footer = () => {
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
@@ -110,9 +140,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="relative pt-20 pb-12 mt-20 bg-surface-subtle/20">
-      {/* Premium Separator Line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-text/20 to-transparent" />
+    <footer className="relative pt-20 md:pt-28 pb-4 md:pb-6">
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
@@ -128,7 +156,7 @@ const Footer = () => {
             </div>
             <p className="text-base text-primary-secondary leading-relaxed max-w-sm">
               Designing and developing high-performance applications with a
-              focus on user experience and architectural cleaniness.
+              focus on user experience and architectural cleanliness.
             </p>
             <div className="flex gap-4">
               {/* LeetCode */}
@@ -357,18 +385,16 @@ const Footer = () => {
               Sitemap
             </h4>
             <ul className="space-y-3">
-              {["About", "Work", "Skills", "Education", "Contact"].map(
-                (item) => (
-                  <li key={item}>
-                    <a
-                      href={`#${item.toLowerCase().replace("about", "architecture")}`}
-                      className="text-primary-secondary hover:text-accent transition-colors text-sm font-medium"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ),
-              )}
+              {SITEMAP.map((item) => (
+                <li key={item.name}>
+                  <a
+                    href={item.href}
+                    className="text-primary-secondary hover:text-accent transition-colors text-sm font-medium"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -380,10 +406,10 @@ const Footer = () => {
             <ul className="space-y-3">
               {[
                 { name: "Devpost", href: "https://devpost.com/rohan-mukka-1" },
-                { name: "CV/Resume", href: "#" },
+                { name: "CV/Resume", href: RESUME_URL },
                 {
                   name: "Source Code",
-                  href: "https://github.com/rohanmukka/web-engineering-portfolio",
+                  href: "https://github.com/RohanMukka/portfolio",
                 },
               ].map((item) => (
                 <li key={item.name}>
@@ -573,6 +599,8 @@ const Footer = () => {
           <div className="hidden md:block"></div>
         </div>
       </div>
+
+      <Wordmark />
     </footer>
   );
 };
