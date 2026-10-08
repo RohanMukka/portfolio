@@ -1,5 +1,4 @@
-// About copy. Facts come from the resume and the project READMEs. The hero's
-// chapters already cover what I build and the M.S., so Journey tells the path.
+// About copy. Facts come from the resume and the project READMEs.
 
 export const PORTRAIT = `${import.meta.env.BASE_URL}hero-profile.png`;
 export const DEVPOST = "https://devpost.com/rohan-mukka-1";
