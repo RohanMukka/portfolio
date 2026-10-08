@@ -34,14 +34,15 @@ export const Magnetic = ({ href, className, children, download }: {
   );
 };
 
-// A line whose words rise one by one from behind a mask. `{ em }` parts are
-// set in the italic serif, in the accent colour unless `emClassName` says
-// otherwise.
+// A line whose words rise one by one from behind a mask, once `play` is on.
+// `{ em }` parts are set in the italic serif, in the accent colour unless
+// `emClassName` says otherwise.
 export type RevealPart = string | { em: string };
 
-export const RevealWords = ({ parts, delay = 0, className = "", emClassName = "text-accent" }: {
+export const RevealWords = ({ parts, delay = 0, play = true, className = "", emClassName = "text-accent" }: {
   parts: RevealPart[];
   delay?: number;
+  play?: boolean;
   className?: string;
   emClassName?: string;
 }) => {
@@ -58,7 +59,7 @@ export const RevealWords = ({ parts, delay = 0, className = "", emClassName = "t
             <motion.span
               className={`inline-block ${w.em ? `font-serif italic font-normal tracking-normal ${emClassName}` : ""}`}
               initial={{ y: "110%" }}
-              animate={{ y: 0 }}
+              animate={{ y: play ? 0 : "110%" }}
               transition={{ duration: 0.9, ease: EASE, delay: delay + i * 0.04 }}
             >
               {w.text}
@@ -70,8 +71,8 @@ export const RevealWords = ({ parts, delay = 0, className = "", emClassName = "t
   );
 };
 
-export const fadeUp = (delay: number) => ({
+export const fadeUp = (delay: number, play = true) => ({
   initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
+  animate: play ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 },
   transition: { duration: 0.8, ease: EASE, delay },
 });

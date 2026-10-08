@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
@@ -10,23 +9,22 @@ import Skills from "./sections/Skills";
 import Education from "./sections/Education";
 import Certifications from "./sections/Certifications";
 import FinalCTA from "./sections/FinalCTA";
-import Loader from "./components/Loader";
 import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
 import Stage from "./stage/Stage";
 import { startSmoothScroll } from "./lib/smoothScroll";
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
+  const [introDone, setIntroDone] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const [overPanel, setOverPanel] = useState(true);
 
-  const finishIntro = useCallback(() => setLoading(false), []);
+  const finishIntro = useCallback(() => setIntroDone(true), []);
 
   useEffect(() => {
-    // The intro hands its letters to the hero at the top of the page, so
-    // always start there rather than at a restored scroll position.
+    // The intro plays in the hero at the top of the page, so always start
+    // there rather than at a restored scroll position.
     history.scrollRestoration = "manual";
 
     const handleScroll = () => {
@@ -52,24 +50,17 @@ const App = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Start after the loader so Lenis measures the real page, not the splash.
+  // Hold the page still while the intro plays, then start smooth scrolling.
   useEffect(() => {
-    if (!loading) return startSmoothScroll();
-  }, [loading]);
+    if (introDone) return startSmoothScroll();
+    const root = document.documentElement;
+    root.style.overflow = "hidden";
+    return () => {
+      root.style.overflow = "";
+    };
+  }, [introDone]);
 
   return (
-    <>
-    {/* AnimatePresence keeps the intro mounted for one more render as it
-        leaves, which lets framer-motion measure its letters and fly them
-        into the hero's matching layoutIds. */}
-    <AnimatePresence>
-      {loading && (
-        <div key="intro">
-          <Loader onDone={finishIntro} />
-        </div>
-      )}
-    </AnimatePresence>
-    {!loading && (
     <div className="bg-transparent text-primary-text relative min-h-screen">
       <Stage />
       <Navbar isScrolled={isScrolled} overPanel={overPanel} />
@@ -84,7 +75,7 @@ const App = () => {
       {/* overflow-x-clip, not -hidden: hidden makes <main> a scroll container,
           which silently breaks position: sticky (the pinned hero) inside it. */}
       <main className="relative w-full overflow-x-clip">
-        <Hero />
+        <Hero onIntroDone={finishIntro} />
         <Architecture />
         {/* <Experience /> */}
         <Projects />
@@ -95,8 +86,6 @@ const App = () => {
         <Footer />
       </main>
     </div>
-    )}
-    </>
   );
 };
 

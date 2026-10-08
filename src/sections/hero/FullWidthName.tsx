@@ -2,12 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { motion, motionValue, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { NAME_WORDS } from "../../lib/heroName";
 
-// When the intro unmounts, each of its letters flies to the hero letter that
-// shares its layoutId.
-const handoff = (index: number) => ({
-  layout: { duration: 1.1, ease: [0.76, 0, 0.24, 1] as const, delay: index * 0.02 },
-});
-
 const NAME_LETTERS = NAME_WORDS.map((word, w) => word.map((l, i) => ({ ...l, index: w * 5 + i })));
 const ALL_LETTERS = NAME_LETTERS.flat();
 
@@ -20,13 +14,7 @@ const Letter = ({ letter, lift, setRef }: {
   const y = useTransform(s, (v) => `${-v * 14}%`);
   const scaleY = useTransform(s, [0, 1], [1, 1.3]);
   return (
-    <motion.span
-      ref={setRef}
-      layoutId={letter.id}
-      className="inline-block"
-      style={{ y, scaleY, originY: 1 }}
-      transition={handoff(letter.index)}
-    >
+    <motion.span ref={setRef} className="inline-block" style={{ y, scaleY, originY: 1 }}>
       {letter.char}
     </motion.span>
   );

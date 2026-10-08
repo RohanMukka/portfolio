@@ -1,6 +1,4 @@
-// The hero name, shared by the intro and the hero. Each letter carries a
-// layoutId, so when the intro unmounts and the hero mounts in the same render,
-// framer-motion flies every letter from its intro position into the hero.
+// The hero name, letter by letter (ids are stable React keys).
 export const NAME_WORDS = [
   [
     { char: "R", id: "swap-1" },
@@ -17,7 +15,3 @@ export const NAME_WORDS = [
     { char: "a", id: "a-2" },
   ],
 ];
-
-// Type styling both copies share, so the hand-off doesn't jump in size.
-export const NAME_TYPE =
-  "text-5xl sm:text-6xl lg:text-[7.5rem] font-extrabold tracking-[-0.055em] leading-[0.9]";
