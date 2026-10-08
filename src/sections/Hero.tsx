@@ -1,11 +1,16 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import Crosshair from './hero/Crosshair';
 import FullWidthName from './hero/FullWidthName';
 import GradientField from './hero/GradientField';
-import HeroIntro, { CLOSED_CLIP } from './hero/HeroIntro';
+import HeroIntro, { INTRO_OPEN, type IntroPhase } from './hero/HeroIntro';
 import { Magnetic, RevealWords, fadeUp } from './hero/shared';
+
+// The name while the intro plays, and as it pulls into focus. Plain opacity,
+// transform and filter values, so the browser animates them itself.
+const NAME_HIDDEN = { opacity: 0, filter: 'blur(8px)', transform: 'scale(1.04)' };
+const NAME_SHOWN = { opacity: 1, filter: 'blur(0px)', transform: 'scale(1)', transitionEnd: { filter: 'none' } };
 
 const RESUME_URL = `${import.meta.env.BASE_URL}Rohan_Mukka_Resume.pdf`;
 
@@ -30,8 +35,9 @@ const Corner = ({ className }: { className: string }) => (
 
 // The hero is a rounded panel of drifting colour with the name huge in the
 // middle and a crosshair tracking the cursor. It opens with an intro (see
-// HeroIntro): a line of colour that widens as the page loads, then opens into
-// the panel as the name pulls into focus, before the details settle in.
+// HeroIntro): a line of colour that widens as the page loads, then plates
+// slide apart from it to uncover the panel as the name pulls into focus,
+// before the details settle in.
 // Scrolling away, the panel tips back in 3D, as if laying down onto the grid
 // floor behind the page.
 const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
@@ -45,33 +51,20 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
   // The top row clears out quickly, before the navbar drops in over it.
   const topFade = useTransform(p, [0, 0.15], [1, 0]);
 
-  const clip = useMotionValue(CLOSED_CLIP);
-  const focus = useMotionValue(0);
-  const nameOpacity = useTransform(focus, [0.05, 0.55], [0, 1]);
-  const nameBlur = useTransform(focus, (f) => (f >= 1 ? 'none' : `blur(${(1 - f) * 18}px)`));
-  const [entered, setEntered] = useState(false);
-
-  const open = useCallback(() => {
-    clip.set('none');
-    focus.set(1);
-    setEntered(true);
+  const [phase, setPhase] = useState<IntroPhase>('loading');
+  const entered = phase === 'open';
+  const opening = useCallback(() => setPhase('opening'), []);
+  const opened = useCallback(() => {
+    setPhase('open');
     onIntroDone();
-  }, [clip, focus, onIntroDone]);
+  }, [onIntroDone]);
 
   return (
     <section ref={sectionRef} id="hero" className="relative h-[100dvh] min-h-[640px] p-2.5 md:p-3.5">
-      {!entered && (
-        <div className="absolute inset-0 p-2.5 md:p-3.5 pointer-events-none" aria-hidden="true">
-          <div className="relative h-full w-full">
-            <HeroIntro clip={clip} focus={focus} panelRef={panelRef} nameRef={nameRef} onOpen={open} />
-          </div>
-        </div>
-      )}
-
       <motion.div
         ref={panelRef}
         data-nav-light
-        style={{ scale: panelScale, rotateX: panelTilt, originY: 1, transformPerspective: 1400, clipPath: clip }}
+        style={{ scale: panelScale, rotateX: panelTilt, originY: 1, transformPerspective: 1400 }}
         className="relative h-full w-full overflow-hidden rounded-[22px] md:rounded-[28px] text-white flex flex-col"
       >
         <GradientField />
@@ -97,7 +90,9 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
         <div className="relative z-[1] flex-1 flex flex-col items-center justify-center px-5 md:px-14">
           <motion.div
             ref={nameRef}
-            style={{ opacity: nameOpacity, filter: nameBlur, willChange: entered ? 'auto' : 'filter, opacity' }}
+            initial={NAME_HIDDEN}
+            animate={phase === 'loading' ? NAME_HIDDEN : NAME_SHOWN}
+            transition={INTRO_OPEN}
           >
             <FullWidthName className="items-center text-white text-[calc((100vw-4rem)*0.33)] md:text-[calc((100vw-9rem)*0.165)]" />
           </motion.div>
@@ -122,6 +117,8 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
 
         <Crosshair area={panelRef} lineClassName="bg-white/25" labelClassName="text-[#ffb38a]" />
       </motion.div>
+
+      {!entered && <HeroIntro phase={phase} nameRef={nameRef} onReady={opening} onOpened={opened} />}
     </section>
   );
 };

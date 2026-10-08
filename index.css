@@ -169,6 +169,36 @@
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+/* Lite mode: <html data-lite> when the browser draws without a graphics card
+   (src/lib/rendering.ts). There, anything repainted every frame stutters:
+   drifting blobs under blended grain, and frosted glass re-blurred on every
+   scroll frame. The blobs hold still, the grain goes, and glass turns plain
+   (its fill is already near-opaque). */
+[data-lite] .hero-blob {
+  animation: none;
+  will-change: auto;
+}
+[data-lite] .hero-grain {
+  display: none;
+}
+[data-lite] * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+/* Lite mode's page background in place of the 3D stage: the stage's own
+   soft glows, painted once. */
+.lite-backdrop {
+  background:
+    radial-gradient(60vmax 60vmax at 95% 0%, rgba(255, 255, 255, 0.6), transparent 70%),
+    radial-gradient(70vmax 70vmax at 0% 100%, rgba(234, 223, 205, 0.55), transparent 70%),
+    var(--bg-primary);
+}
+[data-theme='dark'] .lite-backdrop {
+  background:
+    radial-gradient(60vmax 60vmax at 95% 0%, rgba(30, 58, 138, 0.55), transparent 70%),
+    radial-gradient(70vmax 70vmax at 0% 100%, rgba(49, 46, 129, 0.5), transparent 70%),
+    var(--bg-primary);
+}
 @keyframes hero-drift-a {
   to { transform: translate(-14%, 10%) scale(1.15); }
 }

@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { isSoftwareRendering } from "../../lib/rendering";
 
 // The hero panel's living colour: a base gradient with three soft colour
 // blobs that drift on their own (CSS keyframes in index.css) and lean a
-// little toward the cursor, under a film-grain layer.
+// little toward the cursor, under a film-grain layer. In lite mode they hold
+// still and the grain goes (index.css).
 const GradientField = () => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -11,6 +13,7 @@ const GradientField = () => {
   const sy = useSpring(y, { stiffness: 30, damping: 20 });
 
   useEffect(() => {
+    if (isSoftwareRendering()) return;
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
       x.set((e.clientX / window.innerWidth - 0.5) * 60);

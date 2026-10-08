@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Background from "../components/Background";
+import { isSoftwareRendering } from "../lib/rendering";
 import type { Stage as StageApi, Theme } from "./scene";
 
 export const loadStage = () => import("./scene");
@@ -9,7 +10,7 @@ const currentTheme = (): Theme =>
 
 // Fixed WebGL canvas behind the whole page (see scene.ts). Without WebGL the
 // page keeps its CSS background instead.
-const Stage = () => {
+const WebGLStage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
@@ -79,5 +80,14 @@ const Stage = () => {
     />
   );
 };
+
+// In lite mode (no graphics card) the 3D floor gives way to the same soft
+// glows painted once, which cost nothing to scroll past.
+const Stage = () =>
+  isSoftwareRendering() ? (
+    <div className="lite-backdrop fixed inset-0 -z-50 pointer-events-none" aria-hidden="true" />
+  ) : (
+    <WebGLStage />
+  );
 
 export default Stage;
