@@ -26,6 +26,10 @@ const Navbar = ({ isScrolled = false, overPanel = false }: NavbarProps) => {
   const [isNavHovered, setIsNavHovered] = useState(false);
   const [theme, setTheme] = useState("light");
   const activeTab = useActiveSection(NAV_SECTIONS, 100);
+  // The landing page stays clear: the bar drops in once the visitor starts
+  // scrolling and tucks away again back at the top. It stays while the
+  // mobile menu is open, since the menu lives inside it.
+  const shown = isScrolled || mobileOpen;
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -61,10 +65,11 @@ const Navbar = ({ isScrolled = false, overPanel = false }: NavbarProps) => {
     <>
       <motion.nav
         className={`fixed top-4 left-0 right-0 z-50 flex justify-center`}
-        initial={{ y: -20, opacity: 0 }}
+        inert={!shown}
+        initial={{ y: "-150%", opacity: 0 }}
         animate={{
-          y: 0,
-          opacity: 1,
+          y: shown ? 0 : "-150%",
+          opacity: shown ? 1 : 0,
           scale: isNavHovered ? 1.05 : 1,
         }}
         transition={{
@@ -78,9 +83,7 @@ const Navbar = ({ isScrolled = false, overPanel = false }: NavbarProps) => {
         <div
           className={`w-full max-w-5xl transition-all duration-500 backdrop-blur-xl rounded-full border mx-4 px-6 flex justify-between items-center relative overflow-hidden ${
             overPanel ? "bg-white/10 border-white/25 shadow-none" : "bg-glass-bg border-glass-border shadow-2xl shadow-glass-shadow"
-          } ${
-            isScrolled ? "py-3" : "py-5"
-          } ${isNavHovered ? "shadow-accent/20 border-accent/20" : ""}`}
+          } py-3 ${isNavHovered ? "shadow-accent/20 border-accent/20" : ""}`}
         >
           {/* Scroll Progress Bar */}
           <motion.div
