@@ -157,10 +157,12 @@ const vertexShader = /* glsl */ `
       int i = int(seg);
       o.pos = mix(uStops[i], uStops[i + 1], k - seg);
       o.pos += vec3(0.0, sin(k * 2.0 + uTime * 0.5) * 0.08, sin(k * 1.7 + uTime * 0.3) * 0.5);
-      o.pos += (t.xyz - 0.5) * vec3(0.0, 0.07, 0.07);
-      o.glow = 0.3;
-      o.hue = 0.08 + t.w * 0.15;
-      o.size = 0.6;
+      o.pos += (t.xyz - 0.5) * vec3(0.0, 0.05, 0.05);
+      // Pulses run along it toward the stops still to come.
+      float pulse = pow(0.5 + 0.5 * sin(k * 9.0 - uTime * 2.2), 12.0);
+      o.glow = 0.45 + pulse * 0.6;
+      o.hue = mix(0.08 + t.w * 0.15, 0.7, pulse);
+      o.size = 0.7 + pulse * 0.4;
     }
     return o;
   }

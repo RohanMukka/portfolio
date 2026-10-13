@@ -240,8 +240,6 @@ export const createStage = (
     aboutAt: 0,
     stop: { x: 0, y: 0 },
   };
-  // Inspectable from the console while developing.
-  if (import.meta.env.DEV) Object.assign(window, { __stageFrame: frame });
   const pointerTarget = { x: 0, y: 0, active: false };
   let width = 1;
   let height = 1;
@@ -307,8 +305,7 @@ export const createStage = (
   let last = 0;
   const started = performance.now();
 
-  const render = (now: number) => {
-    raf = requestAnimationFrame(render);
+  const draw = (now: number) => {
     // Capped, so a frame after the tab was hidden doesn't jump, but loose
     // enough that slow machines still move in real time.
     const dt = Math.min((now - last) / 1000, 0.25);
@@ -350,6 +347,11 @@ export const createStage = (
     adapt(dt);
   };
 
+  const render = (now: number) => {
+    raf = requestAnimationFrame(render);
+    draw(now);
+  };
+
   // If the first couple of seconds after the intro run slow (an integrated
   // GPU on a big screen, say), draw at one pixel per CSS pixel instead.
   const sampled = { frames: 0, seconds: 0 };
@@ -363,6 +365,17 @@ export const createStage = (
     frame.viewH = height;
     dustUniforms.uPixel.value = 1;
   };
+
+  // While developing: the eased state, and a way to step frames by hand
+  // when the page is in a hidden tab (where the browser stops animating).
+  if (import.meta.env.DEV) {
+    Object.assign(window, {
+      __stageFrame: frame,
+      __stageStep: (frames = 1) => {
+        for (let i = 0; i < frames; i++) draw(last + 100);
+      },
+    });
+  }
 
   applyTheme(opts.theme);
   usePiece(opts.centrepiece);

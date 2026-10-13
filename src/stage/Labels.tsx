@@ -25,7 +25,7 @@ const WORK: Tag[] = FEATURED_TITLES.slice(0, NODE_COUNT).map((title) => ({
 const SKILLS: Tag[] = [
   { name: "Interfaces", detail: "React · Next.js · Angular" },
   { name: "Services", detail: "Node.js · Firebase · SQL" },
-  { name: "Infrastructure", detail: "Docker · Kubernetes · AWS · Google Cloud" },
+  { name: "Infrastructure", detail: "Docker · K8s · AWS · GCP" },
   { name: "Models", detail: "TensorFlow · scikit-learn · NLP" },
 ];
 
