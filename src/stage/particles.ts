@@ -93,6 +93,7 @@ const vertexShader = /* glsl */ `
 
   varying vec3 vColor;
   varying float vAlpha;
+  varying float vBlur;
 
   ${NOISE}
   ${PALETTE}
@@ -328,9 +329,13 @@ const vertexShader = /* glsl */ `
     glow += push * 0.5;
 
     gl_Position = projectionMatrix * mv;
-    gl_PointSize = min(64.0, uSize * size * uViewH / (2.0 * uTanHalf * -mv.z));
+    // Depth of field: points off the focal plane (z = 0, where the page
+    // sits) open into larger, fainter, flatter discs.
+    float blur = clamp(abs(-mv.z - 10.0) * 0.3 - 0.2, 0.0, 1.0);
+    gl_PointSize = min(64.0, uSize * size * (1.0 + blur * 2.2) * uViewH / (2.0 * uTanHalf * -mv.z));
     vColor = palette(hue);
-    vAlpha = clamp(glow, 0.0, 1.6) * uDim;
+    vAlpha = clamp(glow, 0.0, 1.6) * uDim / (1.0 + blur * 2.5);
+    vBlur = blur;
   }
 `;
 
@@ -338,11 +343,12 @@ const fragmentShader = /* glsl */ `
   uniform float uLight;
   varying vec3 vColor;
   varying float vAlpha;
+  varying float vBlur;
 
   void main() {
     float d = length(gl_PointCoord - 0.5);
-    float soft = smoothstep(0.5, 0.05, d);
-    float core = smoothstep(0.2, 0.0, d);
+    float soft = smoothstep(0.5, mix(0.05, 0.42, vBlur), d);
+    float core = smoothstep(0.2, 0.0, d) * (1.0 - vBlur);
     vec3 col = vColor * (0.6 + core * 0.8) + core * 0.3 * (1.0 - uLight);
     gl_FragColor = vec4(col, soft * vAlpha * mix(1.0, 0.85, uLight));
     #include <colorspace_fragment>

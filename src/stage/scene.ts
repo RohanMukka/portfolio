@@ -19,6 +19,7 @@ import {
 import type { Theme } from "../lib/theme";
 import { BACKDROP } from "./glsl";
 import { createParticles } from "./particles";
+import { createLens } from "./post";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
 import { emitStageLabels, stageState, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
@@ -88,6 +89,7 @@ const dustVertex = /* glsl */ `
   uniform float uAspect;
   uniform float uPixel;
   varying float vAlpha;
+  varying float vNear;
   void main() {
     float depth = aSeed.z;
     float z = mix(-14.0, 5.0, depth * depth);
@@ -96,10 +98,13 @@ const dustVertex = /* glsl */ `
     y = mod(y + spanY * 0.5, spanY) - spanY * 0.5;
     vec4 mv = modelViewMatrix * vec4((aSeed.x - 0.5) * spanY * uAspect, y, z, 1.0);
     gl_Position = projectionMatrix * mv;
-    gl_PointSize = mix(1.0, 3.2, depth) * uPixel;
+    // The nearest motes are out of focus: big, faint, flat discs.
+    float near = smoothstep(0.94, 1.0, depth);
+    gl_PointSize = mix(mix(1.0, 3.2, depth), 24.0, near) * uPixel;
     // Twinkle, and fade at the wrap so no mote pops in or out.
     vAlpha = (0.35 + 0.65 * pow(0.5 + 0.5 * sin(uTime * (0.6 + aSeed.w) + aSeed.x * 40.0), 3.0))
-      * (1.0 - smoothstep(0.42, 0.5, abs(y / spanY))) * mix(0.35, 1.0, depth);
+      * (1.0 - smoothstep(0.42, 0.5, abs(y / spanY))) * mix(0.35, 1.0, depth) * mix(1.0, 0.1, near);
+    vNear = near;
   }
 `;
 
@@ -107,8 +112,9 @@ const dustFragment = /* glsl */ `
   uniform vec3 uColor;
   uniform float uAlpha;
   varying float vAlpha;
+  varying float vNear;
   void main() {
-    float soft = smoothstep(0.5, 0.0, length(gl_PointCoord - 0.5));
+    float soft = smoothstep(0.5, mix(0.0, 0.38, vNear), length(gl_PointCoord - 0.5));
     gl_FragColor = vec4(uColor, soft * vAlpha * uAlpha);
     #include <colorspace_fragment>
   }
@@ -199,11 +205,13 @@ export const createStage = (
     dustMaterial.blending = next === "dark" ? AdditiveBlending : NormalBlending;
     dustMaterial.needsUpdate = true;
     piece.setTheme(next);
+    lens.setTheme(next);
   };
 
   // Centrepiece
   const piece: Piece = createParticles({ mobile: opts.mobile, theme });
   scene.add(piece.object);
+  const lens = createLens(renderer, scene, camera, theme);
 
   // Eased state
   const timeline = createTimeline();
@@ -328,7 +336,7 @@ export const createStage = (
     dustUniforms.uTime.value = frame.time;
 
     piece.update(frame);
-    renderer.render(scene, camera);
+    lens.render(frame.time);
     sendLabels();
     adapt(dt);
   };
@@ -339,17 +347,28 @@ export const createStage = (
   };
 
   // If the first couple of seconds after the intro run slow (an integrated
-  // GPU on a big screen, say), draw at one pixel per CSS pixel instead.
-  const sampled = { frames: 0, seconds: 0 };
+  // GPU on a big screen, say), drop the bloom; if that's still not enough,
+  // draw at one pixel per CSS pixel.
+  const sampled = { frames: 0, seconds: 0, steps: 0 };
   const adapt = (dt: number) => {
-    if (frame.intro < 1 || sampled.frames >= 120) return;
+    if (frame.intro < 1 || sampled.steps >= 2) return;
     sampled.frames += 1;
     sampled.seconds += dt;
-    if (sampled.frames < 120 || sampled.seconds / sampled.frames < 1 / 40 || renderer.getPixelRatio() <= 1) return;
-    renderer.setPixelRatio(1);
-    renderer.setSize(width, height, false);
-    frame.viewH = height;
-    dustUniforms.uPixel.value = 1;
+    if (sampled.frames < 120) return;
+    const slow = sampled.seconds / sampled.frames > 1 / 40;
+    sampled.frames = 0;
+    sampled.seconds = 0;
+    sampled.steps = slow ? sampled.steps + 1 : 2;
+    if (!slow) return;
+    if (sampled.steps === 1) {
+      lens.lighten();
+    } else if (renderer.getPixelRatio() > 1) {
+      renderer.setPixelRatio(1);
+      renderer.setSize(width, height, false);
+      lens.setSize(width, height, 1);
+      frame.viewH = height;
+      dustUniforms.uPixel.value = 1;
+    }
   };
 
   // While developing: the eased state, and a way to step frames by hand
@@ -386,6 +405,7 @@ export const createStage = (
       frame.mobile = width < 768;
       frame.halfW = frame.halfH * frame.aspect;
       frame.viewH = height * renderer.getPixelRatio();
+      lens.setSize(width, height, renderer.getPixelRatio());
       backdropUniforms.uAspect.value = frame.aspect;
       dustUniforms.uAspect.value = frame.aspect;
     },
@@ -404,6 +424,7 @@ export const createStage = (
       cancelAnimationFrame(raf);
       timeline.dispose();
       piece.dispose();
+      lens.dispose();
       backdropGeometry.dispose();
       backdropMaterial.dispose();
       dustGeometry.dispose();
