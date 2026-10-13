@@ -3,22 +3,21 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
 import Architecture from "./sections/Architecture";
-import Experience from "./sections/Experience";
 import Projects from "./sections/Projects";
 import Skills from "./sections/Skills";
-import Education from "./sections/Education";
-import Certifications from "./sections/Certifications";
+import Credentials from "./sections/Credentials";
 import FinalCTA from "./sections/FinalCTA";
 import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
 import Stage from "./stage/Stage";
+import StageLabels from "./stage/Labels";
+import Switcher from "./stage/Switcher";
 import { startSmoothScroll } from "./lib/smoothScroll";
 
 const App = () => {
   const [introDone, setIntroDone] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [pastHero, setPastHero] = useState(false);
-  const [overPanel, setOverPanel] = useState(true);
 
   const finishIntro = useCallback(() => setIntroDone(true), []);
 
@@ -30,19 +29,6 @@ const App = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
       setPastHero(window.scrollY > window.innerHeight * 0.6);
-      // The navbar turns frosted white while it floats over a colour panel
-      // (the hero, the contact section). Before the hero exists, assume the
-      // top of the page, which is the hero.
-      const panels = document.querySelectorAll("[data-nav-light]");
-      const navLine = 48;
-      setOverPanel(
-        panels.length === 0
-          ? window.scrollY < window.innerHeight - 110
-          : Array.from(panels).some((el) => {
-              const r = el.getBoundingClientRect();
-              return r.top < navLine && r.bottom > navLine;
-            }),
-      );
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
@@ -63,7 +49,8 @@ const App = () => {
   return (
     <div className="bg-transparent text-primary-text relative min-h-screen">
       <Stage />
-      <Navbar isScrolled={isScrolled} overPanel={overPanel} />
+      <StageLabels />
+      <Navbar isScrolled={isScrolled} />
 
       {/* Fixed UI Elements. They wait until the hero is behind you: the hero
           has its own Resume link, and the big type runs edge to edge. */}
@@ -73,18 +60,18 @@ const App = () => {
       </div>
 
       {/* overflow-x-clip, not -hidden: hidden makes <main> a scroll container,
-          which silently breaks position: sticky (the pinned hero) inside it. */}
+          which silently breaks position: sticky (the pinned About story) inside it. */}
       <main className="relative w-full overflow-x-clip">
         <Hero onIntroDone={finishIntro} />
         <Architecture />
-        {/* <Experience /> */}
         <Projects />
         <Skills />
-        <Education />
-        <Certifications />
+        <Credentials />
         <FinalCTA />
         <Footer />
       </main>
+
+      {import.meta.env.DEV && <Switcher />}
     </div>
   );
 };

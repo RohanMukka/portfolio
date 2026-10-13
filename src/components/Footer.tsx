@@ -20,8 +20,7 @@ const SITEMAP = [
   { name: "About", href: "#architecture" },
   { name: "Work", href: "#projects" },
   { name: "Skills", href: "#skills" },
-  { name: "Education", href: "#education" },
-  { name: "Certifications", href: "#certifications" },
+  { name: "Credentials", href: "#credentials" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -147,17 +146,13 @@ const Footer = () => {
           {/* Brand & Mission */}
           <div className="md:col-span-4 space-y-6">
             <div className="flex flex-col gap-1">
-              <span className="text-2xl font-display font-bold text-primary-text tracking-tight italic">
+              <span className="text-2xl font-display font-bold text-primary-text tracking-tight">
                 Rohan Mukka
               </span>
-              <span className="text-sm text-primary-secondary font-medium tracking-wide">
-                Software Engineer
+              <span className="hud text-primary-tertiary">
+                Software engineer · Norman, OK
               </span>
             </div>
-            <p className="text-base text-primary-secondary leading-relaxed max-w-sm">
-              Designing and developing high-performance applications with a
-              focus on user experience and architectural cleanliness.
-            </p>
             <div className="flex gap-4">
               {/* LeetCode */}
               <div className="relative group/lc">
@@ -381,7 +376,7 @@ const Footer = () => {
 
           {/* Sitemaps */}
           <div className="md:col-span-2 space-y-6">
-            <h4 className="text-sm font-bold text-primary-text uppercase tracking-widest">
+            <h4 className="hud text-primary-tertiary">
               Sitemap
             </h4>
             <ul className="space-y-3">
@@ -400,7 +395,7 @@ const Footer = () => {
 
           {/* Resources */}
           <div className="md:col-span-2 space-y-6">
-            <h4 className="text-sm font-bold text-primary-text uppercase tracking-widest">
+            <h4 className="hud text-primary-tertiary">
               External
             </h4>
             <ul className="space-y-3">
@@ -429,7 +424,7 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div className="md:col-span-4 space-y-6">
-            <h4 className="text-sm font-bold text-primary-text uppercase tracking-widest">
+            <h4 className="hud text-primary-tertiary">
               Stay Updated
             </h4>
             <p className="text-sm text-primary-secondary leading-relaxed">
@@ -518,12 +513,12 @@ const Footer = () => {
           {/* Left - Copyright */}
           <div className="flex justify-center md:justify-start text-center md:text-left">
             <span>
-              © {new Date().getFullYear()} Rohan Mukka. Built with React, Framer
-              Motion, and Coffee.
+              © {new Date().getFullYear()} Rohan Mukka. Built with React, three.js
+              and Framer Motion.
             </span>
           </div>
 
-          {/* Center - DEMO 3 VARIANTS */}
+          {/* Center - view counter */}
           <div className="flex justify-center flex-1">
             {visitorCount !== null && (
               <div className="flex flex-col md:flex-row items-center gap-6">

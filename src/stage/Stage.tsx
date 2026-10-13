@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import Background from "../components/Background";
 import { isSoftwareRendering } from "../lib/rendering";
-import type { Stage as StageApi, Theme } from "./scene";
+import { currentTheme } from "../lib/theme";
+import type { Stage as StageApi } from "./scene";
+import { getCentrepiece, onCentrepiece } from "./store";
 
 export const loadStage = () => import("./scene");
-
-const currentTheme = (): Theme =>
-  document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
 
 // Fixed WebGL canvas behind the whole page (see scene.ts). Without WebGL the
 // page keeps its CSS background instead.
@@ -26,7 +25,11 @@ const WebGLStage = () => {
       .then(({ createStage }) => {
         if (cancelled) return;
         try {
-          stage = createStage(canvas, { theme: currentTheme(), mobile: window.matchMedia("(max-width: 767px)").matches });
+          stage = createStage(canvas, {
+            theme: currentTheme(),
+            mobile: window.matchMedia("(max-width: 767px)").matches,
+            centrepiece: getCentrepiece(),
+          });
         } catch {
           setFailed(true);
           return;
@@ -41,6 +44,8 @@ const WebGLStage = () => {
         const themeWatch = new MutationObserver(() => s.setTheme(currentTheme()));
         themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
         cleanups.push(() => themeWatch.disconnect());
+
+        cleanups.push(onCentrepiece(() => s.setCentrepiece(getCentrepiece())));
 
         const onMove = (e: PointerEvent) => {
           if (e.pointerType === "touch") return;
@@ -81,8 +86,8 @@ const WebGLStage = () => {
   );
 };
 
-// In lite mode (no graphics card) the 3D floor gives way to the same soft
-// glows painted once, which cost nothing to scroll past.
+// In lite mode (no graphics card) the 3D stage gives way to its soft glows
+// painted once, which cost nothing to scroll past.
 const Stage = () =>
   isSoftwareRendering() ? (
     <div className="lite-backdrop fixed inset-0 -z-50 pointer-events-none" aria-hidden="true" />

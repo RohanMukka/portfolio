@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
-export const SECTION_COUNT = 6;
+export const SECTION_COUNT = 5;
 
 interface SectionHeaderProps {
   /** Two-digit running number, e.g. "02". */

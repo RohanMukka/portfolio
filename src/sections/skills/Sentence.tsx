@@ -59,7 +59,7 @@ const Sentence = () => {
     <div>
       <p
         ref={ref}
-        className="font-display font-semibold text-[clamp(1.75rem,3.6vw,3.4rem)] leading-[1.18] tracking-[-0.03em] text-primary-text max-w-6xl"
+        className="font-display font-semibold text-[clamp(1.75rem,3vw,3rem)] leading-[1.18] tracking-[-0.03em] text-primary-text"
       >
         {UNITS.map((u, i) => (
           <React.Fragment key={i}>
@@ -71,7 +71,7 @@ const Sentence = () => {
       <div className="mt-20 grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-8 border-t border-primary-text/10 pt-10">
         {skillGroups.map((g) => (
           <div key={g.category}>
-            <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-accent mb-3">{g.category}</h3>
+            <h3 className="hud text-accent mb-3">{g.category}</h3>
             <p className="text-sm text-primary-secondary leading-relaxed">{g.items.map((i) => i.name).join(" · ")}</p>
           </div>
         ))}

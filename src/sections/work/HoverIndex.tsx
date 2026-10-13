@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, useVelocity } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import type { Project } from "../../data/projects";
+import { FEATURED_TITLES, type Project } from "../../data/projects";
 import { useMediaQuery } from "../../lib/useMediaQuery";
+import { NODE_COUNT } from "../../stage/piece";
+import { setFocus } from "../../stage/store";
 import { EASE, pad, ProjectLinks, TagList } from "./shared";
 import ProjectVisual, { factFor } from "./ProjectVisual";
 import { hasCaseStudy, openCaseStudy } from "./CaseStudy";
 
-// An editorial list. Hovering a row floats that project's diagram by the
-// cursor in a colour-panel frame that leans with the cursor's speed;
-// clicking a row opens its case study, or its details inline for projects
-// without one. Plain scrolling, no pin.
+// The project's node in the 3D network behind the list, if it has one.
+const nodeOf = (p: Project) => {
+  const i = FEATURED_TITLES.indexOf(p.title);
+  return i < NODE_COUNT ? i : -1;
+};
+
+// An editorial list. Hovering a row lights that project's node in the 3D
+// network beside it and floats its diagram by the cursor in a gradient
+// frame that leans with the cursor's speed; clicking a row opens its case
+// study, or its details inline for projects without one. Plain scrolling,
+// no pin.
 const HoverIndex = ({ items }: { items: Project[] }) => {
   const [hovered, setHovered] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
@@ -34,7 +43,10 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
         x.set(e.clientX);
         y.set(e.clientY);
       }}
-      onMouseLeave={() => setHovered(null)}
+      onMouseLeave={() => {
+        setHovered(null);
+        setFocus(-1);
+      }}
     >
       <ol>
         {items.map((p, i) => {
@@ -45,19 +57,23 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
             <li key={p.title} className="border-b border-primary-text/10" onMouseEnter={() => {
                 setHovered(p.title);
                 setShown(p);
+                setFocus(nodeOf(p));
               }}>
               <button
                 onClick={() => (hasCaseStudy(p.title) ? openCaseStudy(p.title) : setOpen(isOpen ? null : p.title))}
                 aria-expanded={hasCaseStudy(p.title) ? undefined : isOpen}
-                className={`relative w-full grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_1fr_15rem_7rem_2rem] items-center gap-4 py-6 md:py-7 text-left transition-opacity duration-300 ${dim ? "opacity-35" : "opacity-100"}`}
+                className={`relative w-full grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_1fr_7rem_2rem] items-center gap-4 py-6 md:py-7 text-left transition-opacity duration-300 ${dim ? "opacity-35" : "opacity-100"}`}
               >
-                <span className="text-xs tabular-nums tracking-widest text-accent">{pad(i + 1)}</span>
+                <span className="hud text-accent">{pad(i + 1)}</span>
                 <motion.span
-                  className="font-display font-bold text-2xl md:text-5xl tracking-[-0.04em] leading-none text-primary-text"
+                  className="min-w-0"
                   animate={{ x: isHovered ? 16 : 0 }}
                   transition={{ duration: 0.4, ease: EASE }}
                 >
-                  {p.title}
+                  <span className="block font-display font-bold text-2xl md:text-5xl tracking-[-0.04em] leading-none text-primary-text">
+                    {p.title}
+                  </span>
+                  <span className="hidden md:block mt-2 text-sm text-primary-secondary truncate">{p.tagline}</span>
                 </motion.span>
                 {/* Gradient underline that sweeps across the hovered row. */}
                 <motion.span
@@ -67,8 +83,7 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
                   animate={{ scaleX: isHovered ? 1 : 0 }}
                   transition={{ duration: 0.6, ease: EASE }}
                 />
-                <span className="hidden md:block text-sm text-primary-secondary truncate">{p.tagline}</span>
-                <span className="hidden md:block text-xs font-bold uppercase tracking-[0.2em] text-primary-secondary">{p.category}</span>
+                <span className="hidden md:block hud text-primary-secondary">{p.category}</span>
                 <motion.span
                   className="justify-self-end text-primary-text"
                   animate={{ rotate: isOpen ? 90 : isHovered ? 45 : 0 }}

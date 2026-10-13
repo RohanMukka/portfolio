@@ -12,7 +12,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 const Panel = ({ i, panel }: { i: number; panel: (typeof PANELS)[number] }) => (
   <div className="flex flex-col justify-center gap-8 h-full">
-    <p className="text-xs font-bold uppercase tracking-[0.3em] text-accent">
+    <p className="hud text-accent">
       {pad(i + 1)} — {panel.kicker}
     </p>
     <h3 className="font-display font-bold text-4xl lg:text-[4.25rem] tracking-[-0.045em] leading-[1.02] text-primary-text max-w-[16ch]">
@@ -60,28 +60,30 @@ const Pinned = () => {
   );
 
   return (
-    <div ref={ref} className="relative" style={{ height: `${PANELS.length * 90 + 60}vh` }}>
+    <div ref={ref} data-progress="about" className="relative" style={{ height: `${PANELS.length * 90 + 60}vh` }}>
       <div className="sticky top-0 h-[100dvh] overflow-hidden flex flex-col">
         <motion.div ref={track} style={{ x }} className="flex flex-1 items-stretch will-change-transform">
           {PANELS.map((panel, i) => (
             <div
               key={panel.kicker}
-              className="shrink-0 w-[78vw] max-w-[1100px] first:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] pr-[8vw] py-28"
+              className="relative shrink-0 w-[78vw] max-w-[1100px] first:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] pr-[8vw] py-28"
             >
               <Panel i={i} panel={panel} />
+              {/* Where this chapter's stop sits on the 3D timeline. */}
+              <span data-stop className="absolute right-[12%] top-1/2" aria-hidden="true" />
             </div>
           ))}
           <div className="shrink-0 w-[10vw]" aria-hidden="true" />
         </motion.div>
 
         <div className="max-w-6xl mx-auto w-full px-6 pb-10 flex items-center gap-6">
-          <span className="text-xs font-bold tabular-nums tracking-[0.25em] text-primary-text">
+          <span className="hud text-primary-text">
             {pad(active + 1)} / {pad(PANELS.length)}
           </span>
           <div className="relative flex-1 h-px bg-primary-text/15">
             <motion.div style={{ scaleX: bar }} className="absolute inset-0 origin-left bg-accent" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary-secondary">{PANELS[active].kicker}</span>
+          <span className="hud text-primary-secondary">{PANELS[active].kicker}</span>
         </div>
       </div>
     </div>
@@ -93,13 +95,14 @@ const Stacked = () => (
     {PANELS.map((panel, i) => (
       <motion.div
         key={panel.kicker}
-        className="py-12 border-t border-primary-text/10"
+        className="relative py-12 border-t border-primary-text/10"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-10%" }}
         transition={{ duration: 0.8, ease: EASE }}
       >
         <Panel i={i} panel={panel} />
+        <span data-stop className="absolute right-6 top-16" aria-hidden="true" />
       </motion.div>
     ))}
   </div>

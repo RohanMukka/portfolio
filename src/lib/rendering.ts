@@ -20,6 +20,20 @@ const detect = (): boolean => {
   }
 };
 
+// `?full` or `?lite` in the address forces a mode for the rest of the tab's
+// visit, e.g. to check the full site on a machine without a graphics card.
+const forced = (): boolean | undefined => {
+  try {
+    const query = new URLSearchParams(location.search);
+    if (query.has("full")) sessionStorage.setItem("render-mode", "full");
+    if (query.has("lite")) sessionStorage.setItem("render-mode", "lite");
+    const mode = sessionStorage.getItem("render-mode");
+    return mode === "full" ? false : mode === "lite" ? true : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 let softwareRendering: boolean | undefined;
 
 // True when the browser is drawing without a graphics card (software
@@ -28,4 +42,4 @@ let softwareRendering: boolean | undefined;
 // (see index.tsx). A WebGL context that refuses to start under
 // `failIfMajorPerformanceCaveat` is the browser's own signal for that; the
 // renderer's name catches the cases it lets through. Checked once.
-export const isSoftwareRendering = (): boolean => (softwareRendering ??= detect());
+export const isSoftwareRendering = (): boolean => (softwareRendering ??= forced() ?? detect());

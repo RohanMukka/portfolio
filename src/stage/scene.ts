@@ -1,57 +1,71 @@
 import {
+  AdditiveBlending,
+  BufferAttribute,
+  BufferGeometry,
   Color,
   Mesh,
   NoToneMapping,
+  NormalBlending,
   PerspectiveCamera,
   PlaneGeometry,
+  Points,
   Scene,
   ShaderMaterial,
   SRGBColorSpace,
   Vector2,
+  Vector3,
   WebGLRenderer,
 } from "three";
+import type { Theme } from "../lib/theme";
+import { BACKDROP } from "./glsl";
+import { createGlass } from "./glass";
+import { createParticles } from "./particles";
+import { NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
+import { emitStageLabels, stageState, type Centrepiece, type ScreenPoint } from "./store";
+import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
 
-// The page's 3D stage: one fixed canvas behind every section. A full-screen
-// shader paints the background, its soft glows and an endless grid floor that
-// the camera glides over as the page scrolls.
-
-export type Theme = "light" | "dark";
+// The page's 3D stage: one fixed canvas behind every section. A backdrop of
+// soft glows and a faint dot grid, a drift of dust at many depths that
+// parallaxes as the page scrolls, and the centrepiece, which takes a new
+// shape for each chapter of the page (see particles.ts / glass.ts).
 
 export type Stage = {
   setTheme: (theme: Theme) => void;
   setPointer: (ndc: { x: number; y: number } | null) => void;
+  setCentrepiece: (centrepiece: Centrepiece) => void;
   resize: (width: number, height: number) => void;
   start: () => void;
   stop: () => void;
   dispose: () => void;
 };
 
-// Matches index.css and the CSS Background it replaces.
 const THEMES = {
-  light: {
-    bg: "#f4f1ea",
-    line: "#003399",
-    lineAlpha: 0.2,
-    glows: [["#ffffff", 0.6], ["#eadfcd", 0.55], ["#c45c26", 0.07]] as const,
-  },
   dark: {
     bg: "#0a0a0d",
-    line: "#94a3b8",
-    lineAlpha: 0.13,
-    glows: [["#1e3a8a", 0.55], ["#312e81", 0.5], ["#5b21b6", 0.2]] as const,
+    glows: [["#1e3a8a", 0.24], ["#312e81", 0.2], ["#5b21b6", 0.06]] as const,
+    dots: "#94a3b8",
+    dotAlpha: 0.07,
+    dust: "#a5b4fc",
+    dustAlpha: 0.55,
+  },
+  light: {
+    bg: "#f4f1ea",
+    glows: [["#ffffff", 0.6], ["#eadfcd", 0.55], ["#c45c26", 0.07]] as const,
+    dots: "#003399",
+    dotAlpha: 0.09,
+    dust: "#003399",
+    dustAlpha: 0.35,
   },
 };
 
 const FOV = 40;
-const CAMERA_HEIGHT = 4;
-const CAMERA_PITCH = -0.32; // look down at the floor; horizon sits near the top
-const TRAVEL = 0.0035; // world units the camera moves per pixel scrolled
+const CAMERA_Z = 10;
+const PLANE_Z = -6; // the backdrop plane, see glsl.ts
+const INTRO_MS = 2200;
 
 const backdropVertex = /* glsl */ `
   varying vec3 vDir;
-  varying vec2 vNdc;
   void main() {
-    vNdc = position.xy;
     // Direction of the camera ray through this corner, in world space.
     vec4 view = inverse(projectionMatrix) * vec4(position.xy, 1.0, 1.0);
     vDir = (inverse(viewMatrix) * vec4(view.xyz / view.w, 0.0)).xyz;
@@ -60,152 +74,300 @@ const backdropVertex = /* glsl */ `
 `;
 
 const backdropFragment = /* glsl */ `
-  uniform vec3 uBg;
-  uniform vec3 uLine;
-  uniform float uLineAlpha;
-  uniform vec3 uGlow[3];
-  uniform float uGlowAlpha[3];
-  uniform float uAspect;
-  uniform vec2 uDrift;
   varying vec3 vDir;
-  varying vec2 vNdc;
-
-  float glow(vec2 p, vec2 c, float r) {
-    vec2 d = (p - c) / r;
-    return exp(-dot(d, d));
-  }
-
+  ${BACKDROP}
   void main() {
-    vec3 col = uBg;
-
-    // Soft colour fields, drifting a little with the pointer.
-    vec2 p = vec2(vNdc.x * uAspect, vNdc.y);
-    col = mix(col, uGlow[0], uGlowAlpha[0] * glow(p, vec2(0.9 * uAspect, 0.85) + uDrift, 1.1));
-    col = mix(col, uGlow[1], uGlowAlpha[1] * glow(p, vec2(-0.85 * uAspect, -0.9) - uDrift, 1.3));
-    col = mix(col, uGlow[2], uGlowAlpha[2] * glow(p, vec2(-0.2, 0.1) + uDrift * 1.5, 0.9));
-
-    // Endless floor grid where the ray meets y = 0.
-    vec3 dir = normalize(vDir);
-    if (dir.y < -1e-4) {
-      float t = -cameraPosition.y / dir.y;
-      vec2 coord = (cameraPosition + dir * t).xz / 0.75;
-      vec2 w = fwidth(coord);
-      vec2 g = abs(fract(coord - 0.5) - 0.5) / max(w, vec2(1e-4));
-      float line = 1.0 - min(min(g.x, g.y), 1.0);
-      // Fade with distance, and where cells shrink to a few pixels (moire).
-      float fade = exp(-t * 0.035) * (1.0 - smoothstep(0.12, 0.5, max(w.x, w.y)));
-      col = mix(col, uLine, line * uLineAlpha * fade);
-    }
-
-    gl_FragColor = vec4(col, 1.0);
+    gl_FragColor = vec4(backdrop(cameraPosition, normalize(vDir)), 1.0);
     #include <colorspace_fragment>
   }
 `;
 
-export const createStage = (canvas: HTMLCanvasElement, opts: { theme: Theme; mobile: boolean }): Stage => {
+const dustVertex = /* glsl */ `
+  attribute vec4 aSeed;
+  uniform float uScroll;
+  uniform float uTime;
+  uniform float uTanHalf;
+  uniform float uAspect;
+  uniform float uPixel;
+  varying float vAlpha;
+  void main() {
+    float depth = aSeed.z;
+    float z = mix(-14.0, 5.0, depth * depth);
+    float spanY = 2.0 * (${CAMERA_Z.toFixed(1)} - z) * uTanHalf * 1.15;
+    float y = (aSeed.y - 0.5) * spanY + uScroll * mix(0.15, 1.3, depth) + uTime * 0.03 * (0.5 + aSeed.w);
+    y = mod(y + spanY * 0.5, spanY) - spanY * 0.5;
+    vec4 mv = modelViewMatrix * vec4((aSeed.x - 0.5) * spanY * uAspect, y, z, 1.0);
+    gl_Position = projectionMatrix * mv;
+    gl_PointSize = mix(1.0, 3.2, depth) * uPixel;
+    // Twinkle, and fade at the wrap so no mote pops in or out.
+    vAlpha = (0.35 + 0.65 * pow(0.5 + 0.5 * sin(uTime * (0.6 + aSeed.w) + aSeed.x * 40.0), 3.0))
+      * (1.0 - smoothstep(0.42, 0.5, abs(y / spanY))) * mix(0.35, 1.0, depth);
+  }
+`;
+
+const dustFragment = /* glsl */ `
+  uniform vec3 uColor;
+  uniform float uAlpha;
+  varying float vAlpha;
+  void main() {
+    float soft = smoothstep(0.5, 0.0, length(gl_PointCoord - 0.5));
+    gl_FragColor = vec4(uColor, soft * vAlpha * uAlpha);
+    #include <colorspace_fragment>
+  }
+`;
+
+const ease = (rate: number, dt: number) => 1 - Math.exp(-rate * dt);
+
+export const createStage = (
+  canvas: HTMLCanvasElement,
+  opts: { theme: Theme; mobile: boolean; centrepiece: Centrepiece },
+): Stage => {
   const renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, opts.mobile ? 1.25 : 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping; // keep page colours exact
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(FOV, 1, 0.1, 200);
-  camera.position.set(0, CAMERA_HEIGHT, 0);
-  camera.rotation.order = "YXZ";
+  camera.position.set(0, 0, CAMERA_Z);
+  const tanHalf = Math.tan(((FOV / 2) * Math.PI) / 180);
 
-  const uniforms = {
+  let theme = opts.theme;
+
+  // Backdrop
+  const backdropUniforms = {
     uBg: { value: new Color() },
-    uLine: { value: new Color() },
-    uLineAlpha: { value: 0 },
     uGlow: { value: [new Color(), new Color(), new Color()] },
     uGlowAlpha: { value: [0, 0, 0] },
-    uAspect: { value: 1 },
+    uDotColor: { value: new Color() },
+    uDotAlpha: { value: 0 },
     uDrift: { value: new Vector2() },
+    uPlaneHalfH: { value: (CAMERA_Z - PLANE_Z) * tanHalf },
+    uAspect: { value: 1 },
   };
-  const material = new ShaderMaterial({
-    uniforms,
+  const backdropMaterial = new ShaderMaterial({
+    uniforms: backdropUniforms,
     vertexShader: backdropVertex,
     fragmentShader: backdropFragment,
     depthTest: false,
     depthWrite: false,
   });
-  const geometry = new PlaneGeometry(2, 2);
-  const backdrop = new Mesh(geometry, material);
+  const backdropGeometry = new PlaneGeometry(2, 2);
+  const backdrop = new Mesh(backdropGeometry, backdropMaterial);
   backdrop.frustumCulled = false;
+  backdrop.renderOrder = -2;
   scene.add(backdrop);
 
-  let dirty = true;
-  const applyTheme = (theme: Theme) => {
-    const t = THEMES[theme];
-    uniforms.uBg.value.set(t.bg);
-    uniforms.uLine.value.set(t.line);
-    uniforms.uLineAlpha.value = t.lineAlpha;
+  // Dust
+  const DUST = opts.mobile ? 500 : 1400;
+  const dustSeeds = new Float32Array(DUST * 4).map(() => Math.random());
+  const dustGeometry = new BufferGeometry();
+  dustGeometry.setAttribute("position", new BufferAttribute(new Float32Array(DUST * 3), 3));
+  dustGeometry.setAttribute("aSeed", new BufferAttribute(dustSeeds, 4));
+  const dustUniforms = {
+    uScroll: { value: 0 },
+    uTime: { value: 0 },
+    uTanHalf: { value: tanHalf },
+    uAspect: { value: 1 },
+    uPixel: { value: renderer.getPixelRatio() },
+    uColor: { value: new Color() },
+    uAlpha: { value: 0 },
+  };
+  const dustMaterial = new ShaderMaterial({
+    uniforms: dustUniforms,
+    vertexShader: dustVertex,
+    fragmentShader: dustFragment,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+  });
+  const dust = new Points(dustGeometry, dustMaterial);
+  dust.frustumCulled = false;
+  dust.renderOrder = -1;
+  scene.add(dust);
+
+  const applyTheme = (next: Theme) => {
+    theme = next;
+    const t = THEMES[next];
+    backdropUniforms.uBg.value.set(t.bg);
     t.glows.forEach(([c, a], i) => {
-      uniforms.uGlow.value[i].set(c);
-      uniforms.uGlowAlpha.value[i] = a;
+      backdropUniforms.uGlow.value[i].set(c);
+      backdropUniforms.uGlowAlpha.value[i] = a;
     });
-    dirty = true;
+    backdropUniforms.uDotColor.value.set(t.dots);
+    backdropUniforms.uDotAlpha.value = t.dotAlpha;
+    dustUniforms.uColor.value.set(t.dust);
+    dustUniforms.uAlpha.value = t.dustAlpha;
+    dustMaterial.blending = next === "dark" ? AdditiveBlending : NormalBlending;
+    dustMaterial.needsUpdate = true;
+    piece?.setTheme(next);
   };
 
-  // Eased state.
-  let camZ = 0;
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0, on: 0, active: false };
+  // Centrepiece
+  let piece: Piece | null = null;
+  const usePiece = (which: Centrepiece) => {
+    if (piece) {
+      scene.remove(piece.object);
+      piece.dispose();
+    }
+    piece =
+      which === "glass"
+        ? createGlass({ mobile: opts.mobile, theme, backdrop: backdropUniforms })
+        : createParticles({ mobile: opts.mobile, theme });
+    scene.add(piece.object);
+    emitStageLabels([], 0);
+  };
+
+  // Eased state
+  const timeline = createTimeline();
+  const reading: TimelineReading = { chapter: 0, progress: CHAPTERS.map(() => 0) };
+  const frame: Frame = {
+    time: 0,
+    chapter: 0,
+    progress: CHAPTERS.map(() => 0),
+    pointer: { x: 0, y: 0, on: 0 },
+    intro: 0,
+    focus: new Array(NODE_COUNT).fill(0),
+    halfW: 1,
+    halfH: CAMERA_Z * tanHalf,
+    aspect: 1,
+    mobile: opts.mobile,
+    viewH: 1,
+    tanHalf,
+    ring: { x: 0, y: 0, r: 3 },
+    stops: Array.from({ length: STOP_COUNT }, (_, i) => ({ x: (i - 1) * 6, y: 0 })),
+    aboutAt: 0,
+    stop: { x: 0, y: 0 },
+  };
+  const pointerTarget = { x: 0, y: 0, active: false };
+  let width = 1;
+  let height = 1;
+  let first = true;
+
+  // Contact's heading carries data-ring; the ring follows it as it scrolls.
+  let ringEl: Element | null = null;
+  const placeRing = () => {
+    if (!ringEl || !ringEl.isConnected) ringEl = document.querySelector("[data-ring]");
+    if (!ringEl) return;
+    const r = ringEl.getBoundingClientRect();
+    const toWorld = (2 * frame.halfH) / height;
+    frame.ring.x = (r.left + r.width / 2 - width / 2) * toWorld;
+    frame.ring.y = -(r.top + r.height / 2 - height / 2) * toWorld;
+    frame.ring.r = Math.max(r.width * 0.5 * 1.08, r.height * 1.1) * toWorld;
+  };
+
+  // About's panels each carry a data-stop marker; the timeline's stops ride
+  // on them as the panels slide.
+  let stopEls: Element[] = [];
+  const placeStops = () => {
+    if (!stopEls[0]?.isConnected) stopEls = Array.from(document.querySelectorAll("[data-stop]"));
+    const toWorld = (2 * frame.halfH) / height;
+    stopEls.slice(0, STOP_COUNT).forEach((el, i) => {
+      const r = el.getBoundingClientRect();
+      frame.stops[i].x = (r.left - width / 2) * toWorld;
+      frame.stops[i].y = -(r.top - height / 2) * toWorld;
+    });
+    const i = Math.min(STOP_COUNT - 2, Math.floor(frame.aboutAt));
+    const f = frame.aboutAt - i;
+    frame.stop.x = frame.stops[i].x + (frame.stops[i + 1].x - frame.stops[i].x) * f;
+    frame.stop.y = frame.stops[i].y + (frame.stops[i + 1].y - frame.stops[i].y) * f;
+  };
+
+  const project = new Vector3();
+  const screen: ScreenPoint[] = Array.from({ length: NODE_COUNT }, () => ({ x: 0, y: 0 }));
+  let labelsShown = false;
 
   let raf = 0;
   let running = false;
   let last = 0;
+  const started = performance.now();
 
-  const frame = (now: number) => {
-    raf = requestAnimationFrame(frame);
-    const dt = Math.min((now - last) / 1000, 1 / 20);
+  const render = (now: number) => {
+    raf = requestAnimationFrame(render);
+    // Capped, so a frame after the tab was hidden doesn't jump, but loose
+    // enough that slow machines still move in real time.
+    const dt = Math.min((now - last) / 1000, 0.25);
     last = now;
-    const ease = (rate: number) => 1 - Math.exp(-rate * dt);
+    frame.time = (now - started) / 1000;
 
-    const targetZ = -window.scrollY * TRAVEL;
-    const moving = Math.abs(targetZ - camZ) > 1e-4;
-    camZ += (targetZ - camZ) * ease(10);
+    timeline.read(window.scrollY, height, reading);
+    const k = first ? 1 : ease(4.5, dt);
+    frame.chapter += (reading.chapter - frame.chapter) * k;
+    reading.progress.forEach((p, i) => {
+      frame.progress[i] += (p - frame.progress[i]) * (first ? 1 : ease(7, dt));
+    });
+    first = false;
 
-    pointer.x += (pointer.tx - pointer.x) * ease(5);
-    pointer.y += (pointer.ty - pointer.y) * ease(5);
-    const onTarget = pointer.active ? 1 : 0;
-    pointer.on += (onTarget - pointer.on) * ease(3);
-    const steering =
-      Math.abs(pointer.tx - pointer.x) + Math.abs(pointer.ty - pointer.y) + Math.abs(onTarget - pointer.on) > 1e-3;
+    frame.focus.forEach((w, i) => {
+      frame.focus[i] += ((stageState.focus === i ? 1 : 0) - w) * ease(6, dt);
+    });
 
-    // Nothing changes on screen while the page and pointer are still.
-    if (!dirty && !moving && !steering) return;
-    dirty = false;
+    const pointer = frame.pointer;
+    pointer.x += (pointerTarget.x - pointer.x) * ease(5, dt);
+    pointer.y += (pointerTarget.y - pointer.y) * ease(5, dt);
+    pointer.on += ((pointerTarget.active ? 1 : 0) - pointer.on) * ease(3, dt);
 
-    camera.position.z = camZ;
-    camera.rotation.x = CAMERA_PITCH + pointer.y * 0.025 * pointer.on;
-    camera.rotation.y = -pointer.x * 0.035 * pointer.on;
-    uniforms.uDrift.value.set(pointer.x * 0.08 * pointer.on, pointer.y * 0.06 * pointer.on);
+    frame.intro = stageState.openedAt ? Math.min(1, (now - stageState.openedAt) / INTRO_MS) : 0;
+    // AboutSideways slides its panels over 4% → 96% of the pinned scroll.
+    frame.aboutAt = Math.min(1, Math.max(0, (frame.progress[1] - 0.04) / 0.92)) * (STOP_COUNT - 1);
+    if (frame.chapter > 0.05 && frame.chapter < 2.5) placeStops();
+    if (frame.chapter > 3.5) placeRing();
+
+    camera.position.set(pointer.x * 0.35 * pointer.on, pointer.y * 0.22 * pointer.on, CAMERA_Z);
+    camera.lookAt(0, 0, 0);
+    backdropUniforms.uDrift.value.set(pointer.x * 0.08 * pointer.on, pointer.y * 0.06 * pointer.on);
+    dustUniforms.uScroll.value = (window.scrollY / height) * 2 * frame.halfH;
+    dustUniforms.uTime.value = frame.time;
+
+    piece?.update(frame);
     renderer.render(scene, camera);
+
+    const labels = piece?.labels?.(frame);
+    if (labels && labels.visible > 0) {
+      camera.updateMatrixWorld();
+      labels.points.forEach((p, i) => {
+        project.copy(p).project(camera);
+        screen[i].x = (project.x * 0.5 + 0.5) * width;
+        screen[i].y = (-project.y * 0.5 + 0.5) * height;
+      });
+      emitStageLabels(screen, labels.visible * frame.intro);
+      labelsShown = true;
+    } else if (labelsShown) {
+      emitStageLabels(screen, 0);
+      labelsShown = false;
+    }
   };
 
   applyTheme(opts.theme);
+  usePiece(opts.centrepiece);
 
   return {
     setTheme: applyTheme,
     setPointer: (ndc) => {
-      pointer.active = !!ndc;
+      pointerTarget.active = !!ndc;
       if (ndc) {
-        pointer.tx = ndc.x;
-        pointer.ty = ndc.y;
+        pointerTarget.x = ndc.x;
+        pointerTarget.y = ndc.y;
       }
     },
+    setCentrepiece: usePiece,
     resize: (w, h) => {
-      renderer.setSize(Math.max(1, w), Math.max(1, h), false);
-      camera.aspect = w / h;
+      width = Math.max(1, w);
+      height = Math.max(1, h);
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      uniforms.uAspect.value = w / h;
-      dirty = true;
+      frame.aspect = width / height;
+      frame.halfW = frame.halfH * frame.aspect;
+      frame.viewH = height * renderer.getPixelRatio();
+      backdropUniforms.uAspect.value = frame.aspect;
+      dustUniforms.uAspect.value = frame.aspect;
     },
     start: () => {
       if (running) return;
       running = true;
       last = performance.now();
-      raf = requestAnimationFrame(frame);
+      raf = requestAnimationFrame(render);
     },
     stop: () => {
       running = false;
@@ -214,8 +376,12 @@ export const createStage = (canvas: HTMLCanvasElement, opts: { theme: Theme; mob
     dispose: () => {
       running = false;
       cancelAnimationFrame(raf);
-      geometry.dispose();
-      material.dispose();
+      timeline.dispose();
+      piece?.dispose();
+      backdropGeometry.dispose();
+      backdropMaterial.dispose();
+      dustGeometry.dispose();
+      dustMaterial.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },
