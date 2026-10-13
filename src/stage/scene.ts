@@ -20,8 +20,8 @@ import type { Theme } from "../lib/theme";
 import { BACKDROP } from "./glsl";
 import { createGlass } from "./glass";
 import { createParticles } from "./particles";
-import { NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
-import { emitStageLabels, stageState, type Centrepiece, type ScreenPoint } from "./store";
+import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
+import { emitStageLabels, stageState, type Centrepiece, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
 
 // The page's 3D stage: one fixed canvas behind every section. A backdrop of
@@ -215,7 +215,8 @@ export const createStage = (
         ? createGlass({ mobile: opts.mobile, theme, backdrop: backdropUniforms })
         : createParticles({ mobile: opts.mobile, theme });
     scene.add(piece.object);
-    emitStageLabels([], 0);
+    emitStageLabels("work", [], 0);
+    emitStageLabels("skills", [], 0);
   };
 
   // Eased state
@@ -239,6 +240,8 @@ export const createStage = (
     aboutAt: 0,
     stop: { x: 0, y: 0 },
   };
+  // Inspectable from the console while developing.
+  if (import.meta.env.DEV) Object.assign(window, { __stageFrame: frame });
   const pointerTarget = { x: 0, y: 0, active: false };
   let width = 1;
   let height = 1;
@@ -274,8 +277,30 @@ export const createStage = (
   };
 
   const project = new Vector3();
-  const screen: ScreenPoint[] = Array.from({ length: NODE_COUNT }, () => ({ x: 0, y: 0 }));
-  let labelsShown = false;
+  const screens: Record<LabelSet, ScreenPoint[]> = {
+    work: Array.from({ length: NODE_COUNT }, () => ({ x: 0, y: 0 })),
+    skills: Array.from({ length: LAYER_COUNT }, () => ({ x: 0, y: 0 })),
+  };
+  const shown: Record<LabelSet, boolean> = { work: false, skills: false };
+
+  // Tags on the scene's labelled points, placed on screen for the page.
+  const sendLabels = () => {
+    for (const group of piece?.labels?.(frame) ?? []) {
+      const screen = screens[group.set];
+      if (group.visible > 0) {
+        group.points.forEach((p, i) => {
+          project.copy(p).project(camera);
+          screen[i].x = (project.x * 0.5 + 0.5) * width;
+          screen[i].y = (-project.y * 0.5 + 0.5) * height;
+        });
+        emitStageLabels(group.set, screen, group.visible * frame.intro);
+        shown[group.set] = true;
+      } else if (shown[group.set]) {
+        emitStageLabels(group.set, screen, 0);
+        shown[group.set] = false;
+      }
+    }
+  };
 
   let raf = 0;
   let running = false;
@@ -321,21 +346,22 @@ export const createStage = (
 
     piece?.update(frame);
     renderer.render(scene, camera);
+    sendLabels();
+    adapt(dt);
+  };
 
-    const labels = piece?.labels?.(frame);
-    if (labels && labels.visible > 0) {
-      camera.updateMatrixWorld();
-      labels.points.forEach((p, i) => {
-        project.copy(p).project(camera);
-        screen[i].x = (project.x * 0.5 + 0.5) * width;
-        screen[i].y = (-project.y * 0.5 + 0.5) * height;
-      });
-      emitStageLabels(screen, labels.visible * frame.intro);
-      labelsShown = true;
-    } else if (labelsShown) {
-      emitStageLabels(screen, 0);
-      labelsShown = false;
-    }
+  // If the first couple of seconds after the intro run slow (an integrated
+  // GPU on a big screen, say), draw at one pixel per CSS pixel instead.
+  const sampled = { frames: 0, seconds: 0 };
+  const adapt = (dt: number) => {
+    if (frame.intro < 1 || sampled.frames >= 120) return;
+    sampled.frames += 1;
+    sampled.seconds += dt;
+    if (sampled.frames < 120 || sampled.seconds / sampled.frames < 1 / 40 || renderer.getPixelRatio() <= 1) return;
+    renderer.setPixelRatio(1);
+    renderer.setSize(width, height, false);
+    frame.viewH = height;
+    dustUniforms.uPixel.value = 1;
   };
 
   applyTheme(opts.theme);
@@ -358,6 +384,9 @@ export const createStage = (
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       frame.aspect = width / height;
+      // The layout follows the window (phones turning, windows resizing);
+      // the point budget set at start doesn't.
+      frame.mobile = width < 768;
       frame.halfW = frame.halfH * frame.aspect;
       frame.viewH = height * renderer.getPixelRatio();
       backdropUniforms.uAspect.value = frame.aspect;

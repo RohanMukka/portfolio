@@ -10,6 +10,8 @@ export const currentTheme = (): Theme =>
 
 export const setTheme = (theme: Theme) => {
   document.documentElement.setAttribute("data-theme", theme);
+  // Phones tint their browser bar to match the page.
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#0a0a0d" : "#f4f1ea");
   try {
     localStorage.setItem(KEY, theme);
   } catch {

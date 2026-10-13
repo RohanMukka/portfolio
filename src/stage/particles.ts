@@ -14,7 +14,7 @@ import {
 } from "three";
 import type { Theme } from "../lib/theme";
 import { NOISE, PALETTE } from "./glsl";
-import { NODE_COUNT, STOP_COUNT, perChapter, type Frame, type Piece } from "./piece";
+import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, perChapter, type Frame, type Piece } from "./piece";
 
 // "Data becomes a system": tens of thousands of points that tell the page's
 // story one shape per chapter.
@@ -45,6 +45,9 @@ const EDGES = [
   [0, 1], [1, 2], [0, 3], [3, 4], [1, 4], [2, 4], [3, 5],
   [5, 6], [3, 6], [4, 7], [6, 7], [2, 7], [0, 5],
 ].map(([a, b]) => new Vector2(a, b));
+
+// How far the Skills stack tips toward the viewer (stack() and its labels).
+const STACK_TILT = 0.42;
 
 const PALETTES = {
   dark: { a: "#3b6cff", b: "#e0457b", c: "#ff7a3d", light: 0 },
@@ -213,7 +216,7 @@ const vertexShader = /* glsl */ `
       o.hue = 0.92;
       o.size = 0.6;
     }
-    o.pos = rotX(o.pos, 0.42);
+    o.pos = rotX(o.pos, ${STACK_TILT.toFixed(2)});
     o.pos += vec3(mix(uHalfW * 0.55, 0.0, uMobile), mix(0.0, uHalfH * 0.45, uMobile), -1.0);
     return o;
   }
@@ -380,7 +383,7 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     uMobile: { value: opts.mobile ? 1 : 0 },
     uViewH: { value: 1 },
     uTanHalf: { value: 1 },
-    uSize: { value: opts.mobile ? 0.045 : 0.034 },
+    uSize: { value: 0.034 },
     uAspect: { value: 1 },
     uDim: { value: 1 },
     uPointer: { value: new Vector2() },
@@ -439,6 +442,8 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
   };
 
   const labelPoints = NODES.map(() => new Vector3());
+  const layerPoints = Array.from({ length: LAYER_COUNT }, () => new Vector3());
+  const stackCenter = new Vector3();
 
   return {
     object: points,
@@ -446,6 +451,8 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     update(f) {
       const from = Math.min(5, Math.floor(f.chapter));
       uniforms.uTime.value = f.time;
+      uniforms.uMobile.value = f.mobile ? 1 : 0;
+      uniforms.uSize.value = f.mobile ? 0.045 : 0.034;
       uniforms.uFrom.value = from;
       uniforms.uTo.value = Math.min(5, from + 1);
       uniforms.uMix.value = f.chapter - from;
@@ -469,7 +476,17 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     },
     labels(f) {
       NODES.forEach((n, i) => labelPoints[i].copy(n).applyMatrix3(netRot).add(netCenter));
-      return { points: labelPoints, visible: Math.max(0, 1 - Math.abs(f.chapter - 2) * 2.2) };
+      // The front of each Skills layer, placed as stack() places it.
+      layerPoints.forEach((p, k) => {
+        const y = (1.5 - k) * 0.95;
+        p.set(0, y * Math.cos(STACK_TILT) - 1.9 * Math.sin(STACK_TILT), y * Math.sin(STACK_TILT) + 1.9 * Math.cos(STACK_TILT));
+        p.add(stackCenter.set(f.mobile ? 0 : f.halfW * 0.55, f.mobile ? f.halfH * 0.45 : 0, -1));
+      });
+      const near = (chapter: number) => Math.max(0, 1 - Math.abs(f.chapter - chapter) * 2.2);
+      return [
+        { set: "work", points: labelPoints, visible: near(2) },
+        { set: "skills", points: layerPoints, visible: near(3) },
+      ];
     },
     dispose() {
       geometry.dispose();

@@ -115,7 +115,7 @@ const FinalCTA = () => {
             viewport={{ once: true, margin: '-10%' }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
           >
-            <span className="text-accent">●</span> Available for work · Norman, OK
+            <span className="text-accent">●</span> Available for work
           </motion.p>
         </div>
 

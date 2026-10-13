@@ -235,6 +235,7 @@ export const createGlass = (opts: { mobile: boolean; theme: Theme; backdrop: Rec
     update(f: Frame) {
       const from = Math.min(5, Math.floor(f.chapter));
       uniforms.uTime.value = f.time;
+      uniforms.uMobile.value = f.mobile ? 1 : 0;
       uniforms.uFrom.value = from;
       uniforms.uTo.value = Math.min(5, from + 1);
       uniforms.uMix.value = f.chapter - from;

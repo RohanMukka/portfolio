@@ -56,10 +56,11 @@ export const onCentrepiece = (fn: () => void) => {
 };
 
 // Screen positions of points in the scene that the page labels (the Work
-// network's nodes), sent after every rendered frame. `visible` fades 0 → 1
-// while the scene shows them.
+// network's nodes, the Skills stack's layers), sent after every rendered
+// frame. `visible` fades 0 → 1 while the scene shows them.
+export type LabelSet = "work" | "skills";
 export type ScreenPoint = { x: number; y: number };
-type LabelListener = (points: ScreenPoint[], visible: number) => void;
+type LabelListener = (set: LabelSet, points: ScreenPoint[], visible: number) => void;
 const labelListeners = new Set<LabelListener>();
 export const onStageLabels = (fn: LabelListener) => {
   labelListeners.add(fn);
@@ -67,6 +68,6 @@ export const onStageLabels = (fn: LabelListener) => {
     labelListeners.delete(fn);
   };
 };
-export const emitStageLabels = (points: ScreenPoint[], visible: number) => {
-  labelListeners.forEach((fn) => fn(points, visible));
+export const emitStageLabels = (set: LabelSet, points: ScreenPoint[], visible: number) => {
+  labelListeners.forEach((fn) => fn(set, points, visible));
 };

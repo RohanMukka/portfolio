@@ -26,6 +26,9 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
   // Keeps the preview's content while it fades out after the cursor leaves.
   const [shown, setShown] = useState<Project | null>(null);
   const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
+  // On wide screens the network's tag already shows a featured project's
+  // headline fact, so the card shows its tagline instead.
+  const wide = useMediaQuery("(min-width: 1024px)");
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -144,7 +147,7 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
                 <span key={c} className={`absolute w-3 h-3 border-primary-text/40 ${c}`} />
               ))}
               <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-primary-text/10 text-[10px] font-medium uppercase tracking-[0.2em]">
-                <span className="truncate text-primary-text">{factFor(shown) ?? shown.tagline}</span>
+                <span className="truncate text-primary-text">{wide && nodeOf(shown) >= 0 ? shown.tagline : factFor(shown) ?? shown.tagline}</span>
                 <span className="shrink-0 text-accent">{shown.category}</span>
               </div>
             </div>

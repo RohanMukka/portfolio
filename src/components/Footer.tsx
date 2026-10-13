@@ -150,7 +150,7 @@ const Footer = () => {
                 Rohan Mukka
               </span>
               <span className="hud text-primary-tertiary">
-                Software engineer · Norman, OK
+                Software engineer
               </span>
             </div>
             <div className="flex gap-4">

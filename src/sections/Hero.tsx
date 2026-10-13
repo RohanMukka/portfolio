@@ -4,6 +4,8 @@ import { ArrowUpRight } from 'lucide-react';
 import Crosshair from './hero/Crosshair';
 import FullWidthName from './hero/FullWidthName';
 import HeroIntro, { INTRO_OPEN, type IntroPhase } from './hero/HeroIntro';
+import LiteStream from './hero/LiteStream';
+import { isSoftwareRendering } from '../lib/rendering';
 import { Magnetic, RevealWords, fadeUp } from './hero/shared';
 import { openStage } from '../stage/store';
 
@@ -64,6 +66,9 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
   return (
     <section ref={sectionRef} id="hero" data-chapter="hero" className="relative h-[100dvh] min-h-[640px]">
       <div className="relative h-full w-full flex flex-col">
+        {/* Without a graphics card there's no 3D stage behind the hero; its
+            stream is painted in still. */}
+        {isSoftwareRendering() && <LiteStream />}
         <motion.div style={{ opacity: topFade }} className="absolute inset-0 pointer-events-none">
           <Corner className="top-4 md:top-6 left-4 md:left-7 border-t border-l" />
           <Corner className="top-4 md:top-6 right-4 md:right-7 border-t border-r" />

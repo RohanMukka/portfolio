@@ -1,8 +1,11 @@
 import type { Object3D, Vector3 } from "three";
 import type { Theme } from "../lib/theme";
+import type { LabelSet } from "./store";
 
 // One featured Work project per node in the scene.
 export const NODE_COUNT = 8;
+// The Skills stack's layers, top to bottom.
+export const LAYER_COUNT = 4;
 
 // Everything a centrepiece needs to draw a frame; scene.ts eases it all.
 export type Frame = {
@@ -22,6 +25,7 @@ export type Frame = {
   halfW: number;
   halfH: number;
   aspect: number;
+  /** Phone-sized window: the shapes centre themselves above the text. */
   mobile: boolean;
   /** Drawing-buffer height in device pixels, and tan(fov / 2): for sizing points. */
   viewH: number;
@@ -38,12 +42,14 @@ export type Frame = {
 
 export const STOP_COUNT = 5;
 
+export type Labels = { set: LabelSet; points: Vector3[]; visible: number };
+
 export interface Piece {
   readonly object: Object3D;
   update(frame: Frame): void;
   setTheme(theme: Theme): void;
-  /** World positions the page labels (the Work nodes) and how visible they are. */
-  labels?(frame: Frame): { points: Vector3[]; visible: number };
+  /** World positions the page labels (Work's nodes, Skills' layers) and how visible each set is. */
+  labels?(frame: Frame): Labels[];
   dispose(): void;
 }
 

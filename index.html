@@ -5,17 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rohan Mukka · Software Engineer</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="description" content="Portfolio of Rohan Mukka, a Software Engineer specializing in scalable web systems and intelligent automation." />
+    <meta name="description" content="Rohan Mukka, software engineer: full-stack products and ML systems that hold up in production." />
+    <meta name="theme-color" content="#0a0a0d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://portfolio-rohan03.vercel.app/" />
+    <meta property="og:title" content="Rohan Mukka · Software Engineer" />
+    <meta property="og:description" content="Full-stack products and ML systems that hold up in production." />
+    <meta name="twitter:card" content="summary" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <script>
       // Saved theme before first paint (see src/lib/theme.ts); dark by default.
-      try {
-        document.documentElement.setAttribute("data-theme", localStorage.getItem("color-theme") === "light" ? "light" : "dark");
-      } catch (e) {
-        document.documentElement.setAttribute("data-theme", "dark");
-      }
+      (function () {
+        var theme = "dark";
+        try {
+          if (localStorage.getItem("color-theme") === "light") theme = "light";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-theme", theme);
+        if (theme === "light") document.querySelector('meta[name="theme-color"]').setAttribute("content", "#f4f1ea");
+      })();
     </script>
     <link rel="stylesheet" href="/index.css" />
   </head>
