@@ -11,7 +11,6 @@ import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
 import Stage from "./stage/Stage";
 import StageLabels from "./stage/Labels";
-import Switcher from "./stage/Switcher";
 import { startSmoothScroll } from "./lib/smoothScroll";
 
 const App = () => {
@@ -70,8 +69,6 @@ const App = () => {
         <FinalCTA />
         <Footer />
       </main>
-
-      {import.meta.env.DEV && <Switcher />}
     </div>
   );
 };

@@ -5,6 +5,9 @@ import { NODE_COUNT } from "./piece";
 import { onStageLabels, stageState, type LabelSet } from "./store";
 
 const pad = (n: number) => String(n).padStart(2, "0");
+// Roughly how wide a tag runs, and how far apart two need to sit to read.
+const TAG_WIDTH = 190;
+const TAG_GAP = 26;
 
 type Tag = { name: string; detail?: string };
 
@@ -36,6 +39,7 @@ const SKILLS: Tag[] = [
 const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hoverable?: boolean }) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const order = useRef(tags.map((_, i) => i));
 
   useEffect(
     () =>
@@ -46,16 +50,33 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
         box.style.visibility = visible > 0.01 ? "visible" : "hidden";
         if (visible <= 0.01) return;
         if (hoverable) box.dataset.focus = String(stageState.focus >= 0);
-        // Tags point away from the shape's middle, so they spread out rather
-        // than pile up across it.
+        // Work's tags point away from the network's middle, so they spread
+        // out rather than pile up across it, and left wherever pointing right
+        // would run them off the screen. Top to bottom, a tag that would sit
+        // on a neighbour pointing the same way drops just below it.
         const middle = points.reduce((sum, p) => sum + p.x, 0) / points.length;
-        points.forEach((p, i) => {
+        const placed: { x: number; y: number; side: string }[] = [];
+        order.current = order.current.sort((a, b) => points[a].y - points[b].y);
+        order.current.forEach((i) => {
+          const p = points[i];
           const tag = tagRefs.current[i];
           if (!tag) return;
+          let side = set === "work" && (p.x < middle || p.x + TAG_WIDTH > window.innerWidth) ? "left" : "right";
+          // A tag whose text would run across another node swaps sides.
+          const crosses = (dir: number) =>
+            points.some((q) => q !== p && (q.x - p.x) * dir > 15 && (q.x - p.x) * dir < TAG_WIDTH && Math.abs(q.y - (p.y - 26)) < 22);
+          if (set === "work" && crosses(side === "right" ? 1 : -1) && !crosses(side === "right" ? -1 : 1)) {
+            side = side === "right" ? "left" : "right";
+          }
+          let y = p.y;
+          for (const q of placed) {
+            if (q.side === side && Math.abs(q.x - p.x) < TAG_WIDTH && y - q.y < TAG_GAP) y = q.y + TAG_GAP;
+          }
+          placed.push({ x: p.x, y, side });
           tag.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`;
+          tag.style.setProperty("--nudge", `${(y - p.y).toFixed(1)}px`);
           const on = String(!!hoverable && stageState.focus === i);
           if (tag.dataset.on !== on) tag.dataset.on = on;
-          const side = set === "work" && p.x < middle ? "left" : "right";
           if (tag.dataset.side !== side) tag.dataset.side = side;
         });
       }),

@@ -18,21 +18,19 @@ import {
 } from "three";
 import type { Theme } from "../lib/theme";
 import { BACKDROP } from "./glsl";
-import { createGlass } from "./glass";
 import { createParticles } from "./particles";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
-import { emitStageLabels, stageState, type Centrepiece, type LabelSet, type ScreenPoint } from "./store";
+import { emitStageLabels, stageState, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
 
 // The page's 3D stage: one fixed canvas behind every section. A backdrop of
 // soft glows and a faint dot grid, a drift of dust at many depths that
-// parallaxes as the page scrolls, and the centrepiece, which takes a new
-// shape for each chapter of the page (see particles.ts / glass.ts).
+// parallaxes as the page scrolls, and the centrepiece, tens of thousands of
+// points that take a new shape for each chapter of the page (particles.ts).
 
 export type Stage = {
   setTheme: (theme: Theme) => void;
   setPointer: (ndc: { x: number; y: number } | null) => void;
-  setCentrepiece: (centrepiece: Centrepiece) => void;
   resize: (width: number, height: number) => void;
   start: () => void;
   stop: () => void;
@@ -120,7 +118,7 @@ const ease = (rate: number, dt: number) => 1 - Math.exp(-rate * dt);
 
 export const createStage = (
   canvas: HTMLCanvasElement,
-  opts: { theme: Theme; mobile: boolean; centrepiece: Centrepiece },
+  opts: { theme: Theme; mobile: boolean },
 ): Stage => {
   const renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
@@ -200,24 +198,12 @@ export const createStage = (
     dustUniforms.uAlpha.value = t.dustAlpha;
     dustMaterial.blending = next === "dark" ? AdditiveBlending : NormalBlending;
     dustMaterial.needsUpdate = true;
-    piece?.setTheme(next);
+    piece.setTheme(next);
   };
 
   // Centrepiece
-  let piece: Piece | null = null;
-  const usePiece = (which: Centrepiece) => {
-    if (piece) {
-      scene.remove(piece.object);
-      piece.dispose();
-    }
-    piece =
-      which === "glass"
-        ? createGlass({ mobile: opts.mobile, theme, backdrop: backdropUniforms })
-        : createParticles({ mobile: opts.mobile, theme });
-    scene.add(piece.object);
-    emitStageLabels("work", [], 0);
-    emitStageLabels("skills", [], 0);
-  };
+  const piece: Piece = createParticles({ mobile: opts.mobile, theme });
+  scene.add(piece.object);
 
   // Eased state
   const timeline = createTimeline();
@@ -283,7 +269,7 @@ export const createStage = (
 
   // Tags on the scene's labelled points, placed on screen for the page.
   const sendLabels = () => {
-    for (const group of piece?.labels?.(frame) ?? []) {
+    for (const group of piece.labels?.(frame) ?? []) {
       const screen = screens[group.set];
       if (group.visible > 0) {
         group.points.forEach((p, i) => {
@@ -341,7 +327,7 @@ export const createStage = (
     dustUniforms.uScroll.value = (window.scrollY / height) * 2 * frame.halfH;
     dustUniforms.uTime.value = frame.time;
 
-    piece?.update(frame);
+    piece.update(frame);
     renderer.render(scene, camera);
     sendLabels();
     adapt(dt);
@@ -378,7 +364,6 @@ export const createStage = (
   }
 
   applyTheme(opts.theme);
-  usePiece(opts.centrepiece);
 
   return {
     setTheme: applyTheme,
@@ -389,7 +374,6 @@ export const createStage = (
         pointerTarget.y = ndc.y;
       }
     },
-    setCentrepiece: usePiece,
     resize: (w, h) => {
       width = Math.max(1, w);
       height = Math.max(1, h);
@@ -419,7 +403,7 @@ export const createStage = (
       running = false;
       cancelAnimationFrame(raf);
       timeline.dispose();
-      piece?.dispose();
+      piece.dispose();
       backdropGeometry.dispose();
       backdropMaterial.dispose();
       dustGeometry.dispose();

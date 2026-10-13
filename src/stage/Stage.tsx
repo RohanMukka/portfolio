@@ -3,7 +3,6 @@ import Background from "../components/Background";
 import { isSoftwareRendering } from "../lib/rendering";
 import { currentTheme } from "../lib/theme";
 import type { Stage as StageApi } from "./scene";
-import { getCentrepiece, onCentrepiece } from "./store";
 
 export const loadStage = () => import("./scene");
 
@@ -28,7 +27,6 @@ const WebGLStage = () => {
           stage = createStage(canvas, {
             theme: currentTheme(),
             mobile: window.matchMedia("(max-width: 767px)").matches,
-            centrepiece: getCentrepiece(),
           });
         } catch {
           setFailed(true);
@@ -44,8 +42,6 @@ const WebGLStage = () => {
         const themeWatch = new MutationObserver(() => s.setTheme(currentTheme()));
         themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
         cleanups.push(() => themeWatch.disconnect());
-
-        cleanups.push(onCentrepiece(() => s.setCentrepiece(getCentrepiece())));
 
         const onMove = (e: PointerEvent) => {
           if (e.pointerType === "touch") return;

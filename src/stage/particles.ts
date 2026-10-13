@@ -438,7 +438,7 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
   // same transform, so it's built here rather than in the shader.
   const placeNetwork = (f: Frame) => {
     // It sways rather than spins, so the tagged nodes never line up.
-    euler.set(-0.18 + f.pointer.y * 0.12 * f.pointer.on, Math.sin(f.time * 0.12) * 0.5 + f.pointer.x * 0.25 * f.pointer.on, 0);
+    euler.set(-0.18 + f.pointer.y * 0.12 * f.pointer.on, Math.sin(f.time * 0.12) * 0.32 + f.pointer.x * 0.2 * f.pointer.on, 0);
     rotation.makeRotationFromEuler(euler).multiplyScalar(f.mobile ? 0.62 : 0.92);
     netRot.setFromMatrix4(rotation);
     netCenter.set(f.mobile ? 0 : f.halfW * 0.56, f.mobile ? f.halfH * 0.42 : -0.05, 0);

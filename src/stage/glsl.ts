@@ -69,10 +69,8 @@ export const PALETTE = /* glsl */ `
   }
 `;
 
-// The page's backdrop as seen along any ray: a plane behind the scene with
-// soft colour glows and a faint grid of dots. The full-screen backdrop draws
-// it along camera rays; the glass centrepiece along refracted ones, so the
-// dots and glows bend through it.
+// The page's backdrop as seen along a ray: a plane behind the scene with soft
+// colour glows and a faint grid of dots, drawn full-screen along camera rays.
 export const BACKDROP = /* glsl */ `
   uniform vec3 uBg;
   uniform vec3 uGlow[3];

@@ -171,6 +171,8 @@
   top: -33px;
   white-space: nowrap;
   color: var(--text-secondary);
+  /* Dropped below a neighbour it would overlap (Labels.tsx). */
+  transform: translateY(var(--nudge, 0px));
   transition: color 0.3s ease;
 }
 .stage-tag-fact {
