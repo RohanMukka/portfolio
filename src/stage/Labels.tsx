@@ -61,13 +61,15 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
           const p = points[i];
           const tag = tagRefs.current[i];
           if (!tag) return;
-          let side = set === "work" && (p.x < middle || p.x + TAG_WIDTH > window.innerWidth) ? "left" : "right";
-          // A tag whose text would run across another node swaps sides.
+          const fitsRight = p.x + TAG_WIDTH < window.innerWidth;
+          const fitsLeft = p.x - TAG_WIDTH > 0;
+          let side = set === "work" && (p.x < middle || !fitsRight) ? "left" : "right";
+          // A tag whose text would run across another node swaps sides, as
+          // long as the other side has room on screen.
           const crosses = (dir: number) =>
             points.some((q) => q !== p && (q.x - p.x) * dir > 15 && (q.x - p.x) * dir < TAG_WIDTH && Math.abs(q.y - (p.y - 26)) < 22);
-          if (set === "work" && crosses(side === "right" ? 1 : -1) && !crosses(side === "right" ? -1 : 1)) {
-            side = side === "right" ? "left" : "right";
-          }
+          if (set === "work" && side === "right" && crosses(1) && !crosses(-1) && fitsLeft) side = "left";
+          else if (set === "work" && side === "left" && crosses(-1) && !crosses(1) && fitsRight) side = "right";
           let y = p.y;
           for (const q of placed) {
             if (q.side === side && Math.abs(q.x - p.x) < TAG_WIDTH && y - q.y < TAG_GAP) y = q.y + TAG_GAP;

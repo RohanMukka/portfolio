@@ -69,8 +69,9 @@ export const PALETTE = /* glsl */ `
   }
 `;
 
-// The page's backdrop as seen along a ray: a plane behind the scene with soft
-// colour glows and a faint grid of dots, drawn full-screen along camera rays.
+// The page's backdrop, drawn full-screen behind the scene: soft colour glows
+// fixed to the screen, and a floor of light points far below the world that
+// the camera flies over.
 export const BACKDROP = /* glsl */ `
   uniform vec3 uBg;
   uniform vec3 uGlow[3];
@@ -78,29 +79,31 @@ export const BACKDROP = /* glsl */ `
   uniform vec3 uDotColor;
   uniform float uDotAlpha;
   uniform vec2 uDrift;
-  uniform float uPlaneHalfH;
   uniform float uAspect;
-
-  const float PLANE_Z = -6.0;
+  uniform float uFloorY;
 
   float glowAt(vec2 p, vec2 c, float r) {
     vec2 d = (p - c) / r;
     return exp(-dot(d, d));
   }
 
-  vec3 backdrop(vec3 ro, vec3 rd) {
-    float t = (PLANE_Z - ro.z) / min(rd.z, -1e-3);
-    vec2 hit = (ro + rd * t).xy;
-    vec2 p = hit / uPlaneHalfH;
+  // ndc: the pixel's place on screen (-1 → 1); ro, rd: its camera ray.
+  vec3 backdrop(vec2 ndc, vec3 ro, vec3 rd) {
+    vec2 p = vec2(ndc.x * uAspect, ndc.y);
     vec3 col = uBg;
     col = mix(col, uGlow[0], uGlowAlpha[0] * glowAt(p, vec2(0.9 * uAspect, 0.85) + uDrift, 1.1));
     col = mix(col, uGlow[1], uGlowAlpha[1] * glowAt(p, vec2(-0.85 * uAspect, -0.9) - uDrift, 1.3));
     col = mix(col, uGlow[2], uGlowAlpha[2] * glowAt(p, vec2(-0.2, 0.1) + uDrift * 1.5, 0.9));
-    vec2 cell = hit / 0.45;
-    float aa = max(fwidth(cell.x), 1e-3);
-    float dotMask = 1.0 - smoothstep(0.045, 0.045 + aa * 1.5, length(fract(cell) - 0.5));
-    // Dots fade where they'd shrink below a pixel, so they never shimmer.
-    dotMask *= 1.0 - smoothstep(0.08, 0.2, aa);
-    return mix(col, uDotColor, dotMask * uDotAlpha);
+    if (rd.y < -1e-3) {
+      float t = (uFloorY - ro.y) / rd.y;
+      vec2 cell = (ro + rd * t).xz / 1.6;
+      float aa = max(fwidth(cell.x), fwidth(cell.y));
+      float dotMask = 1.0 - smoothstep(0.07, 0.07 + aa * 1.5, length(fract(cell) - 0.5));
+      // Dots fade with distance, and where they'd shrink below a pixel, so
+      // the horizon never shimmers.
+      dotMask *= exp(-t * 0.02) * (1.0 - smoothstep(0.08, 0.25, aa));
+      col = mix(col, uDotColor, dotMask * uDotAlpha);
+    }
+    return col;
   }
 `;

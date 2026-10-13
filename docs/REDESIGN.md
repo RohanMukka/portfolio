@@ -13,7 +13,8 @@ after every step.
   ~24k particles take a new shape per section (data stream → About timeline
   → project network → Skills layer stack → Credentials crystal → ring around
   Contact's "Let's talk."). Dark theme by default; light theme kept.
-- Step 1 of the upgrade plan (cinematic lens) is done and pushed.
+- Steps 1 (cinematic lens) and 2 (camera flight) of the upgrade plan are
+  done. Step 2 waits for the owner's review before step 3 starts.
 
 ## Upgrade plan: one step at a time
 
@@ -22,12 +23,15 @@ and approved before the next starts.
 
 1. ✅ **Cinematic look**: bloom, particle depth of field, grain, vignette
    (`src/stage/post.ts`).
-2. ⏭ **Camera flight** (next): scrolling flies the camera through one
+2. ✅ **Camera flight**: scrolling flies the camera through one
    continuous 3D world, each section a place you travel to (USAvionix-style)
-   instead of shapes morphing in place.
-3. **Scroll-pinned scenes**: sections pin while scrolling; Work flies node to
-   node through each project with captions; Skills assembles layer by layer;
-   About travels the timeline.
+   instead of shapes morphing in place (`src/stage/world.ts`). The swarm
+   travels with you and re-forms at each place; faint "ghost" copies of the
+   other places' shapes stand in the distance; dust hangs along the path and
+   a floor of light points lies below.
+3. ⏭ **Scroll-pinned scenes** (next): sections pin while scrolling; Work
+   flies node to node through each project with captions; Skills assembles
+   layer by layer; About travels the timeline.
 4. **Playable particles**: name formed from particles in the hero, cursor
    gravity, click a node to open its case study, drag to spin the network.
 5. **3D transitions**: opening a case study dives the camera into that
@@ -44,6 +48,9 @@ and approved before the next starts.
 - `src/stage/particles.ts`: the formations, all computed on the GPU from
   per-point seeds; moving between sections blends two formations.
 - `src/stage/post.ts`: the lens (bloom, grain, vignette, fringing).
+- `src/stage/world.ts`: where each chapter's place is, the rest view of
+  each, and the camera path between them. Shapes are written in their
+  place's own frame (rest view on +z, 10 units away) and carried to it.
 - `src/stage/timeline.ts`: sections carry `data-chapter="hero|about|work|
   skills|credentials|contact"`; the stage reads scroll progress from them.
   About's panels carry `data-stop` (timeline stops ride on them); Contact's

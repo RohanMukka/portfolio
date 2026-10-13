@@ -23,6 +23,7 @@ import { createLens } from "./post";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
 import { emitStageLabels, stageState, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
+import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, VIEW_DISTANCE } from "./world";
 
 // The page's 3D stage: one fixed canvas behind every section. A backdrop of
 // soft glows and a faint dot grid, a drift of dust at many depths that
@@ -43,7 +44,7 @@ const THEMES = {
     bg: "#0a0a0d",
     glows: [["#1e3a8a", 0.24], ["#312e81", 0.2], ["#5b21b6", 0.06]] as const,
     dots: "#94a3b8",
-    dotAlpha: 0.07,
+    dotAlpha: 0.2,
     dust: "#a5b4fc",
     dustAlpha: 0.55,
   },
@@ -51,59 +52,66 @@ const THEMES = {
     bg: "#f4f1ea",
     glows: [["#ffffff", 0.6], ["#eadfcd", 0.55], ["#c45c26", 0.07]] as const,
     dots: "#003399",
-    dotAlpha: 0.09,
+    dotAlpha: 0.16,
     dust: "#003399",
     dustAlpha: 0.35,
   },
 };
 
 const FOV = 40;
-const CAMERA_Z = 10;
-const PLANE_Z = -6; // the backdrop plane, see glsl.ts
 const INTRO_MS = 2200;
+const WORLD_UP = new Vector3(0, 1, 0);
 
 const backdropVertex = /* glsl */ `
   varying vec3 vDir;
+  varying vec2 vNdc;
   void main() {
     // Direction of the camera ray through this corner, in world space.
     vec4 view = inverse(projectionMatrix) * vec4(position.xy, 1.0, 1.0);
     vDir = (inverse(viewMatrix) * vec4(view.xyz / view.w, 0.0)).xyz;
+    vNdc = position.xy;
     gl_Position = vec4(position.xy, 0.9999, 1.0);
   }
 `;
 
 const backdropFragment = /* glsl */ `
   varying vec3 vDir;
+  varying vec2 vNdc;
   ${BACKDROP}
   void main() {
-    gl_FragColor = vec4(backdrop(cameraPosition, normalize(vDir)), 1.0);
+    gl_FragColor = vec4(backdrop(vNdc, cameraPosition, normalize(vDir)), 1.0);
     #include <colorspace_fragment>
   }
 `;
 
+// Dust hangs in a wide tube along the whole flight path (and a little past
+// both ends), drifting slowly, so flying between places means flying
+// through it.
 const dustVertex = /* glsl */ `
   attribute vec4 aSeed;
-  uniform float uScroll;
+  uniform vec3 uPlaces[${PLACE_COUNT}];
   uniform float uTime;
   uniform float uTanHalf;
-  uniform float uAspect;
+  uniform float uViewH;
   uniform float uPixel;
   varying float vAlpha;
   varying float vNear;
   void main() {
-    float depth = aSeed.z;
-    float z = mix(-14.0, 5.0, depth * depth);
-    float spanY = 2.0 * (${CAMERA_Z.toFixed(1)} - z) * uTanHalf * 1.15;
-    float y = (aSeed.y - 0.5) * spanY + uScroll * mix(0.15, 1.3, depth) + uTime * 0.03 * (0.5 + aSeed.w);
-    y = mod(y + spanY * 0.5, spanY) - spanY * 0.5;
-    vec4 mv = modelViewMatrix * vec4((aSeed.x - 0.5) * spanY * uAspect, y, z, 1.0);
+    float u = aSeed.z * ${(PLACE_COUNT + 0.6).toFixed(1)} - 0.8;
+    int i = int(clamp(floor(u), 0.0, ${(PLACE_COUNT - 2).toFixed(1)}));
+    vec3 centre = mix(uPlaces[i], uPlaces[i + 1], u - float(i));
+    vec3 pos = centre + vec3((aSeed.x - 0.5) * 34.0, (aSeed.y - 0.5) * 20.0, 0.0);
+    pos += vec3(cos(uTime * 0.15 + aSeed.w * 20.0), sin(uTime * 0.2 + aSeed.w * 30.0), 0.0) * 0.4;
+    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+    float dist = -mv.z;
     gl_Position = projectionMatrix * mv;
-    // The nearest motes are out of focus: big, faint, flat discs.
-    float near = smoothstep(0.94, 1.0, depth);
-    gl_PointSize = mix(mix(1.0, 3.2, depth), 24.0, near) * uPixel;
-    // Twinkle, and fade at the wrap so no mote pops in or out.
+    // Motes right by the lens are out of focus: big, faint, flat discs.
+    float near = smoothstep(4.0, 1.5, dist);
+    float size = 0.025 * uViewH / (2.0 * uTanHalf * max(dist, 0.5));
+    gl_PointSize = dist < 0.3 ? 0.0 : min(mix(size, 26.0 * uPixel, near), 40.0);
+    // Twinkle, and fade into the distance.
     vAlpha = (0.35 + 0.65 * pow(0.5 + 0.5 * sin(uTime * (0.6 + aSeed.w) + aSeed.x * 40.0), 3.0))
-      * (1.0 - smoothstep(0.42, 0.5, abs(y / spanY))) * mix(0.35, 1.0, depth) * mix(1.0, 0.1, near);
+      * exp(-max(dist - 10.0, 0.0) * 0.03) * mix(1.0, 0.12, near);
     vNear = near;
   }
 `;
@@ -132,8 +140,7 @@ export const createStage = (
   renderer.toneMapping = NoToneMapping; // keep page colours exact
 
   const scene = new Scene();
-  const camera = new PerspectiveCamera(FOV, 1, 0.1, 200);
-  camera.position.set(0, 0, CAMERA_Z);
+  const camera = new PerspectiveCamera(FOV, 1, 0.1, 400);
   const tanHalf = Math.tan(((FOV / 2) * Math.PI) / 180);
 
   let theme = opts.theme;
@@ -146,7 +153,7 @@ export const createStage = (
     uDotColor: { value: new Color() },
     uDotAlpha: { value: 0 },
     uDrift: { value: new Vector2() },
-    uPlaneHalfH: { value: (CAMERA_Z - PLANE_Z) * tanHalf },
+    uFloorY: { value: FLOOR_Y },
     uAspect: { value: 1 },
   };
   const backdropMaterial = new ShaderMaterial({
@@ -163,16 +170,16 @@ export const createStage = (
   scene.add(backdrop);
 
   // Dust
-  const DUST = opts.mobile ? 500 : 1400;
+  const DUST = opts.mobile ? 1600 : 4000;
   const dustSeeds = new Float32Array(DUST * 4).map(() => Math.random());
   const dustGeometry = new BufferGeometry();
   dustGeometry.setAttribute("position", new BufferAttribute(new Float32Array(DUST * 3), 3));
   dustGeometry.setAttribute("aSeed", new BufferAttribute(dustSeeds, 4));
   const dustUniforms = {
-    uScroll: { value: 0 },
+    uPlaces: { value: placePositions },
     uTime: { value: 0 },
     uTanHalf: { value: tanHalf },
-    uAspect: { value: 1 },
+    uViewH: { value: 1 },
     uPixel: { value: renderer.getPixelRatio() },
     uColor: { value: new Color() },
     uAlpha: { value: 0 },
@@ -224,7 +231,7 @@ export const createStage = (
     intro: 0,
     focus: new Array(NODE_COUNT).fill(0),
     halfW: 1,
-    halfH: CAMERA_Z * tanHalf,
+    halfH: VIEW_DISTANCE * tanHalf,
     aspect: 1,
     mobile: opts.mobile,
     viewH: 1,
@@ -294,6 +301,32 @@ export const createStage = (
     }
   };
 
+  // The camera flies the path between places (world.ts) as the chapters
+  // change, leans with the pointer across its view, and banks into the
+  // turns while it's travelling.
+  const eye = new Vector3();
+  const target = new Vector3();
+  const ahead = new Vector3();
+  const aheadTarget = new Vector3();
+  const forward = new Vector3();
+  const right = new Vector3();
+  const up = new Vector3();
+  const placeCamera = () => {
+    const { pointer } = frame;
+    cameraAt(frame.chapter, eye, target);
+    cameraAt(frame.chapter + 0.02, ahead, aheadTarget);
+    forward.subVectors(target, eye).normalize();
+    right.crossVectors(forward, WORLD_UP).normalize();
+    up.crossVectors(right, forward);
+    const sideways = ahead.sub(eye).dot(right);
+    eye.addScaledVector(right, pointer.x * 0.35 * pointer.on).addScaledVector(up, pointer.y * 0.22 * pointer.on);
+    camera.position.copy(eye);
+    camera.up.copy(WORLD_UP);
+    camera.lookAt(target);
+    const travelling = Math.sin(Math.PI * (frame.chapter % 1));
+    camera.rotateZ(Math.max(-0.22, Math.min(0.22, -sideways * 0.35)) * travelling);
+  };
+
   let raf = 0;
   let running = false;
   let last = 0;
@@ -329,10 +362,8 @@ export const createStage = (
     if (frame.chapter > 0.05 && frame.chapter < 2.5) placeStops();
     if (frame.chapter > 3.5) placeRing();
 
-    camera.position.set(pointer.x * 0.35 * pointer.on, pointer.y * 0.22 * pointer.on, CAMERA_Z);
-    camera.lookAt(0, 0, 0);
+    placeCamera();
     backdropUniforms.uDrift.value.set(pointer.x * 0.08 * pointer.on, pointer.y * 0.06 * pointer.on);
-    dustUniforms.uScroll.value = (window.scrollY / height) * 2 * frame.halfH;
     dustUniforms.uTime.value = frame.time;
 
     piece.update(frame);
@@ -368,6 +399,7 @@ export const createStage = (
       lens.setSize(width, height, 1);
       frame.viewH = height;
       dustUniforms.uPixel.value = 1;
+      dustUniforms.uViewH.value = height;
     }
   };
 
@@ -407,7 +439,7 @@ export const createStage = (
       frame.viewH = height * renderer.getPixelRatio();
       lens.setSize(width, height, renderer.getPixelRatio());
       backdropUniforms.uAspect.value = frame.aspect;
-      dustUniforms.uAspect.value = frame.aspect;
+      dustUniforms.uViewH.value = frame.viewH;
     },
     start: () => {
       if (running) return;

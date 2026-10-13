@@ -14,6 +14,7 @@ import {
 } from "three";
 import type { Theme } from "../lib/theme";
 import { NOISE, PALETTE } from "./glsl";
+import { placePositions, placeRotations, toWorld } from "./world";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, perChapter, type Frame, type Piece } from "./piece";
 
 // "Data becomes a system": tens of thousands of points that tell the page's
@@ -87,9 +88,24 @@ const vertexShader = /* glsl */ `
   uniform vec3 uNetCenter;
   uniform vec3 uRing;
   uniform vec3 uStops[5];
+  uniform vec3 uPlaces[6];
+  uniform mat3 uPlaceRots[6];
+  uniform float uChapter;
 
   attribute vec4 aSeed;
   attribute vec4 aSeed2;
+  attribute float aGhost;
+
+  // Ghosts are drawn away from the place you're at, so they can't follow
+  // the page's anchors (About's panels, Contact's heading); they stand in
+  // a resting layout instead.
+  bool gGhost = false;
+  vec3 stopAt(int k) {
+    return gGhost ? vec3((float(k) - 2.0) * 3.2, -0.3, 0.0) : uStops[k];
+  }
+  vec3 ringAt() {
+    return gGhost ? vec3(0.0, 0.0, 3.2) : uRing;
+  }
 
   varying vec3 vColor;
   varying float vAlpha;
@@ -147,7 +163,7 @@ const vertexShader = /* glsl */ `
     if (s.w < 0.55) {
       int k = int(floor(s.x * 5.0));
       float here = 1.0 - clamp(abs(uAbout - float(k)), 0.0, 1.0);
-      o.pos = uStops[k] + sphereDir(t.xy) * (0.45 + here * 0.3) * pow(s.y, 2.2);
+      o.pos = stopAt(k) + sphereDir(t.xy) * (0.45 + here * 0.3) * pow(s.y, 2.2);
       o.glow = 0.4 + 0.6 * (1.0 - s.y) + here * 0.5;
       o.hue = mix(0.1 + t.z * 0.15, 0.95, here);
       o.size = 0.9 + here * 0.6;
@@ -156,7 +172,7 @@ const vertexShader = /* glsl */ `
       float k = fract(s.y + uTime * 0.01) * 6.0 - 1.0;
       float seg = clamp(floor(k), 0.0, 3.0);
       int i = int(seg);
-      o.pos = mix(uStops[i], uStops[i + 1], k - seg);
+      o.pos = mix(stopAt(i), stopAt(i + 1), k - seg);
       o.pos += vec3(0.0, sin(k * 2.0 + uTime * 0.5) * 0.08, sin(k * 1.7 + uTime * 0.3) * 0.5);
       o.pos += (t.xyz - 0.5) * vec3(0.0, 0.05, 0.05);
       // Pulses run along it toward the stops still to come.
@@ -268,7 +284,8 @@ const vertexShader = /* glsl */ `
   // 5 · contact: a ring around the closing line, data spiralling into it.
   Shape ring(vec4 s, vec4 t) {
     Shape o;
-    float R = uRing.z;
+    vec3 anchor = ringAt();
+    float R = anchor.z;
     float a = s.x * TAU + uTime * 0.06;
     if (s.w < 0.8) {
       float r = 0.3 * pow(s.y, 1.8);
@@ -286,7 +303,7 @@ const vertexShader = /* glsl */ `
       o.hue = 0.5 + 0.5 * sin(aa);
       o.size = 0.6;
     }
-    o.pos.xy += uRing.xy;
+    o.pos.xy += anchor.xy;
     return o;
   }
 
@@ -299,43 +316,76 @@ const vertexShader = /* glsl */ `
     return ring(s, t);
   }
 
-  void main() {
-    Shape a = formation(uFrom, aSeed, aSeed2);
-    Shape b = formation(uTo, aSeed, aSeed2);
-    float m = smoothstep(0.0, 1.0, clamp((uMix - aSeed2.w * 0.4) / 0.6, 0.0, 1.0));
-    vec3 pos = mix(a.pos, b.pos, m);
-    float flight = m * (1.0 - m) * 4.0;
-    pos += snoise3(pos * 0.25 + aSeed.xyz * 3.0 + uTime * 0.1) * flight * 1.3;
-    pos += snoise3(pos * 0.35 + uTime * 0.05) * 0.06;
-    float glow = mix(a.glow, b.glow, m) + flight * 0.15;
-    float hue = mix(a.hue, b.hue, m);
-    float size = mix(a.size, b.size, m);
+  // A point in a place's own frame, in the world (see world.ts).
+  vec3 place(float k, vec3 local) {
+    int i = int(k + 0.5);
+    return uPlaces[i] + uPlaceRots[i] * local;
+  }
 
-    // The intro: everything starts folded into its loading line and opens
-    // out from the middle.
-    float open = smoothstep(0.0, 1.0, clamp((uIntro - abs(aSeed.x - 0.5) * 0.6 - aSeed2.z * 0.15) / 0.5, 0.0, 1.0));
-    vec3 folded = vec3((aSeed.x - 0.5) * 2.0 * uHalfW, (aSeed2.x - 0.5) * 0.02, 0.0);
-    pos = mix(folded, pos, open);
-    glow = mix(0.9, glow, open);
-    hue = mix(aSeed.x, hue, open);
+  void main() {
+    vec3 pos;
+    float glow;
+    float hue;
+    float size;
+    float open = 1.0;
+
+    if (aGhost > 0.5) {
+      // A faint standing copy of one chapter's shape at its place, so the
+      // world ahead is already there as you fly toward it. It gives way
+      // where you are, since the swarm itself is there.
+      gGhost = true;
+      float k = floor(aSeed2.y * 6.0);
+      Shape g = formation(k, aSeed, aSeed2);
+      pos = place(k, g.pos);
+      glow = g.glow * 0.3 * smoothstep(0.35, 0.9, abs(uChapter - k)) * uIntro;
+      hue = g.hue;
+      size = g.size;
+    } else {
+      // The swarm travels with you: it leaves one place's shape and
+      // re-forms as the next at the next place, each point on its own beat,
+      // swirling through noise on the way.
+      Shape a = formation(uFrom, aSeed, aSeed2);
+      Shape b = formation(uTo, aSeed, aSeed2);
+      float m = smoothstep(0.0, 1.0, clamp((uMix - aSeed2.w * 0.4) / 0.6, 0.0, 1.0));
+      pos = mix(place(uFrom, a.pos), place(uTo, b.pos), m);
+      float flight = m * (1.0 - m) * 4.0;
+      pos += snoise3(pos * 0.25 + aSeed.xyz * 3.0 + uTime * 0.1) * flight * 1.3;
+      pos += snoise3(pos * 0.35 + uTime * 0.05) * 0.06;
+      glow = mix(a.glow, b.glow, m) + flight * 0.15;
+      hue = mix(a.hue, b.hue, m);
+      size = mix(a.size, b.size, m);
+
+      // The intro: everything starts folded into its loading line and
+      // opens out from the middle.
+      open = smoothstep(0.0, 1.0, clamp((uIntro - abs(aSeed.x - 0.5) * 0.6 - aSeed2.z * 0.15) / 0.5, 0.0, 1.0));
+      vec3 folded = place(0.0, vec3((aSeed.x - 0.5) * 2.0 * uHalfW, (aSeed2.x - 0.5) * 0.02, 0.0));
+      pos = mix(folded, pos, open);
+      glow = mix(0.9, glow, open);
+      hue = mix(aSeed.x, hue, open);
+    }
 
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
 
     // Points part around the pointer.
     vec4 clip = projectionMatrix * mv;
     vec2 d = (clip.xy / clip.w - uPointer) * vec2(uAspect, 1.0);
-    float push = uPointerOn * smoothstep(0.3, 0.0, length(d)) * open;
+    float push = uPointerOn * smoothstep(0.3, 0.0, length(d)) * open * (1.0 - aGhost);
     mv.xy += normalize(d + 1e-5) * push * 0.5 * (-mv.z / 10.0);
     glow += push * 0.5;
 
     gl_Position = projectionMatrix * mv;
+    // Points flying close past the lens fade out before they can swell over
+    // the page; nothing draws at or behind it.
+    glow *= smoothstep(2.0, 5.5, -mv.z);
     // Depth of field: points off the focal plane (z = 0, where the page
     // sits) open into larger, fainter, flatter discs.
     float blur = clamp(abs(-mv.z - 10.0) * 0.3 - 0.2, 0.0, 1.0);
-    gl_PointSize = min(64.0, uSize * size * (1.0 + blur * 2.2) * uViewH / (2.0 * uTanHalf * -mv.z));
+    gl_PointSize = clamp(uSize * size * (1.0 + blur * 2.2) * uViewH / (2.0 * uTanHalf * max(-mv.z, 0.4)), 0.0, 36.0);
     vColor = palette(hue);
     vAlpha = clamp(glow, 0.0, 1.6) * uDim / (1.0 + blur * 2.5);
     vBlur = blur;
+    // Faded-out points cost nothing to draw.
+    if (vAlpha < 0.002) gl_PointSize = 0.0;
   }
 `;
 
@@ -365,7 +415,10 @@ const mulberry32 = (seed: number) => () => {
 };
 
 export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece => {
-  const count = opts.mobile ? 9000 : 24000;
+  // The swarm, plus the faint standing copies of every place's shape.
+  const swarm = opts.mobile ? 9000 : 24000;
+  const ghosts = opts.mobile ? 3000 : 8000;
+  const count = swarm + ghosts;
   const random = mulberry32(20240801);
   const seeds = new Float32Array(count * 4);
   const seeds2 = new Float32Array(count * 4);
@@ -378,6 +431,7 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
   geometry.setAttribute("position", new BufferAttribute(new Float32Array(count * 3), 3));
   geometry.setAttribute("aSeed", new BufferAttribute(seeds, 4));
   geometry.setAttribute("aSeed2", new BufferAttribute(seeds2, 4));
+  geometry.setAttribute("aGhost", new BufferAttribute(new Float32Array(count).map((_, i) => (i < swarm ? 0 : 1)), 1));
 
   const uniforms = {
     uTime: { value: 0 },
@@ -404,6 +458,9 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     uNetCenter: { value: new Vector3() },
     uRing: { value: new Vector3(0, 0, 3) },
     uStops: { value: Array.from({ length: STOP_COUNT }, () => new Vector3()) },
+    uPlaces: { value: placePositions },
+    uPlaceRots: { value: placeRotations },
+    uChapter: { value: 0 },
     uColA: { value: new Color() },
     uColB: { value: new Color() },
     uColC: { value: new Color() },
@@ -465,6 +522,7 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       uniforms.uFrom.value = from;
       uniforms.uTo.value = Math.min(5, from + 1);
       uniforms.uMix.value = f.chapter - from;
+      uniforms.uChapter.value = f.chapter;
       uniforms.uIntro.value = f.intro;
       uniforms.uAbout.value = f.aboutAt;
       f.stops.forEach((s, i) => uniforms.uStops.value[i].set(s.x, s.y, 0));
@@ -484,12 +542,13 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       uniforms.uNetCenter.value.copy(netCenter);
     },
     labels(f) {
-      NODES.forEach((n, i) => labelPoints[i].copy(n).applyMatrix3(netRot).add(netCenter));
+      // Tags sit on points in the world: each shape's own frame, carried to its place.
+      NODES.forEach((n, i) => toWorld(2, labelPoints[i].copy(n).applyMatrix3(netRot).add(netCenter)));
       // The front of each Skills layer, placed as stack() places it.
       layerPoints.forEach((p, k) => {
         const y = (1.5 - k) * 0.95;
         p.set(0, y * Math.cos(STACK_TILT) - 1.9 * Math.sin(STACK_TILT), y * Math.sin(STACK_TILT) + 1.9 * Math.cos(STACK_TILT));
-        p.add(stackCenter.set(f.mobile ? 0 : f.halfW * 0.55, f.mobile ? f.halfH * 0.45 : 0, -1));
+        toWorld(3, p.add(stackCenter.set(f.mobile ? 0 : f.halfW * 0.55, f.mobile ? f.halfH * 0.45 : 0, -1)));
       });
       const near = (chapter: number) => Math.max(0, 1 - Math.abs(f.chapter - chapter) * 2.2);
       return [
