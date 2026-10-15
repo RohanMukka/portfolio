@@ -263,6 +263,7 @@ export const createStage = (
     aboutAt: 0,
     stop: { x: 0, y: 0 },
     tour: 0,
+    dive: 0,
     focusDist: VIEW_DISTANCE,
     layers: [0, 0, 0, 0],
   };
@@ -366,6 +367,21 @@ export const createStage = (
     frame.focusDist += (eye.distanceTo(tourNode) - frame.focusDist) * frame.tour;
   };
 
+  // Opening a case study: the camera turns to the project's node and flies
+  // straight into it, until its glow fills the frame and the page opens out
+  // of it (CaseStudy.tsx); closing pulls back out the same way.
+  let diveNode = 0;
+  const diveEye = new Vector3();
+  const placeDive = () => {
+    const nodes = piece.nodes?.();
+    if (!nodes || frame.dive <= 0.001) return;
+    const node = nodes[diveNode];
+    diveEye.subVectors(eye, node).normalize().multiplyScalar(0.35).add(node);
+    eye.lerp(diveEye, smooth(0, 1, frame.dive));
+    target.lerp(node, smooth(0, 0.5, frame.dive));
+    frame.focusDist += (eye.distanceTo(node) - frame.focusDist) * frame.dive;
+  };
+
   const placeCamera = () => {
     const { pointer } = frame;
     cameraAt(frame.chapter, eye, target);
@@ -373,6 +389,7 @@ export const createStage = (
     const sideways = ahead.sub(eye).dot(right.subVectors(target, eye).cross(WORLD_UP).normalize());
     frame.focusDist = VIEW_DISTANCE;
     placeTour();
+    placeDive();
     forward.subVectors(target, eye).normalize();
     right.crossVectors(forward, WORLD_UP).normalize();
     up.crossVectors(right, forward);
@@ -426,6 +443,11 @@ export const createStage = (
     }
     frame.spin = stageState.spin;
 
+    // Diving into a node as its case study opens, or pulling back out.
+    if (stageState.dive >= 0) diveNode = stageState.dive;
+    frame.dive += ((stageState.dive >= 0 ? 1 : 0) - frame.dive) * ease(stageState.dive >= 0 ? 2.4 : 3, dt);
+    stageState.chapter = frame.chapter;
+
     frame.intro = stageState.openedAt ? Math.min(1, (now - stageState.openedAt) / INTRO_MS) : 0;
     // AboutSideways slides its panels over 4% → 96% of the pinned scroll.
     frame.aboutAt = Math.min(1, Math.max(0, (frame.progress[1] - 0.04) / 0.92)) * (STOP_COUNT - 1);
@@ -442,6 +464,8 @@ export const createStage = (
     dustUniforms.uTime.value = frame.time;
 
     piece.update(frame);
+    // Nothing to draw while a case study covers the page.
+    if (stageState.covered) return;
     lens.render(frame.time);
     sendLabels();
     adapt(dt);
@@ -538,6 +562,7 @@ export const createStage = (
       nameWatch.disconnect();
       clearTimeout(nameTimer);
       delete document.documentElement.dataset.stageName;
+      stageState.chapter = -1;
       piece.dispose();
       lens.dispose();
       backdropGeometry.dispose();

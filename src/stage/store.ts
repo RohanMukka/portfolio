@@ -18,7 +18,18 @@ export const stageState = {
   spin: 0,
   spinSpeed: 0,
   spinning: false,
+  /** Where the stage is in the page's chapters (0 → 5), written every frame;
+      -1 while there's no 3D stage (lite mode, or not loaded yet). */
+  chapter: -1,
+  /** The Work node the camera is diving into as its case study opens, or -1. */
+  dive: -1,
+  /** True while a case study fully covers the page: the stage stops drawing. */
+  covered: false,
 };
+
+// Whether opening a case study now should dive into its node: only with a
+// 3D stage, and only from around Work, where the network is in view.
+export const canDive = () => stageState.chapter >= 0 && Math.abs(stageState.chapter - 2) < 0.6;
 
 // Dragging the Work network turns it; let go and it coasts to a stop.
 export const dragSpin = (radians: number, perSecond: number) => {

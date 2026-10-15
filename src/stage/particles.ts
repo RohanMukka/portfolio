@@ -629,8 +629,9 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       });
       const near = (chapter: number) => Math.max(0, 1 - Math.abs(f.chapter - chapter) * 2.2);
       return [
-        // The tour's captions take over from the tags while it runs.
-        { set: "work", points: nodeWorld, visible: near(2) * (1 - f.tour) },
+        // The tour's captions take over from the tags while it runs, and
+        // they step aside while the camera dives into a node.
+        { set: "work", points: nodeWorld, visible: near(2) * (1 - f.tour) * (1 - f.dive) },
         { set: "skills", points: layerPoints, visible: near(3) },
       ];
     },

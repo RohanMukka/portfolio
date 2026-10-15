@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { projects, FEATURED_TITLES } from "../../data/projects";
 import { caseStudies, caseStudyBySlug } from "../../data/caseStudies";
 import { setPageScrollPaused } from "../../lib/smoothScroll";
+import { NODE_COUNT } from "../../stage/piece";
+import { canDive, setFocus, stageState } from "../../stage/store";
 import ProjectVisual, { factFor } from "./ProjectVisual";
 import { EASE, pad, ProjectLinks } from "./shared";
 
@@ -41,20 +43,50 @@ const Label = ({ children }: { children: React.ReactNode }) => (
   <p className="mb-8 text-xs font-bold uppercase tracking-[0.3em] text-accent">{children}</p>
 );
 
+// Lets the 3D stage draw again and pulls the camera back out of its node,
+// which stops glowing.
+const surface = () => {
+  if (stageState.dive >= 0) setFocus(-1);
+  stageState.dive = -1;
+  stageState.covered = false;
+};
+
 const CaseStudy = () => {
   const [slug, setSlug] = useState(slugFromHash);
+  // Opened from around Work, the camera dives into the project's node first
+  // and the page opens out of its glow; otherwise it opens straight away.
+  const [dives, setDives] = useState(false);
   const openedHere = useRef(false);
+  const showing = useRef(slug !== null);
   const scroller = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onHash = () => {
       const next = slugFromHash();
-      if (next) openedHere.current = true;
+      if (next) {
+        openedHere.current = true;
+        if (!showing.current) {
+          const title = caseStudyBySlug(next)?.title;
+          const node = title ? FEATURED_TITLES.indexOf(title) : -1;
+          const dive = node >= 0 && node < NODE_COUNT && canDive();
+          setDives(dive);
+          if (dive) {
+            stageState.dive = node;
+            setFocus(node);
+          }
+        }
+      } else {
+        surface();
+      }
+      showing.current = next !== null;
       setSlug(next);
       scroller.current?.scrollTo({ top: 0 });
     };
     window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+      surface();
+    };
   }, []);
 
   const found = slug ? caseStudyBySlug(slug) : null;
@@ -80,6 +112,8 @@ const CaseStudy = () => {
     } else {
       // Arrived from a shared link: drop the hash without leaving the site.
       history.replaceState(null, "", window.location.pathname + window.location.search + "#projects");
+      surface();
+      showing.current = false;
       setSlug(null);
       document.getElementById("projects")?.scrollIntoView();
     }
@@ -109,10 +143,17 @@ const CaseStudy = () => {
           tabIndex={-1}
           data-lenis-prevent
           className="fixed inset-0 z-[80] overflow-y-auto overscroll-contain bg-background text-primary-text outline-none"
-          initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
-          animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
-          exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
-          transition={{ duration: 0.75, ease: EASE }}
+          // The page opens out of the middle of the frame, where the dived-
+          // into node's glow is, and closes back into it.
+          initial={{ clipPath: "circle(0% at 50% 50%)" }}
+          animate={{ clipPath: "circle(150% at 50% 50%)", transition: { duration: 0.8, ease: EASE, delay: dives ? 0.5 : 0 } }}
+          exit={{ clipPath: "circle(0% at 50% 50%)", transition: { duration: 0.55, ease: [0.7, 0, 0.84, 0] } }}
+          onAnimationComplete={(done) => {
+            // Fully open: the stage behind has nothing to show until it closes.
+            if (showing.current && typeof done === "object" && String((done as { clipPath?: string }).clipPath).startsWith("circle(150%")) {
+              stageState.covered = true;
+            }
+          }}
         >
           <div className="sticky top-0 z-10 bg-background/85 backdrop-blur-xl border-b border-primary-text/10">
             <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">

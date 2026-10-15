@@ -42,6 +42,8 @@ export type Frame = {
   stops: { x: number; y: number }[];
   aboutAt: number;
   stop: { x: number; y: number };
+  /** How far the camera has dived into a node as its case study opens (0 → 1). */
+  dive: number;
   /** How far the camera has left Work's rest view for its project tour (0 → 1). */
   tour: number;
   /** Distance from the camera to what it's looking at: the depth-of-field focus. */

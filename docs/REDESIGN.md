@@ -13,9 +13,9 @@ after every step.
   ~24k particles take a new shape per section (data stream → About timeline
   → project network → Skills layer stack → Credentials crystal → ring around
   Contact's "Let's talk."). Dark theme by default; light theme kept.
-- Steps 1 (cinematic lens), 2 (camera flight) and 3 (scroll-pinned
-  scenes) are done and approved. Step 4 (playable particles) is built and
-  waits for the owner's review.
+- Steps 1 (cinematic lens), 2 (camera flight), 3 (scroll-pinned scenes)
+  and 4 (playable particles) are done and approved. Step 5 (3D transitions)
+  is built and waits for the owner's review.
 
 ## Upgrade plan: one step at a time
 
@@ -47,7 +47,7 @@ and approved before the next starts.
      Services, Docker → Infrastructure, TensorFlow → Models; thresholds set
      in `Skills.tsx`, read by the stage through `stageState.layerAt`).
    - About already pinned and travelled its timeline; unchanged.
-4. ✅ **Playable particles** (awaiting review):
+4. ✅ **Playable particles**:
    - The hero name is drawn by the particles (`src/stage/name.ts`): each
      word of the page's heading (`data-hero-name`) is redrawn on a canvas
      at its layout position and size, and most of the hero's points take
@@ -63,8 +63,14 @@ and approved before the next starts.
    - Dragging the right side of the screen while the network is in view
      spins it (`.stage-drag`, "Drag to spin · Click a node"); a flick
      coasts, then the network drifts back to face the viewer.
-5. **3D transitions**: opening a case study dives the camera into that
-   project's node.
+5. ✅ **3D transitions** (awaiting review): opening a case study from around
+   Work (`canDive()` in `store.ts`) dives the camera straight into that
+   project's node (`placeDive` in `scene.ts`) until its glow fills the
+   frame; the page then opens out of the middle as a growing circle
+   (`CaseStudy.tsx`). Closing shrinks it back into the node and the camera
+   pulls out. Shared links and lite mode open without the dive. While a
+   case study fully covers the page the stage stops drawing
+   (`stageState.covered`).
 6. **Custom cursor**: morphs over links and projects (labels like View, Drag).
 7. **Real project media**: screen recordings/screenshots of public demos in
    case studies and hover previews.
