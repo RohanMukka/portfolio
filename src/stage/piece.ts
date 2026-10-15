@@ -1,5 +1,6 @@
 import type { Object3D, Vector3 } from "three";
 import type { Theme } from "../lib/theme";
+import type { NamePoints } from "./name";
 import type { LabelSet } from "./store";
 
 // One featured Work project per node in the scene.
@@ -15,8 +16,11 @@ export type Frame = {
   chapter: number;
   /** Per chapter, 0 → 1 through it. */
   progress: number[];
-  /** Pointer in normalised device coordinates; `on` fades out when it leaves. */
-  pointer: { x: number; y: number; on: number };
+  /** Pointer in normalised device coordinates; `on` fades out when it
+      leaves, `press` rises while the button is held. */
+  pointer: { x: number; y: number; on: number; press: number };
+  /** How far the visitor has spun the Work network by dragging it (radians). */
+  spin: number;
   /** 0 while the intro holds everything folded into its loading line, 1 once open. */
   intro: number;
   /** Hover weight (0 → 1) of each Work node. */
@@ -58,6 +62,8 @@ export interface Piece {
   labels?(frame: Frame): Labels[];
   /** Work's nodes in the world this frame, for the camera's project tour. */
   nodes?(): Vector3[];
+  /** The hero name's points (name.ts), or null to let the stream have them all. */
+  setName?(name: NamePoints | null): void;
   dispose(): void;
 }
 

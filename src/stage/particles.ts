@@ -3,11 +3,14 @@ import {
   BufferAttribute,
   BufferGeometry,
   Color,
+  DataTexture,
   Euler,
+  FloatType,
   Matrix3,
   Matrix4,
   NormalBlending,
   Points,
+  RGBAFormat,
   ShaderMaterial,
   Vector2,
   Vector3,
@@ -19,7 +22,7 @@ import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, perChapter, type Frame, type Piece
 
 // "Data becomes a system": tens of thousands of points that tell the page's
 // story one shape per chapter.
-//   0 hero      a stream of raw data flowing across the screen
+//   0 hero      the name drawn in points, a stream of raw data behind it
 //   1 about     the stream pulls taut into a timeline, one bright stop per
 //               chapter of the About story, sliding along as it's told
 //   2 work      a network: one node per featured project, data flowing down
@@ -94,6 +97,11 @@ const vertexShader = /* glsl */ `
   uniform float uFocus;
   uniform float uTour;
   uniform float uLayers[4];
+  uniform float uPress;
+  uniform float uLight;
+  uniform sampler2D uName;
+  uniform float uNameCount;
+  uniform vec2 uNameSize;
 
   attribute vec4 aSeed;
   attribute vec4 aSeed2;
@@ -135,7 +143,25 @@ const vertexShader = /* glsl */ `
     return vec3(p.x, p.y * c - p.z * s, p.y * s + p.z * c);
   }
 
-  // 0 · hero: raw data streaming across the screen, thick in the middle.
+  // 0 · hero, most of the points: the name, drawn in points where the page's
+  // heading sits (name.ts), a slow shimmer running through the letters.
+  Shape nameShape(vec4 s, vec4 t) {
+    float i = floor(s.y * uNameCount);
+    vec2 cell = vec2(mod(i, uNameSize.x), floor(i / uNameSize.x));
+    vec2 at = texture2D(uName, (cell + 0.5) / uNameSize).xy;
+    float shimmer = pow(0.5 + 0.5 * sin(at.x * 1.7 + at.y * 0.8 - uTime * 1.3), 6.0);
+    Shape o;
+    o.pos = vec3(at + (t.xy - 0.5) * 0.02, (t.z - 0.5) * 0.06);
+    o.glow = 0.85 + 0.3 * t.w + shimmer * 0.45;
+    // The brand gradient across the name; on paper it stays in the blues,
+    // like the page's royal-blue type.
+    o.hue = clamp(at.x / (uHalfW * 1.8) + 0.5, 0.0, 1.0) * mix(1.0, 0.3, uLight);
+    o.size = 0.95 + shimmer * 0.3;
+    return o;
+  }
+
+  // 0 · hero, the other half: raw data streaming across the screen behind
+  // the name, thick in the middle.
   Shape stream(vec4 s, vec4 t) {
     float u = fract(s.x + uTime * 0.006);
     vec3 c = vec3(
@@ -324,7 +350,10 @@ const vertexShader = /* glsl */ `
   }
 
   Shape formation(float k, vec4 s, vec4 t) {
-    if (k < 0.5) return stream(s, t);
+    if (k < 0.5) {
+      if (uNameCount > 0.5 && s.w < 0.6) return nameShape(s, t);
+      return stream(s, t);
+    }
     if (k < 1.5) return timeline(s, t);
     if (k < 2.5) return network(s, t);
     if (k < 3.5) return stack(s, t);
@@ -382,12 +411,15 @@ const vertexShader = /* glsl */ `
 
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
 
-    // Points part around the pointer.
+    // The pointer pulls points toward it like gravity, twisting them round
+    // it as they come; holding the button down pulls harder and wider.
     vec4 clip = projectionMatrix * mv;
     vec2 d = (clip.xy / clip.w - uPointer) * vec2(uAspect, 1.0);
-    float push = uPointerOn * smoothstep(0.3, 0.0, length(d)) * open * (1.0 - aGhost);
-    mv.xy += normalize(d + 1e-5) * push * 0.5 * (-mv.z / 10.0);
-    glow += push * 0.5;
+    float pull = uPointerOn * smoothstep(mix(0.32, 0.5, uPress), 0.0, length(d)) * open * (1.0 - aGhost);
+    float twist = pull * (0.8 + uPress * 1.6);
+    vec2 drawn = mat2(cos(twist), sin(twist), -sin(twist), cos(twist)) * d * (1.0 - pull * mix(0.45, 0.75, uPress));
+    mv.xy += (drawn - d) * -mv.z * uTanHalf;
+    glow += pull * 0.6;
 
     gl_Position = projectionMatrix * mv;
     // Points flying close past the lens fade out before they can swell over
@@ -480,6 +512,10 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     uFocus: { value: 10 },
     uTour: { value: 0 },
     uLayers: { value: [0, 0, 0, 0] },
+    uPress: { value: 0 },
+    uName: { value: new DataTexture(new Float32Array(4), 1, 1, RGBAFormat, FloatType) as DataTexture },
+    uNameCount: { value: 0 },
+    uNameSize: { value: new Vector2(1, 1) },
     uColA: { value: new Color() },
     uColB: { value: new Color() },
     uColC: { value: new Color() },
@@ -520,7 +556,7 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
   // same transform, so it's built here rather than in the shader.
   const placeNetwork = (f: Frame) => {
     // It sways rather than spins, so the tagged nodes never line up.
-    euler.set(-0.18 + f.pointer.y * 0.12 * f.pointer.on, Math.sin(f.time * 0.12) * 0.32 + f.pointer.x * 0.2 * f.pointer.on, 0);
+    euler.set(-0.18 + f.pointer.y * 0.12 * f.pointer.on, Math.sin(f.time * 0.12) * 0.32 + f.pointer.x * 0.2 * f.pointer.on + f.spin, 0);
     rotation.makeRotationFromEuler(euler).multiplyScalar(f.mobile ? 0.62 : 0.92);
     netRot.setFromMatrix4(rotation);
     netCenter.set(f.mobile ? 0 : f.halfW * 0.56, f.mobile ? f.halfH * 0.42 : -0.05, 0);
@@ -546,6 +582,7 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       uniforms.uFocus.value = f.focusDist;
       uniforms.uTour.value = f.tour;
       uniforms.uLayers.value = f.layers;
+      uniforms.uPress.value = f.pointer.press;
       uniforms.uIntro.value = f.intro;
       uniforms.uAbout.value = f.aboutAt;
       f.stops.forEach((s, i) => uniforms.uStops.value[i].set(s.x, s.y, 0));
@@ -566,6 +603,22 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       NODES.forEach((n, i) => toWorld(2, nodeWorld[i].copy(n).applyMatrix3(netRot).add(netCenter)));
     },
     nodes: () => nodeWorld,
+    // The name's points as a float texture, 128 to a row, that nameShape()
+    // reads by index.
+    setName(name) {
+      uniforms.uName.value.dispose();
+      const rows = name ? Math.ceil(name.count / 128) : 1;
+      const texels = new Float32Array(128 * rows * 4);
+      for (let i = 0; i < (name?.count ?? 0); i++) {
+        texels[i * 4] = name!.points[i * 2];
+        texels[i * 4 + 1] = name!.points[i * 2 + 1];
+      }
+      const texture = new DataTexture(texels, 128, rows, RGBAFormat, FloatType);
+      texture.needsUpdate = true;
+      uniforms.uName.value = texture;
+      uniforms.uNameSize.value.set(128, rows);
+      uniforms.uNameCount.value = name?.count ?? 0;
+    },
     labels(f) {
       // Tags sit on points in the world: each shape's own frame, carried to
       // its place. The front of each Skills layer, placed as stack() places it.
@@ -583,6 +636,7 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     },
     dispose() {
       geometry.dispose();
+      uniforms.uName.value.dispose();
       material.dispose();
     },
   };

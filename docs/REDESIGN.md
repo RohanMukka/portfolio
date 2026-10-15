@@ -13,8 +13,9 @@ after every step.
   ~24k particles take a new shape per section (data stream → About timeline
   → project network → Skills layer stack → Credentials crystal → ring around
   Contact's "Let's talk."). Dark theme by default; light theme kept.
-- Steps 1 (cinematic lens) and 2 (camera flight) are done and approved.
-  Step 3 (scroll-pinned scenes) is built and waits for the owner's review.
+- Steps 1 (cinematic lens), 2 (camera flight) and 3 (scroll-pinned
+  scenes) are done and approved. Step 4 (playable particles) is built and
+  waits for the owner's review.
 
 ## Upgrade plan: one step at a time
 
@@ -31,7 +32,7 @@ and approved before the next starts.
    a floor of light points lies below. The owner compared three flight
    speeds and kept the original: the flight spans 0.8 screen heights of
    scroll (`timeline.ts`) and the camera eases at rate 4.5 (`scene.ts`).
-3. ✅ **Scroll-pinned scenes** (awaiting review):
+3. ✅ **Scroll-pinned scenes**:
    - Work is a guided tour (`src/sections/work/WorkTour.tsx`): the scene
      pins and the camera flies close to each featured project's node in
      turn while a caption beside it changes (number, name, tagline, fact,
@@ -46,8 +47,22 @@ and approved before the next starts.
      Services, Docker → Infrastructure, TensorFlow → Models; thresholds set
      in `Skills.tsx`, read by the stage through `stageState.layerAt`).
    - About already pinned and travelled its timeline; unchanged.
-4. **Playable particles**: name formed from particles in the hero, cursor
-   gravity, click a node to open its case study, drag to spin the network.
+4. ✅ **Playable particles** (awaiting review):
+   - The hero name is drawn by the particles (`src/stage/name.ts`): each
+     word of the page's heading (`data-hero-name`) is redrawn on a canvas
+     at its layout position and size, and most of the hero's points take
+     positions from the inked pixels (a float texture read in
+     `nameShape()`). The heading stays for layout, search and screen
+     readers but hides while the points draw it (`html[data-stage-name]`
+     in index.css). Lite mode keeps the normal heading. On paper the name
+     stays in the blues.
+   - Cursor gravity: points near the pointer are pulled in and twisted
+     round it; holding the mouse button pulls harder and wider.
+   - Work's node tags are buttons (mouse targets): hover lights the node,
+     click opens the case study (Spend Smart, without one, opens its code).
+   - Dragging the right side of the screen while the network is in view
+     spins it (`.stage-drag`, "Drag to spin · Click a node"); a flick
+     coasts, then the network drifts back to face the viewer.
 5. **3D transitions**: opening a case study dives the camera into that
    project's node.
 6. **Custom cursor**: morphs over links and projects (labels like View, Drag).

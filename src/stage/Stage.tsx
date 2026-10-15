@@ -50,11 +50,22 @@ const WebGLStage = () => {
         const onOut = (e: PointerEvent) => {
           if (!e.relatedTarget) s.setPointer(null);
         };
+        // Holding the mouse button down strengthens the pointer's pull.
+        const onDown = (e: PointerEvent) => {
+          if (e.pointerType === "mouse" && e.button === 0) s.setPress(true);
+        };
+        const onUp = () => s.setPress(false);
         window.addEventListener("pointermove", onMove, { passive: true });
         document.addEventListener("pointerout", onOut);
+        window.addEventListener("pointerdown", onDown, { passive: true });
+        window.addEventListener("pointerup", onUp, { passive: true });
+        window.addEventListener("blur", onUp);
         cleanups.push(() => {
           window.removeEventListener("pointermove", onMove);
           document.removeEventListener("pointerout", onOut);
+          window.removeEventListener("pointerdown", onDown);
+          window.removeEventListener("pointerup", onUp);
+          window.removeEventListener("blur", onUp);
         });
 
         s.start();

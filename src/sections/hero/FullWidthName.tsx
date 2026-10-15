@@ -56,6 +56,7 @@ const FullWidthName = ({ className = "" }: { className?: string }) => {
   return (
     <h1
       ref={h1Ref}
+      data-hero-name
       aria-label="Rohan Mukka"
       className={`relative flex flex-col md:flex-row md:gap-x-[0.25em] font-display font-extrabold leading-[0.8] tracking-[-0.055em] ${className}`}
     >

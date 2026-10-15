@@ -137,6 +137,12 @@
   border-bottom: 1px solid var(--glass-border);
 }
 
+/* While the stage's particles draw the hero name (src/stage/name.ts), the
+   page's own heading keeps its place but steps back. */
+html[data-stage-name] [data-hero-name] {
+  opacity: 0;
+}
+
 /* Tags on the Work network's nodes (src/stage/Labels.tsx). */
 .stage-tag {
   will-change: transform;
@@ -144,6 +150,40 @@
 }
 .stage-labels[data-focus="true"] .stage-tag[data-on="false"] {
   opacity: 0.3;
+}
+/* Work's network takes the mouse while it's in view: drag its side of the
+   screen to spin it, click a node's tag to open the project. */
+.stage-labels[data-live="true"] .stage-drag,
+.stage-labels[data-live="true"] .stage-tag-button {
+  pointer-events: auto;
+}
+.stage-drag {
+  cursor: grab;
+}
+.stage-drag:active {
+  cursor: grabbing;
+}
+.stage-drag-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: var(--text-tertiary);
+}
+.stage-tag-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.stage-tag-hit {
+  position: absolute;
+  left: -22px;
+  top: -22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
 }
 .stage-tag-ring {
   position: absolute;

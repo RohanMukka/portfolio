@@ -1,19 +1,23 @@
 import React, { useEffect, useRef } from "react";
-import { FEATURED_TITLES } from "../data/projects";
+import { projects, FEATURED_TITLES } from "../data/projects";
 import { diagrams } from "../data/diagrams";
+import { hasCaseStudy, openCaseStudy } from "../sections/work/CaseStudy";
 import { NODE_COUNT } from "./piece";
-import { onStageLabels, stageState, type LabelSet } from "./store";
+import { dragSpin, onStageLabels, releaseSpin, setFocus, stageState, type LabelSet } from "./store";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 // Roughly how wide a tag runs, and how far apart two need to sit to read.
 const TAG_WIDTH = 190;
 const TAG_GAP = 26;
+// Radians the network turns per pixel dragged.
+const SPIN_PER_PX = 0.006;
 
-type Tag = { name: string; detail?: string };
+type Tag = { name: string; detail?: string; open?: () => void };
 
 // Work: one tag per featured project's node, short enough that tags on the
 // network's left stay clear of the list. The detail (its headline fact)
-// shows while the project is hovered.
+// shows while the project is hovered; clicking opens its case study (or,
+// without one, its code).
 const SHORT: Record<string, string> = {
   "Multi-Agent Course Builder": "Course Builder",
   "Fake Review Detection": "Fake Reviews",
@@ -21,6 +25,13 @@ const SHORT: Record<string, string> = {
 const WORK: Tag[] = FEATURED_TITLES.slice(0, NODE_COUNT).map((title) => ({
   name: SHORT[title] ?? title,
   detail: diagrams[title]?.fact,
+  open: () => {
+    if (hasCaseStudy(title)) openCaseStudy(title);
+    else {
+      const link = projects.find((p) => p.title === title)?.links.github;
+      if (link) window.open(link, "_blank", "noopener,noreferrer");
+    }
+  },
 }));
 
 // Skills: the stack's layers, top to bottom, as the layers of a system,
@@ -38,8 +49,35 @@ const SKILLS: Tag[] = [
 // straight to the DOM rather than through React state.
 const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hoverable?: boolean }) => {
   const boxRef = useRef<HTMLDivElement>(null);
-  const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tagRefs = useRef<(HTMLElement | null)[]>([]);
   const order = useRef(tags.map((_, i) => i));
+  const drag = useRef<{ x: number; t: number } | null>(null);
+
+  // Dragging across the network's side of the screen turns it; a quick
+  // flick sends it coasting, a drag that stops before letting go doesn't.
+  const endDrag = () => {
+    if (drag.current && performance.now() - drag.current.t > 90) stageState.spinSpeed = 0;
+    drag.current = null;
+    releaseSpin();
+  };
+  const dragHandlers = {
+    onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
+      e.currentTarget.setPointerCapture(e.pointerId);
+      drag.current = { x: e.clientX, t: performance.now() };
+      dragSpin(0, 0);
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => {
+      const d = drag.current;
+      if (!d) return;
+      const now = performance.now();
+      const radians = (e.clientX - d.x) * SPIN_PER_PX;
+      dragSpin(radians, radians / Math.max(0.008, (now - d.t) / 1000));
+      d.x = e.clientX;
+      d.t = now;
+    },
+    onPointerUp: endDrag,
+    onPointerCancel: endDrag,
+  };
 
   useEffect(
     () =>
@@ -49,6 +87,8 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
         box.style.opacity = String(visible);
         box.style.visibility = visible > 0.01 ? "visible" : "hidden";
         if (visible <= 0.01) return;
+        // Clickable and draggable only once they're well in view.
+        box.dataset.live = String(visible > 0.6);
         if (hoverable) box.dataset.focus = String(stageState.focus >= 0);
         // Work's tags point away from the network's middle, so they spread
         // out rather than pile up across it, and left wherever pointing right
@@ -95,16 +135,49 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
       style={{ opacity: 0, visibility: "hidden" }}
       aria-hidden="true"
     >
-      {tags.map((tag, i) => (
-        <div key={tag.name} ref={(el) => { tagRefs.current[i] = el; }} className="stage-tag absolute left-0 top-0" data-on="false">
-          <span className="stage-tag-ring" />
-          <span className="stage-tag-line" />
-          <span className="stage-tag-text hud">
-            <span className="text-accent">{pad(i + 1)}</span> {tag.name}
-            {tag.detail && <span className="stage-tag-fact">{tag.detail}</span>}
-          </span>
+      {hoverable && (
+        <div className="stage-drag absolute right-0 top-0 bottom-0 w-[40%]" {...dragHandlers}>
+          <span className="stage-drag-hint hud">Drag to spin · Click a node</span>
         </div>
-      ))}
+      )}
+      {tags.map((tag, i) => {
+        const parts = (
+          <>
+            <span className="stage-tag-ring" />
+            <span className="stage-tag-line" />
+            <span className="stage-tag-text hud">
+              <span className="text-accent">{pad(i + 1)}</span> {tag.name}
+              {tag.detail && <span className="stage-tag-fact">{tag.detail}</span>}
+            </span>
+          </>
+        );
+        const setRef = (el: HTMLElement | null) => {
+          tagRefs.current[i] = el;
+        };
+        // Work's tags are mouse targets on the nodes (the tour's captions
+        // and the lists carry the same links for keyboards and screen
+        // readers): hovering lights the node, clicking opens the project.
+        return tag.open ? (
+          <button
+            key={tag.name}
+            ref={setRef}
+            type="button"
+            tabIndex={-1}
+            className="stage-tag stage-tag-button absolute left-0 top-0"
+            data-on="false"
+            onClick={tag.open}
+            onPointerEnter={() => setFocus(i)}
+            onPointerLeave={() => setFocus(-1)}
+          >
+            <span className="stage-tag-hit" />
+            {parts}
+          </button>
+        ) : (
+          <div key={tag.name} ref={setRef} className="stage-tag absolute left-0 top-0" data-on="false">
+            {parts}
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -20,6 +20,7 @@ import type { Theme } from "../lib/theme";
 import { BACKDROP } from "./glsl";
 import { createParticles } from "./particles";
 import { createLens } from "./post";
+import { sampleName } from "./name";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
 import { emitStageLabels, stageState, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
@@ -33,6 +34,7 @@ import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, placeRotations, VIEW_DI
 export type Stage = {
   setTheme: (theme: Theme) => void;
   setPointer: (ndc: { x: number; y: number } | null) => void;
+  setPress: (down: boolean) => void;
   resize: (width: number, height: number) => void;
   start: () => void;
   stop: () => void;
@@ -220,6 +222,25 @@ export const createStage = (
   scene.add(piece.object);
   const lens = createLens(renderer, scene, camera, theme);
 
+  // The hero name, drawn in points once its font is in and again whenever
+  // the heading changes size. While the points draw it, the page's own
+  // heading steps back (index.css, html[data-stage-name]).
+  let nameTimer = 0;
+  const drawName = () => {
+    const name = sampleName(opts.mobile ? 4500 : 12000, frame.halfH);
+    piece.setName?.(name);
+    if (name) document.documentElement.dataset.stageName = "";
+  };
+  const nameWatch = new ResizeObserver(() => {
+    clearTimeout(nameTimer);
+    nameTimer = window.setTimeout(drawName, 150);
+  });
+  document.fonts.ready.then(() => {
+    drawName();
+    const heading = document.querySelector("[data-hero-name]");
+    if (heading) nameWatch.observe(heading);
+  });
+
   // Eased state
   const timeline = createTimeline();
   const reading: TimelineReading = { chapter: 0, progress: CHAPTERS.map(() => 0) };
@@ -227,7 +248,8 @@ export const createStage = (
     time: 0,
     chapter: 0,
     progress: CHAPTERS.map(() => 0),
-    pointer: { x: 0, y: 0, on: 0 },
+    pointer: { x: 0, y: 0, on: 0, press: 0 },
+    spin: 0,
     intro: 0,
     focus: new Array(NODE_COUNT).fill(0),
     halfW: 1,
@@ -244,7 +266,7 @@ export const createStage = (
     focusDist: VIEW_DISTANCE,
     layers: [0, 0, 0, 0],
   };
-  const pointerTarget = { x: 0, y: 0, active: false };
+  const pointerTarget = { x: 0, y: 0, active: false, down: false };
   let width = 1;
   let height = 1;
   let first = true;
@@ -390,6 +412,19 @@ export const createStage = (
     pointer.x += (pointerTarget.x - pointer.x) * ease(5, dt);
     pointer.y += (pointerTarget.y - pointer.y) * ease(5, dt);
     pointer.on += ((pointerTarget.active ? 1 : 0) - pointer.on) * ease(3, dt);
+    pointer.press += ((pointerTarget.down ? 1 : 0) - pointer.press) * ease(pointerTarget.down ? 4 : 2, dt);
+
+    // A spun network coasts on after it's let go, slowing to a stop, then
+    // drifts back round to face you, where its tags read best.
+    if (!stageState.spinning) {
+      stageState.spin += stageState.spinSpeed * dt;
+      stageState.spinSpeed *= Math.exp(-2.2 * dt);
+      if (Math.abs(stageState.spinSpeed) < 0.15) {
+        const facing = Math.round(stageState.spin / (2 * Math.PI)) * 2 * Math.PI;
+        stageState.spin += (facing - stageState.spin) * ease(0.6, dt);
+      }
+    }
+    frame.spin = stageState.spin;
 
     frame.intro = stageState.openedAt ? Math.min(1, (now - stageState.openedAt) / INTRO_MS) : 0;
     // AboutSideways slides its panels over 4% → 96% of the pinned scroll.
@@ -467,6 +502,9 @@ export const createStage = (
         pointerTarget.y = ndc.y;
       }
     },
+    setPress: (down) => {
+      pointerTarget.down = down;
+    },
     resize: (w, h) => {
       width = Math.max(1, w);
       height = Math.max(1, h);
@@ -497,6 +535,9 @@ export const createStage = (
       running = false;
       cancelAnimationFrame(raf);
       timeline.dispose();
+      nameWatch.disconnect();
+      clearTimeout(nameTimer);
+      delete document.documentElement.dataset.stageName;
       piece.dispose();
       lens.dispose();
       backdropGeometry.dispose();

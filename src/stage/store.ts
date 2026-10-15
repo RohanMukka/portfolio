@@ -13,6 +13,22 @@ export const stageState = {
   layerAt: [0.2, 0.4, 0.6, 0.8],
   /** How built each layer is (0 → 1), written by the stage for the tags. */
   layers: [0, 0, 0, 0],
+  /** How far the Work network has been spun by dragging it (radians), how
+      fast it's still turning (radians a second), and whether it's held. */
+  spin: 0,
+  spinSpeed: 0,
+  spinning: false,
+};
+
+// Dragging the Work network turns it; let go and it coasts to a stop.
+export const dragSpin = (radians: number, perSecond: number) => {
+  stageState.spin += radians;
+  stageState.spinSpeed = perSecond;
+  stageState.spinning = true;
+};
+
+export const releaseSpin = () => {
+  stageState.spinning = false;
 };
 
 export const setFocus = (index: number) => {
