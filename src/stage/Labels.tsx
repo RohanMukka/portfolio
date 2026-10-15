@@ -136,7 +136,7 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
       aria-hidden="true"
     >
       {hoverable && (
-        <div className="stage-drag absolute right-0 top-0 bottom-0 w-[40%]" {...dragHandlers}>
+        <div className="stage-drag absolute right-0 top-0 bottom-0 w-[40%]" data-cursor="Drag" {...dragHandlers}>
           <span className="stage-drag-hint hud">Drag to spin · Click a node</span>
         </div>
       )}
@@ -164,6 +164,7 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
             type="button"
             tabIndex={-1}
             className="stage-tag stage-tag-button absolute left-0 top-0"
+            data-cursor="Open"
             data-on="false"
             onClick={tag.open}
             onPointerEnter={() => setFocus(i)}

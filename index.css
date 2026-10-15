@@ -137,6 +137,59 @@
   border-bottom: 1px solid var(--glass-border);
 }
 
+/* The site's own cursor (src/components/Cursor.tsx) stands in for the
+   system one on mouse-driven screens, except over text fields. Its parts
+   centre on the pointer with `translate`, leaving `transform` to the
+   animation. */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+html.has-cursor input,
+html.has-cursor textarea,
+html.has-cursor [contenteditable="true"] {
+  cursor: text !important;
+}
+html.has-cursor select {
+  cursor: auto !important;
+}
+.cursor-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--text-primary) 55%, transparent);
+  border-radius: 9999px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+.cursor-ring-filled {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+}
+.cursor-label {
+  white-space: nowrap;
+  color: var(--bg-primary);
+}
+.cursor-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  translate: -50% -50%;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+.cursor-hint {
+  position: absolute;
+  left: 24px;
+  top: 16px;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
 /* While the stage's particles draw the hero name (src/stage/name.ts), the
    page's own heading keeps its place but steps back. */
 html[data-stage-name] [data-hero-name] {

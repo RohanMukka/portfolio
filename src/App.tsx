@@ -9,6 +9,7 @@ import Credentials from "./sections/Credentials";
 import FinalCTA from "./sections/FinalCTA";
 import ResumeButton from "./components/ResumeButton";
 import BackToTop from "./components/BackToTop";
+import Cursor from "./components/Cursor";
 import Stage from "./stage/Stage";
 import StageLabels from "./stage/Labels";
 import { startSmoothScroll } from "./lib/smoothScroll";
@@ -49,6 +50,7 @@ const App = () => {
     <div className="bg-transparent text-primary-text relative min-h-screen">
       <Stage />
       <StageLabels />
+      <Cursor />
       <Navbar isScrolled={isScrolled} />
 
       {/* Fixed UI Elements. They wait until the hero is behind you: the hero

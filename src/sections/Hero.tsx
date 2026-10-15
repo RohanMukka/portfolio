@@ -64,7 +64,14 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
   }, [onIntroDone]);
 
   return (
-    <section ref={sectionRef} id="hero" data-chapter="hero" className="relative h-[100dvh] min-h-[640px]">
+    <section
+      ref={sectionRef}
+      id="hero"
+      data-chapter="hero"
+      // Holding the mouse button pulls the particles harder; the cursor says so.
+      data-cursor-hint={isSoftwareRendering() ? undefined : "Hold"}
+      className="relative h-[100dvh] min-h-[640px]"
+    >
       <div className="relative h-full w-full flex flex-col">
         {/* Without a graphics card there's no 3D stage behind the hero; its
             stream is painted in still. */}

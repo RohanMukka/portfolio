@@ -65,6 +65,7 @@ const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) 
               }}>
               <button
                 onClick={() => (hasCaseStudy(p.title) ? openCaseStudy(p.title) : setOpen(isOpen ? null : p.title))}
+                data-cursor={hasCaseStudy(p.title) ? "View" : isOpen ? "Close" : "Details"}
                 aria-expanded={hasCaseStudy(p.title) ? undefined : isOpen}
                 className={`relative w-full grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_1fr_7rem_2rem] items-center gap-4 py-6 md:py-7 text-left transition-opacity duration-300 ${dim ? "opacity-35" : "opacity-100"}`}
               >
