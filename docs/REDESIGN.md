@@ -14,7 +14,7 @@ after every step.
   → project network → Skills layer stack → Credentials crystal → ring around
   Contact's "Let's talk."). Dark theme by default; light theme kept.
 - Steps 1 (cinematic lens) and 2 (camera flight) of the upgrade plan are
-  done. Step 2 waits for the owner's review before step 3 starts.
+  done and approved. Step 3 is next.
 
 ## Upgrade plan: one step at a time
 
@@ -28,7 +28,9 @@ and approved before the next starts.
    instead of shapes morphing in place (`src/stage/world.ts`). The swarm
    travels with you and re-forms at each place; faint "ghost" copies of the
    other places' shapes stand in the distance; dust hangs along the path and
-   a floor of light points lies below.
+   a floor of light points lies below. The owner compared three flight
+   speeds and kept the original: the flight spans 0.8 screen heights of
+   scroll (`timeline.ts`) and the camera eases at rate 4.5 (`scene.ts`).
 3. ⏭ **Scroll-pinned scenes** (next): sections pin while scrolling; Work
    flies node to node through each project with captions; Skills assembles
    layer by layer; About travels the timeline.
@@ -72,6 +74,7 @@ and approved before the next starts.
   (the owner's own PC reports it).
 - **Facts only from the repos, résumé and existing text**; never invent
   numbers or claims.
+- The hero's top row shows no location (owner removed "Norman, OK").
 - When unsure between designs, build working demos side by side (a
   local-only switcher) and let the owner pick.
 - Rejected before: the three.js wireframe globe, a pinned 19-project index,

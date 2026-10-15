@@ -82,7 +82,7 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
             {...fadeUp(0.15, entered)}
           >
             <span>( Portfolio ©{new Date().getFullYear()} )</span>
-            <span className="text-right md:text-center">Software engineer · Norman, OK</span>
+            <span className="text-right md:text-center">Software engineer</span>
             <span className="col-span-2 md:col-span-1 md:text-right">
               <span className="text-accent">●</span> Available for work
             </span>
