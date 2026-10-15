@@ -91,6 +91,9 @@ const vertexShader = /* glsl */ `
   uniform vec3 uPlaces[6];
   uniform mat3 uPlaceRots[6];
   uniform float uChapter;
+  uniform float uFocus;
+  uniform float uTour;
+  uniform float uLayers[4];
 
   attribute vec4 aSeed;
   attribute vec4 aSeed2;
@@ -190,8 +193,10 @@ const vertexShader = /* glsl */ `
     if (s.w < 0.34) {
       int k = int(floor(s.x * 8.0));
       float f = uNodeFocus[k];
-      o.pos = uNodes[k] + sphereDir(t.xy) * (0.22 + 0.32 * f) * pow(s.y, 1.6);
-      o.glow = (0.5 + 0.6 * (1.0 - s.y)) * (1.0 - uFocusAmt * 0.45 * (1.0 - f)) + f * 0.7;
+      // Seen up close on the tour, a node flares far less, or it would
+      // swallow the frame.
+      o.pos = uNodes[k] + sphereDir(t.xy) * (0.22 + mix(0.32, 0.08, uTour) * f) * pow(s.y, 1.6);
+      o.glow = (0.5 + 0.6 * (1.0 - s.y)) * (1.0 - uFocusAmt * 0.45 * (1.0 - f)) + f * mix(0.7, 0.25, uTour);
       o.hue = mix(0.12 + t.z * 0.2, 1.0, f);
       o.size = 1.0 + f * 0.5;
     } else if (s.w < 0.88) {
@@ -216,10 +221,15 @@ const vertexShader = /* glsl */ `
   }
 
   // 3 · skills: four layers turning in opposite directions, with buses
-  // carrying data up between them.
+  // carrying data up between them. Each layer starts as a loose cloud and
+  // locks into its ring as the Skills sentence reaches its tools (uLayers);
+  // the buses run once the whole stack stands.
   Shape stack(vec4 s, vec4 t) {
     Shape o;
     float k = floor(s.x * 4.0);
+    vec3 loose = sphereDir(t.xy) * (1.4 + 1.6 * t.z) + vec3(0.0, (1.5 - k) * 0.4, 0.0);
+    loose += snoise3(loose * 0.4 + uTime * 0.08) * 0.35;
+    float built;
     if (s.w < 0.85) {
       float dir = mod(k, 2.0) < 0.5 ? 1.0 : -1.0;
       float a = s.y * TAU + uTime * 0.12 * dir;
@@ -228,13 +238,19 @@ const vertexShader = /* glsl */ `
       o.glow = 0.38 + 0.4 * t.z;
       o.hue = k / 3.0 * 0.75 + t.w * 0.15;
       o.size = 0.8;
+      built = uLayers[int(k)];
     } else {
       float a = floor(s.y * 6.0) / 6.0 * TAU + uTime * 0.05;
       o.pos = vec3(cos(a) * 1.9, (fract(s.z + uTime * 0.08) - 0.5) * 2.85, sin(a) * 1.9);
       o.glow = 0.55;
       o.hue = 0.92;
       o.size = 0.6;
+      built = uLayers[3];
     }
+    // Each point snaps in on its own beat.
+    built = smoothstep(0.0, 1.0, clamp((built - t.w * 0.35) / 0.65, 0.0, 1.0));
+    o.pos = mix(loose, o.pos, built);
+    o.glow *= mix(0.4, 1.0, built);
     o.pos = rotX(o.pos, ${STACK_TILT.toFixed(2)});
     o.pos += vec3(mix(uHalfW * 0.55, 0.0, uMobile), mix(0.0, uHalfH * 0.45, uMobile), -1.0);
     return o;
@@ -376,10 +392,10 @@ const vertexShader = /* glsl */ `
     gl_Position = projectionMatrix * mv;
     // Points flying close past the lens fade out before they can swell over
     // the page; nothing draws at or behind it.
-    glow *= smoothstep(2.0, 5.5, -mv.z);
-    // Depth of field: points off the focal plane (z = 0, where the page
-    // sits) open into larger, fainter, flatter discs.
-    float blur = clamp(abs(-mv.z - 10.0) * 0.3 - 0.2, 0.0, 1.0);
+    glow *= smoothstep(uFocus * 0.2, uFocus * 0.55, -mv.z);
+    // Depth of field: points off the focal plane (what the camera looks at)
+    // open into larger, fainter, flatter discs.
+    float blur = clamp(abs(-mv.z - uFocus) * 0.3 - 0.2, 0.0, 1.0);
     gl_PointSize = clamp(uSize * size * (1.0 + blur * 2.2) * uViewH / (2.0 * uTanHalf * max(-mv.z, 0.4)), 0.0, 36.0);
     vColor = palette(hue);
     vAlpha = clamp(glow, 0.0, 1.6) * uDim / (1.0 + blur * 2.5);
@@ -461,6 +477,9 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     uPlaces: { value: placePositions },
     uPlaceRots: { value: placeRotations },
     uChapter: { value: 0 },
+    uFocus: { value: 10 },
+    uTour: { value: 0 },
+    uLayers: { value: [0, 0, 0, 0] },
     uColA: { value: new Color() },
     uColB: { value: new Color() },
     uColC: { value: new Color() },
@@ -507,7 +526,8 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     netCenter.set(f.mobile ? 0 : f.halfW * 0.56, f.mobile ? f.halfH * 0.42 : -0.05, 0);
   };
 
-  const labelPoints = NODES.map(() => new Vector3());
+  // Work's nodes in the world, as network() places them this frame.
+  const nodeWorld = NODES.map(() => new Vector3());
   const layerPoints = Array.from({ length: LAYER_COUNT }, () => new Vector3());
   const stackCenter = new Vector3();
 
@@ -523,6 +543,9 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       uniforms.uTo.value = Math.min(5, from + 1);
       uniforms.uMix.value = f.chapter - from;
       uniforms.uChapter.value = f.chapter;
+      uniforms.uFocus.value = f.focusDist;
+      uniforms.uTour.value = f.tour;
+      uniforms.uLayers.value = f.layers;
       uniforms.uIntro.value = f.intro;
       uniforms.uAbout.value = f.aboutAt;
       f.stops.forEach((s, i) => uniforms.uStops.value[i].set(s.x, s.y, 0));
@@ -540,11 +563,12 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       placeNetwork(f);
       uniforms.uNetRot.value.copy(netRot);
       uniforms.uNetCenter.value.copy(netCenter);
+      NODES.forEach((n, i) => toWorld(2, nodeWorld[i].copy(n).applyMatrix3(netRot).add(netCenter)));
     },
+    nodes: () => nodeWorld,
     labels(f) {
-      // Tags sit on points in the world: each shape's own frame, carried to its place.
-      NODES.forEach((n, i) => toWorld(2, labelPoints[i].copy(n).applyMatrix3(netRot).add(netCenter)));
-      // The front of each Skills layer, placed as stack() places it.
+      // Tags sit on points in the world: each shape's own frame, carried to
+      // its place. The front of each Skills layer, placed as stack() places it.
       layerPoints.forEach((p, k) => {
         const y = (1.5 - k) * 0.95;
         p.set(0, y * Math.cos(STACK_TILT) - 1.9 * Math.sin(STACK_TILT), y * Math.sin(STACK_TILT) + 1.9 * Math.cos(STACK_TILT));
@@ -552,7 +576,8 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       });
       const near = (chapter: number) => Math.max(0, 1 - Math.abs(f.chapter - chapter) * 2.2);
       return [
-        { set: "work", points: labelPoints, visible: near(2) },
+        // The tour's captions take over from the tags while it runs.
+        { set: "work", points: nodeWorld, visible: near(2) * (1 - f.tour) },
         { set: "skills", points: layerPoints, visible: near(3) },
       ];
     },

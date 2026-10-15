@@ -13,8 +13,8 @@ after every step.
   ~24k particles take a new shape per section (data stream → About timeline
   → project network → Skills layer stack → Credentials crystal → ring around
   Contact's "Let's talk."). Dark theme by default; light theme kept.
-- Steps 1 (cinematic lens) and 2 (camera flight) of the upgrade plan are
-  done and approved. Step 3 is next.
+- Steps 1 (cinematic lens) and 2 (camera flight) are done and approved.
+  Step 3 (scroll-pinned scenes) is built and waits for the owner's review.
 
 ## Upgrade plan: one step at a time
 
@@ -31,9 +31,21 @@ and approved before the next starts.
    a floor of light points lies below. The owner compared three flight
    speeds and kept the original: the flight spans 0.8 screen heights of
    scroll (`timeline.ts`) and the camera eases at rate 4.5 (`scene.ts`).
-3. ⏭ **Scroll-pinned scenes** (next): sections pin while scrolling; Work
-   flies node to node through each project with captions; Skills assembles
-   layer by layer; About travels the timeline.
+3. ✅ **Scroll-pinned scenes** (awaiting review):
+   - Work is a guided tour (`src/sections/work/WorkTour.tsx`): the scene
+     pins and the camera flies close to each featured project's node in
+     turn while a caption beside it changes (number, name, tagline, fact,
+     tags, case study and code links). Numbered ticks jump to a stop and
+     "Skip to more work" jumps past. The tour and the camera share one
+     stretch of scroll (5% → 95%; `placeTour` in `scene.ts`). After it,
+     "More work" lists the other 11 projects (09 → 19) with filters. The
+     owner once rejected a pinned index of all 19 projects, which is why the
+     tour stops only at the 8 featured ones and can be skipped.
+   - Skills pins its sentence while it paints, and the 3D stack builds a
+     layer as each layer's tool lights up (React → Interfaces, Node.js →
+     Services, Docker → Infrastructure, TensorFlow → Models; thresholds set
+     in `Skills.tsx`, read by the stage through `stageState.layerAt`).
+   - About already pinned and travelled its timeline; unchanged.
 4. **Playable particles**: name formed from particles in the hero, cursor
    gravity, click a node to open its case study, drag to spin the network.
 5. **3D transitions**: opening a case study dives the camera into that
@@ -105,4 +117,6 @@ Then open http://localhost:3000 in a browser with hardware acceleration
 - `?full` forces the 3D on a machine the site would put in lite mode.
 - `window.__stageStep(n)` (dev only) draws n frames by hand, for checking
   the scene when the tab is hidden and the browser has stopped animating.
-- `window.__stageFrame` (dev only) is the stage's eased state.
+- `window.__stageFrame` (dev only) is the stage's eased state;
+  `window.__stageState` the shared state (e.g. set `focus` by hand);
+  `window.__stageNodes()` Work's nodes projected to the screen.

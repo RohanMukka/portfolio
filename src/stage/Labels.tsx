@@ -77,6 +77,8 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
           placed.push({ x: p.x, y, side });
           tag.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`;
           tag.style.setProperty("--nudge", `${(y - p.y).toFixed(1)}px`);
+          // A Skills layer's tag arrives as the layer locks into place.
+          if (set === "skills") tag.style.opacity = stageState.layers[i].toFixed(2);
           const on = String(!!hoverable && stageState.focus === i);
           if (tag.dataset.on !== on) tag.dataset.on = on;
           if (tag.dataset.side !== side) tag.dataset.side = side;

@@ -38,6 +38,12 @@ export type Frame = {
   stops: { x: number; y: number }[];
   aboutAt: number;
   stop: { x: number; y: number };
+  /** How far the camera has left Work's rest view for its project tour (0 → 1). */
+  tour: number;
+  /** Distance from the camera to what it's looking at: the depth-of-field focus. */
+  focusDist: number;
+  /** How built each layer of the Skills stack is (0 → 1), top to bottom. */
+  layers: number[];
 };
 
 export const STOP_COUNT = 5;
@@ -50,6 +56,8 @@ export interface Piece {
   setTheme(theme: Theme): void;
   /** World positions the page labels (Work's nodes, Skills' layers) and how visible each set is. */
   labels?(frame: Frame): Labels[];
+  /** Work's nodes in the world this frame, for the camera's project tour. */
+  nodes?(): Vector3[];
   dispose(): void;
 }
 

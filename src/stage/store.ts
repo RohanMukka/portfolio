@@ -2,12 +2,17 @@
 // free of three.js so sections can import it without pulling the 3D code
 // into the first bundle.
 
-// The stage reads these every frame.
+// The stage reads and writes these every frame.
 export const stageState = {
-  /** Hover weight of each Work node, by featured project (0-based); see setFocus. */
+  /** The Work node in focus (hovered, or the tour's stop), by featured project (0-based), or -1. */
   focus: -1,
   /** performance.now() when the intro began to open, or 0 while it's loading. */
   openedAt: 0,
+  /** Where in the Skills scene (its data-progress, 0 → 1) each layer of the
+      stack locks into place, top to bottom; set by the Skills section. */
+  layerAt: [0.2, 0.4, 0.6, 0.8],
+  /** How built each layer is (0 → 1), written by the stage for the tags. */
+  layers: [0, 0, 0, 0],
 };
 
 export const setFocus = (index: number) => {

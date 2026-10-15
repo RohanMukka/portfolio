@@ -20,7 +20,8 @@ const nodeOf = (p: Project) => {
 // frame that leans with the cursor's speed; clicking a row opens its case
 // study, or its details inline for projects without one. Plain scrolling,
 // no pin.
-const HoverIndex = ({ items }: { items: Project[] }) => {
+// `start` numbers the first row (lists that continue another count on from it).
+const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) => {
   const [hovered, setHovered] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
   // Keeps the preview's content while it fades out after the cursor leaves.
@@ -67,7 +68,7 @@ const HoverIndex = ({ items }: { items: Project[] }) => {
                 aria-expanded={hasCaseStudy(p.title) ? undefined : isOpen}
                 className={`relative w-full grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_1fr_7rem_2rem] items-center gap-4 py-6 md:py-7 text-left transition-opacity duration-300 ${dim ? "opacity-35" : "opacity-100"}`}
               >
-                <span className="hud text-accent">{pad(i + 1)}</span>
+                <span className="hud text-accent">{pad(start + i)}</span>
                 <motion.span
                   className="min-w-0"
                   animate={{ x: isHovered ? 16 : 0 }}

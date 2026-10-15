@@ -3,22 +3,19 @@ import SectionHeader from '../components/SectionHeader';
 import { projects, orderedProjects, CATEGORIES, FEATURED_TITLES, type Category } from '../data/projects';
 import HoverIndex from './work/HoverIndex';
 import CaseStudy from './work/CaseStudy';
+import WorkTour from './work/WorkTour';
 
-// With no filter, lead with the featured projects (one per node of the 3D
-// network) and keep the rest a click away.
-const FEATURED_COUNT = FEATURED_TITLES.length;
+// Everything the tour doesn't stop at.
+const REST = orderedProjects(projects.filter((p) => !FEATURED_TITLES.includes(p.title)));
 
 const Projects = () => {
   const [filter, setFilter] = useState<Category>('All');
-  const [showAll, setShowAll] = useState(false);
-
-  const matching = orderedProjects(projects.filter(p => filter === 'All' || p.category === filter));
-  const collapsible = filter === 'All' && matching.length > FEATURED_COUNT;
-  const items = collapsible && !showAll ? matching.slice(0, FEATURED_COUNT) : matching;
+  const items = REST.filter((p) => filter === 'All' || p.category === filter);
+  const categories = CATEGORIES.filter((cat) => cat === 'All' || REST.some((p) => p.category === cat));
 
   return (
-    <section id="projects" data-chapter="work" className="py-24 md:py-32 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section id="projects" data-chapter="work" className="pt-24 md:pt-32 pb-24 md:pb-32">
+      <div className="max-w-6xl mx-auto px-6">
         <SectionHeader
           className="mb-2"
           index="02"
@@ -26,15 +23,20 @@ const Projects = () => {
           title={"Selected\n*work*"}
           subtitle="Retrieval, streaming and MLOps systems, and the products built on them."
         />
+      </div>
 
-        {/* The filters and list keep to the left on wide screens; the 3D
-            network of these projects fills the right. */}
+      <WorkTour />
+
+      {/* The rest, as a list that keeps to the left on wide screens; the 3D
+          network fills the right. */}
+      <div id="more-work" className="max-w-6xl mx-auto px-6 pt-16">
         <div className="lg:w-[60%]">
+          <h3 className="font-display font-bold text-3xl md:text-4xl tracking-[-0.04em] text-primary-text">More work</h3>
           {/* Editorial filters: label, count, and an underline on the active one. */}
-          <div className="flex flex-wrap gap-x-7 gap-y-3 pt-8 pb-2">
-            {CATEGORIES.map((cat) => {
+          <div className="flex flex-wrap gap-x-7 gap-y-3 pt-6 pb-2">
+            {categories.map((cat) => {
               const active = filter === cat;
-              const count = cat === 'All' ? projects.length : projects.filter((p) => p.category === cat).length;
+              const count = cat === 'All' ? REST.length : REST.filter((p) => p.category === cat).length;
               return (
                 <button
                   key={cat}
@@ -56,21 +58,10 @@ const Projects = () => {
             })}
           </div>
 
-          <HoverIndex items={items} />
-
-          {collapsible && (
-            <div className="mt-12 flex justify-center">
-              <button
-                onClick={() => setShowAll((s) => !s)}
-                className="hud px-6 py-3 rounded-full border border-primary-text/20 text-primary-text hover:border-accent hover:text-accent transition-colors"
-              >
-                {showAll ? 'Show fewer' : `Show all ${matching.length} projects`}
-              </button>
-            </div>
-          )}
+          <HoverIndex items={items} start={FEATURED_TITLES.length + 1} />
         </div>
-        <CaseStudy />
       </div>
+      <CaseStudy />
     </section>
   );
 };

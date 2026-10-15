@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import React from "react";
+import { motion, useTransform, type MotionValue } from "framer-motion";
 import { skillGroups } from "../../data/skills";
 
 // [Name|label] marks a technology (Name must match data/skills.ts); anything
@@ -20,8 +20,11 @@ const UNITS: Unit[] = [...TEXT.matchAll(/\[([^\]]+)\]([^\s[]*)|(\S+)/g)].map((m)
   return { text: label ?? name, trail: m[2], tech: name };
 });
 
+// How far through the painting (0 → 1) a technology lights up.
+export const paintedAt = (tech: string) => (UNITS.findIndex((u) => u.tech === tech) + 1) / UNITS.length;
+
 const Word = ({ unit, index, total, progress }: { unit: Unit; index: number; total: number; progress: MotionValue<number> }) => {
-  // Each word lights up during its own slice of the scroll.
+  // Each word lights up during its own slice of the painting.
   const opacity = useTransform(progress, [index / total, (index + 1) / total], [0.14, 1]);
   const icon = unit.tech ? ICONS.get(unit.tech) : undefined;
 
@@ -48,36 +51,28 @@ const Word = ({ unit, index, total, progress }: { unit: Unit; index: number; tot
   );
 };
 
-// The stack as one sentence in your own voice. Words fill in from
-// faint to full colour as you scroll; hovering a technology shows its logo.
-// A compact full list follows for anyone scanning for a keyword.
-const Sentence = () => {
-  const ref = useRef<HTMLParagraphElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.8", "end 0.45"] });
+// The stack as one sentence in your own voice. Words fill in from faint to
+// full colour as `progress` runs 0 → 1; hovering a technology shows its logo.
+const Sentence = ({ progress }: { progress: MotionValue<number> }) => (
+  <p className="font-display font-semibold text-[clamp(1.6rem,3vw,3rem)] leading-[1.18] tracking-[-0.03em] text-primary-text">
+    {UNITS.map((u, i) => (
+      <React.Fragment key={i}>
+        <Word unit={u} index={i} total={UNITS.length} progress={progress} />
+      </React.Fragment>
+    ))}
+  </p>
+);
 
-  return (
-    <div>
-      <p
-        ref={ref}
-        className="font-display font-semibold text-[clamp(1.75rem,3vw,3rem)] leading-[1.18] tracking-[-0.03em] text-primary-text"
-      >
-        {UNITS.map((u, i) => (
-          <React.Fragment key={i}>
-            <Word unit={u} index={i} total={UNITS.length} progress={scrollYProgress} />
-          </React.Fragment>
-        ))}
-      </p>
-
-      <div className="mt-20 grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-8 border-t border-primary-text/10 pt-10">
-        {skillGroups.map((g) => (
-          <div key={g.category}>
-            <h3 className="hud text-accent mb-3">{g.category}</h3>
-            <p className="text-sm text-primary-secondary leading-relaxed">{g.items.map((i) => i.name).join(" · ")}</p>
-          </div>
-        ))}
+// A compact full list after the sentence, for anyone scanning for a keyword.
+export const SkillGroups = () => (
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-8 border-t border-primary-text/10 pt-10">
+    {skillGroups.map((g) => (
+      <div key={g.category}>
+        <h3 className="hud text-accent mb-3">{g.category}</h3>
+        <p className="text-sm text-primary-secondary leading-relaxed">{g.items.map((i) => i.name).join(" · ")}</p>
       </div>
-    </div>
-  );
-};
+    ))}
+  </div>
+);
 
 export default Sentence;

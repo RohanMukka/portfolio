@@ -23,7 +23,7 @@ import { createLens } from "./post";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
 import { emitStageLabels, stageState, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
-import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, VIEW_DISTANCE } from "./world";
+import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, placeRotations, VIEW_DISTANCE } from "./world";
 
 // The page's 3D stage: one fixed canvas behind every section. A backdrop of
 // soft glows and a faint dot grid, a drift of dust at many depths that
@@ -240,6 +240,9 @@ export const createStage = (
     stops: Array.from({ length: STOP_COUNT }, (_, i) => ({ x: (i - 1) * 6, y: 0 })),
     aboutAt: 0,
     stop: { x: 0, y: 0 },
+    tour: 0,
+    focusDist: VIEW_DISTANCE,
+    layers: [0, 0, 0, 0],
   };
   const pointerTarget = { x: 0, y: 0, active: false };
   let width = 1;
@@ -311,14 +314,46 @@ export const createStage = (
   const forward = new Vector3();
   const right = new Vector3();
   const up = new Vector3();
+  const tourNode = new Vector3();
+  const tourEye = new Vector3();
+  const tourTarget = new Vector3();
+  const tourOffset = new Vector3();
+  const smooth = (a: number, b: number, x: number) => {
+    const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+  };
+
+  // Work's tour: while its pinned scene scrolls, the camera leaves the rest
+  // view and flies close to each featured project's node in turn, holding
+  // on each for most of its stretch of scroll. The node sits right of
+  // centre, beside the caption (on phones, above it).
+  const placeTour = () => {
+    const nodes = piece.nodes?.();
+    const p = frame.progress[2];
+    frame.tour = nodes ? Math.max(0, 1 - Math.abs(frame.chapter - 2) * 2) * smooth(0, 0.05, p) * (1 - smooth(0.95, 1, p)) : 0;
+    if (!nodes || frame.tour <= 0) return;
+    const at = Math.min(1, Math.max(0, (p - 0.05) / 0.9)) * (NODE_COUNT - 1);
+    const i = Math.min(NODE_COUNT - 2, Math.floor(at));
+    tourNode.lerpVectors(nodes[i], nodes[i + 1], smooth(0.35, 0.65, at - i));
+    tourOffset.set(frame.mobile ? 0 : -1.4, frame.mobile ? -0.9 : 0, 0).applyMatrix3(placeRotations[2]);
+    tourTarget.copy(tourNode).add(tourOffset);
+    tourOffset.set(0, 0.3, frame.mobile ? 4.8 : 4.4).applyMatrix3(placeRotations[2]);
+    tourEye.copy(tourTarget).add(tourOffset);
+    eye.lerp(tourEye, frame.tour);
+    target.lerp(tourTarget, frame.tour);
+    frame.focusDist += (eye.distanceTo(tourNode) - frame.focusDist) * frame.tour;
+  };
+
   const placeCamera = () => {
     const { pointer } = frame;
     cameraAt(frame.chapter, eye, target);
     cameraAt(frame.chapter + 0.02, ahead, aheadTarget);
+    const sideways = ahead.sub(eye).dot(right.subVectors(target, eye).cross(WORLD_UP).normalize());
+    frame.focusDist = VIEW_DISTANCE;
+    placeTour();
     forward.subVectors(target, eye).normalize();
     right.crossVectors(forward, WORLD_UP).normalize();
     up.crossVectors(right, forward);
-    const sideways = ahead.sub(eye).dot(right);
     eye.addScaledVector(right, pointer.x * 0.35 * pointer.on).addScaledVector(up, pointer.y * 0.22 * pointer.on);
     camera.position.copy(eye);
     camera.up.copy(WORLD_UP);
@@ -361,6 +396,11 @@ export const createStage = (
     frame.aboutAt = Math.min(1, Math.max(0, (frame.progress[1] - 0.04) / 0.92)) * (STOP_COUNT - 1);
     if (frame.chapter > 0.05 && frame.chapter < 2.5) placeStops();
     if (frame.chapter > 3.5) placeRing();
+    // Each Skills layer locks into place as its stretch of the scene scrolls by.
+    frame.layers.forEach((_, k) => {
+      const at = stageState.layerAt[k];
+      frame.layers[k] = stageState.layers[k] = smooth(at - 0.05, at + 0.04, frame.progress[3]);
+    });
 
     placeCamera();
     backdropUniforms.uDrift.value.set(pointer.x * 0.08 * pointer.on, pointer.y * 0.06 * pointer.on);
@@ -408,6 +448,8 @@ export const createStage = (
   if (import.meta.env.DEV) {
     Object.assign(window, {
       __stageFrame: frame,
+      __stageState: stageState,
+      __stageNodes: () => piece.nodes?.().map((n) => n.clone().project(camera)),
       __stageStep: (frames = 1) => {
         for (let i = 0; i < frames; i++) draw(last + 100);
       },
