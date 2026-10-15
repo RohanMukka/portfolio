@@ -18,13 +18,6 @@ export type IntroPhase = "loading" | "opening" | "open";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const withCap = (p: Promise<unknown>) => Promise.race([p.catch(() => undefined), sleep(MAX_MS)]);
 
-const imageReady = (src: string) =>
-  new Promise<void>((resolve) => {
-    const img = new Image();
-    img.onload = img.onerror = () => resolve();
-    img.src = src;
-  });
-
 const pageLoaded = () =>
   document.readyState === "complete"
     ? Promise.resolve()
@@ -32,10 +25,11 @@ const pageLoaded = () =>
 
 // What the intro waits for. The name's own face comes first, so the name is
 // never measured or shown in a fallback font. Lite mode has no 3D stage.
+// The stage counts as in once its shaders are compiled (scene.ts), so the
+// first frame doesn't stall on them.
 const LOAD_TASKS = [
   () => document.fonts.load('800 1em "Inter Tight"').then(() => document.fonts.ready),
-  () => imageReady(`${import.meta.env.BASE_URL}hero-profile.png`),
-  () => (isSoftwareRendering() ? Promise.resolve() : loadStage()),
+  () => (isSoftwareRendering() ? Promise.resolve() : loadStage().then(({ stageReady }) => stageReady)),
   pageLoaded,
 ];
 

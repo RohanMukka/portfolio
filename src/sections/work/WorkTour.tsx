@@ -21,16 +21,17 @@ const smooth = (a: number, b: number, x: number) => {
 };
 
 // A stop's caption: fully in while the camera holds on its node, sliding
-// on as the camera flies to the next.
-const Caption = ({ project, index, at }: { project: Project; index: number; at: MotionValue<number> }) => {
+// on as the camera flies to the next. The captions are stacked, so only the
+// active one takes the pointer and keyboard; the rest are inert. (It turns
+// over halfway between stops, where both captions are fully faded.)
+const Caption = ({ project, index, at, active }: { project: Project; index: number; at: MotionValue<number>; active: boolean }) => {
   const opacity = useTransform(at, (a) => 1 - smooth(0.2, 0.5, Math.abs(a - index)));
   const y = useTransform(at, (a) => (index - a) * 36);
-  const pointerEvents = useTransform(at, (a) => (Math.abs(a - index) < 0.5 ? "auto" : "none"));
   const fact = diagrams[project.title]?.fact;
 
   return (
-    <div className="absolute inset-0 flex items-end lg:items-center">
-      <motion.div style={{ opacity, y, pointerEvents }} className="w-full">
+    <div className="absolute inset-0 flex items-end lg:items-center pointer-events-none" inert={!active}>
+      <motion.div style={{ opacity, y }} className={`w-full ${active ? "pointer-events-auto" : ""}`}>
         <p className="hud text-primary-tertiary">
           <span className="text-accent">{pad(index + 1)}</span> / {pad(STOPS.length)} · {project.category}
         </p>
@@ -50,7 +51,7 @@ const Caption = ({ project, index, at }: { project: Project; index: number; at: 
               onClick={() => openCaseStudy(project.title)}
               className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-primary-text/20 text-sm font-medium text-primary-text hover:border-accent hover:text-accent transition-colors"
             >
-              Read the case study
+              Read the case study<span className="sr-only"> for {project.title}</span>
               <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:rotate-45" />
             </button>
           )}
@@ -71,9 +72,11 @@ const WorkTour = () => {
   const at = useTransform(scrollYProgress, RUN, [0, STOPS.length - 1]);
   const [active, setActive] = useState(0);
 
-  // The stop in view lights its node; leaving the tour lets it go.
+  // The stop in view lights its node; leaving the tour lets it go. Worked out
+  // from the scroll itself: `at` only catches up a frame later, so after a
+  // jump it would still name the stop before.
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    const i = Math.round(at.get());
+    const i = Math.round(Math.min(1, Math.max(0, (p - RUN[0]) / (RUN[1] - RUN[0]))) * (STOPS.length - 1));
     if (i !== active) setActive(i);
     setFocus(p > 0.02 && p < 0.98 ? i : -1);
   });
@@ -98,7 +101,7 @@ const WorkTour = () => {
           <div className="absolute inset-x-6 top-[42%] bottom-28 lg:top-24 lg:bottom-24 lg:right-auto lg:w-[46%]">
             {STOPS.map((project, i) => (
               <React.Fragment key={project.title}>
-                <Caption project={project} index={i} at={at} />
+                <Caption project={project} index={i} at={at} active={i === active} />
               </React.Fragment>
             ))}
           </div>

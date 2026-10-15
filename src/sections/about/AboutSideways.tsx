@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { scrollToY } from "../../lib/smoothScroll";
 import { useMediaQuery } from "../../lib/useMediaQuery";
 import { DEVPOST, PANELS, PORTRAIT } from "./content";
 
@@ -23,7 +24,11 @@ const Panel = ({ i, panel }: { i: number; panel: (typeof PANELS)[number] }) => (
       <img
         src={PORTRAIT}
         alt="Pencil portrait of Rohan Mukka"
-        className="w-28 h-28 rounded-full object-cover object-[50%_30%] border border-primary-text/10 bg-[#fbfaf6]"
+        width={224}
+        height={224}
+        loading="lazy"
+        decoding="async"
+        className="w-28 h-28 rounded-full object-cover border border-primary-text/10 bg-[#fbfaf6]"
       />
     )}
     {i === PANELS.length - 1 && (
@@ -59,13 +64,26 @@ const Pinned = () => {
     setActive(Math.min(PANELS.length - 1, Math.max(0, Math.round(((v - 0.04) / 0.92) * (PANELS.length - 1))))),
   );
 
+  // Tabbing into a panel that has slid off screen scrolls the page to where
+  // that panel is in view, which slides the track to it.
+  const reveal = (i: number) => {
+    const el = ref.current;
+    if (!el || i === active) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const v = 0.04 + (i / (PANELS.length - 1)) * 0.92;
+    scrollToY(top + v * (el.offsetHeight - window.innerHeight));
+  };
+
   return (
     <div ref={ref} data-progress="about" className="relative" style={{ height: `${PANELS.length * 90 + 60}vh` }}>
-      <div className="sticky top-0 h-[100dvh] overflow-hidden flex flex-col">
+      {/* clip, not hidden: a hidden box can still be scrolled sideways by
+          focusing a link in an off-screen panel, which then strands the track. */}
+      <div className="sticky top-0 h-[100dvh] overflow-clip flex flex-col">
         <motion.div ref={track} style={{ x }} className="flex flex-1 items-stretch will-change-transform">
           {PANELS.map((panel, i) => (
             <div
               key={panel.kicker}
+              onFocus={() => reveal(i)}
               className="relative shrink-0 w-[78vw] max-w-[1100px] first:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] pr-[8vw] py-28"
             >
               <Panel i={i} panel={panel} />

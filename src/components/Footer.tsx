@@ -83,35 +83,16 @@ const Footer = () => {
         console.error("Failed to load visitor count", err);
       });
 
-    // MonkeyType Stats fetch
-    const fetchMonkeyType = async () => {
-      try {
-        const [pbRes, statsRes] = await Promise.all([
-          fetch("https://api.monkeytype.com/users/personalBests?mode=time", {
-            headers: {
-              Authorization:
-                "ApeKey NjliNjM5MzZiN2NkZWRkNWM2YzMxNTQ0Lkx3ekdtdllfYzVRb1V2bHhPdUY1U0pxbjR1eGdfMTJJ",
-            },
-          }),
-          fetch("https://api.monkeytype.com/users/stats", {
-            headers: {
-              Authorization:
-                "ApeKey NjliNjM5MzZiN2NkZWRkNWM2YzMxNTQ0Lkx3ekdtdllfYzVRb1V2bHhPdUY1U0pxbjR1eGdfMTJJ",
-            },
-          }),
-        ]);
-
-        const pbData = await pbRes.json();
-        const statsData = await statsRes.json();
-
-        if (pbData.data && statsData.data) {
-          setMonkeyStats({ pb: pbData.data, stats: statsData.data });
-        }
-      } catch (err) {
-        console.error("Monkeytype fetch error:", err);
-      }
-    };
-    fetchMonkeyType();
+    // MonkeyType Stats fetch. The ApeKey stays on the server (api/monkeytype.ts).
+    fetch("/api/monkeytype")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (data?.pb && data?.stats) setMonkeyStats(data);
+      })
+      .catch((err) => console.error("Monkeytype fetch error:", err));
 
     // Theme observer logic
     const currentTheme =

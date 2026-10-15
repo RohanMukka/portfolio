@@ -16,6 +16,18 @@ after every step.
 - Steps 1 (cinematic lens), 2 (camera flight), 3 (scroll-pinned scenes),
   4 (playable particles) and 5 (3D transitions) are done and approved.
   Step 6 (custom cursor) is built and waits for the owner's review.
+- Review fixes (approved): a five-reviewer audit found six critical bugs,
+  now fixed. Work's stacked tour captions blocked each
+  other's buttons (only the active caption takes the pointer now, the rest
+  are `inert`); the Monkeytype ApeKey was in the client bundle (now behind
+  `api/monkeytype.ts`, key in the `MONKEYTYPE_APE_KEY` env var; the old key
+  must be rotated); tabbing into About scrolled its sticky box sideways for
+  good (`overflow: clip`, and focus scrolls the page to the panel); the
+  2.25 MB portrait PNG is now a 9 KB 224px WebP and the intro no longer
+  waits on it; the particles' shaders compile with `compileAsync` before the
+  first frame (the intro waits on `stageReady`) instead of blocking for
+  1.2 s; and the case study traps focus, makes the page inert and hands
+  focus back on close (it renders in a portal on `<body>`).
 
 ## Upgrade plan: one step at a time
 

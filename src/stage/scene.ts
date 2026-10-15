@@ -15,6 +15,7 @@ import {
   Vector2,
   Vector3,
   WebGLRenderer,
+  WebGLRenderTarget,
 } from "three";
 import type { Theme } from "../lib/theme";
 import { BACKDROP } from "./glsl";
@@ -131,6 +132,13 @@ const dustFragment = /* glsl */ `
 `;
 
 const ease = (rate: number, dt: number) => 1 - Math.exp(-rate * dt);
+
+// Settles once the stage's shaders are compiled and it can draw without
+// stalling. The intro waits on it (HeroIntro.tsx), capped like its other tasks.
+let markReady = () => {};
+export const stageReady = new Promise<void>((resolve) => {
+  markReady = resolve;
+});
 
 export const createStage = (
   canvas: HTMLCanvasElement,
@@ -517,6 +525,21 @@ export const createStage = (
 
   applyTheme(opts.theme);
 
+  // Compile the scene's shaders before the first frame, in parallel where the
+  // browser allows it. Linked on first render instead, the particles' program
+  // held the main thread for over a second. The lens draws the scene into a
+  // buffer, and programs differ by target, so compile against one.
+  const buffer = new WebGLRenderTarget(1, 1);
+  renderer.setRenderTarget(buffer);
+  const compiled = renderer
+    .compileAsync(scene, camera)
+    .catch(() => undefined)
+    .then(() => {
+      buffer.dispose();
+      markReady();
+    });
+  renderer.setRenderTarget(null);
+
   return {
     setTheme: applyTheme,
     setPointer: (ndc) => {
@@ -548,8 +571,12 @@ export const createStage = (
     start: () => {
       if (running) return;
       running = true;
-      last = performance.now();
-      raf = requestAnimationFrame(render);
+      compiled.then(() => {
+        if (!running) return;
+        cancelAnimationFrame(raf);
+        last = performance.now();
+        raf = requestAnimationFrame(render);
+      });
     },
     stop: () => {
       running = false;
