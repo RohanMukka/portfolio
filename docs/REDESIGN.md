@@ -83,7 +83,7 @@ and approved before the next starts.
    pulls out. Shared links and lite mode open without the dive. While a
    case study fully covers the page the stage stops drawing
    (`stageState.covered`).
-6. ✅ **Custom cursor** (awaiting review; `src/components/Cursor.tsx`): a dot
+6. **Custom cursor** (built, awaiting review; `src/components/Cursor.tsx`): a dot
    on the pointer and a ring trailing it on a spring. Links grow the ring;
    `data-cursor="…"` turns it into a labelled pill (View / Details / Close
    on Work rows, Open on network nodes, Drag on the spin area);
@@ -91,7 +91,10 @@ and approved before the next starts.
    (Hold, on the hero, for the particles' stronger pull). Text fields get
    the system caret. Mouse-only; hidden until the first move and when the
    pointer leaves the window (the owner once removed an old cursor that
-   sat stranded in the top-left corner).
+   sat stranded in the top-left corner). It also looks again under a
+   resting pointer, on scroll and once a frame up to five times a second,
+   so a pill never outlives what it named (a swaying node tag, a case
+   study opening over the page).
 7. **Real project media**: screen recordings/screenshots of public demos in
    case studies and hover previews.
 8. **Ambient sound**: off by default, soft ambient bed and subtle UI clicks.

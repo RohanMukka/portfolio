@@ -58,12 +58,18 @@ const Cursor = () => {
       setShown(true);
       update(read(e.target));
     };
-    // Scrolling slides new things under a still pointer.
+    // Things also change under a still pointer: scrolling slides new ones in,
+    // the network sways its tags away, a case study opens over the page. So
+    // look again on scroll, and a few times a second while the pointer rests.
     let frame = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => update(read(document.elementFromPoint(last.current.x, last.current.y))));
+    const recheck = () => {
+      if (away || frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        update(read(document.elementFromPoint(last.current.x, last.current.y)));
+      });
     };
+    const poll = window.setInterval(recheck, 200);
     const onLeave = (e: PointerEvent) => {
       if (e.relatedTarget) return;
       setShown(false);
@@ -73,7 +79,7 @@ const Cursor = () => {
     const onUp = () => setPressed(false);
 
     window.addEventListener("pointermove", onMove, { passive: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", recheck, { passive: true });
     document.addEventListener("pointerout", onLeave);
     window.addEventListener("pointerdown", onDown, { passive: true });
     window.addEventListener("pointerup", onUp, { passive: true });
@@ -81,8 +87,9 @@ const Cursor = () => {
     return () => {
       root.classList.remove("has-cursor");
       cancelAnimationFrame(frame);
+      window.clearInterval(poll);
       window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", recheck);
       document.removeEventListener("pointerout", onLeave);
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
