@@ -14,8 +14,8 @@ after every step.
   → project network → Skills layer stack → Credentials crystal → ring around
   Contact's "Let's talk."). Dark theme by default; light theme kept.
 - Steps 1 (cinematic lens), 2 (camera flight), 3 (scroll-pinned scenes),
-  4 (playable particles) and 5 (3D transitions) are done and approved.
-  Step 6 (custom cursor) is built and waits for the owner's review.
+  4 (playable particles), 5 (3D transitions) and 6 (custom cursor) are
+  done and approved. Step 7 (real project media) is next.
 - Review fixes (approved): a five-reviewer audit found six critical bugs,
   now fixed. Work's stacked tour captions blocked each
   other's buttons (only the active caption takes the pointer now, the rest
@@ -83,7 +83,7 @@ and approved before the next starts.
    pulls out. Shared links and lite mode open without the dive. While a
    case study fully covers the page the stage stops drawing
    (`stageState.covered`).
-6. **Custom cursor** (built, awaiting review; `src/components/Cursor.tsx`): a dot
+6. ✅ **Custom cursor** (`src/components/Cursor.tsx`): a dot
    on the pointer and a ring trailing it on a spring. Links grow the ring;
    `data-cursor="…"` turns it into a labelled pill (View / Details / Close
    on Work rows, Open on network nodes, Drag on the spin area);
