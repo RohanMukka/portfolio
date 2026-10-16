@@ -16,7 +16,7 @@ const nodeOf = (p: Project) => {
 };
 
 // An editorial list. Hovering a row lights that project's node in the 3D
-// network beside it and floats its diagram by the cursor in a gradient
+// network beside it and floats its footage (or diagram) by the cursor in a gradient
 // frame that leans with the cursor's speed; clicking a row opens its case
 // study, or its details inline for projects without one. Plain scrolling,
 // no pin.
@@ -142,7 +142,7 @@ const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) 
           {shown && (
             <div className="relative rounded-[17px] overflow-hidden bg-background">
               <div className="aspect-[4/3]">
-                <ProjectVisual project={shown} />
+                <ProjectVisual project={shown} playing={showPreview} />
               </div>
               {/* HUD corner marks over the visual. */}
               {["top-3 left-3 border-t border-l", "top-3 right-3 border-t border-r", "bottom-[52px] left-3 border-b border-l", "bottom-[52px] right-3 border-b border-r"].map((c) => (

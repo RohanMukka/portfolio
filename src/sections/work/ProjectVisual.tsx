@@ -1,9 +1,9 @@
-import React, { useId } from "react";
-import type { Project } from "../../data/projects";
+import React, { useEffect, useId, useRef } from "react";
+import type { Project, ProjectMedia } from "../../data/projects";
 import { diagrams, type Diagram, type DiagramEdge, type DiagramNode } from "../../data/diagrams";
 
-// What a project looks like in Work: its system diagram when it has one, a
-// screenshot when there's a live UI worth showing, else a type-only cover.
+// What a project looks like in Work: real footage of it running when there
+// is some, else its system diagram, else a type-only cover.
 // Drawn in a 400 × 300 box, so the parent sets a 4:3 aspect ratio.
 
 const W = 400;
@@ -96,12 +96,27 @@ const TypeCover = ({ project }: { project: Project }) => {
 
 export const factFor = (project: Project) => diagrams[project.title]?.fact;
 
-const ProjectVisual = ({ project }: { project: Project }) => {
+// Real footage: the clip loops while `playing` (a hidden preview stops), else
+// the still.
+const Footage = ({ media, playing }: { media: ProjectMedia; playing: boolean }) => {
+  const video = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = video.current;
+    if (!v) return;
+    if (playing) v.play().catch(() => {});
+    else v.pause();
+  }, [playing]);
+  const fit = "block w-full h-full object-cover object-top";
+  if (!media.clip) return <img src={media.still} alt={media.shows} loading="lazy" className={fit} />;
+  return <video ref={video} src={media.clip} poster={media.still} muted loop playsInline preload="none" aria-label={media.shows} className={fit} />;
+};
+
+// A case study's Architecture section asks for the system itself; everywhere
+// else real footage of a project beats a drawing of it.
+const ProjectVisual = ({ project, architecture = false, playing = true }: { project: Project; architecture?: boolean; playing?: boolean }) => {
   const diagram = diagrams[project.title];
+  if (project.media && !architecture) return <Footage media={project.media} playing={playing} />;
   if (diagram) return <SystemDiagram diagram={diagram} />;
-  if (project.image) {
-    return <img src={project.image} alt={project.title} loading="lazy" className="block w-full h-full object-cover object-top" />;
-  }
   return <TypeCover project={project} />;
 };
 

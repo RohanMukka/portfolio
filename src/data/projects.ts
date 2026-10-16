@@ -1,3 +1,15 @@
+// A real capture of the project running (never a mock-up). The still shows in
+// hover previews and while the clip loads; the clip, a short muted loop,
+// plays in the case study. Files live in public/projects/; how to record
+// more is in docs/REDESIGN.md (step 7).
+export interface ProjectMedia {
+  still: string;
+  clip?: string;
+  from: string; // the address it was captured at, shown in the frame
+  recorded: string; // YYYY-MM-DD
+  shows: string; // what happens in it, in words (also the alt text)
+}
+
 export interface Project {
   title: string;
   tagline: string;
@@ -5,7 +17,7 @@ export interface Project {
   tags: string[];
   category: 'Web' | 'ML' | 'System' | 'Blockchain';
   links: { github?: string; demo?: string };
-  image?: string; // screenshot of a live UI, for projects without a diagram
+  media?: ProjectMedia;
   color: string;
 }
 
@@ -44,7 +56,12 @@ export const projects: Project[] = [
     tags: ['React', 'Health', 'TypeScript'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/fitprep', demo: 'https://fitprep.vercel.app' },
-    image: '/projects/fitprep.png',
+    media: {
+      still: '/projects/fitprep.webp',
+      from: 'fitprep.vercel.app',
+      recorded: '2026-10-01',
+      shows: "FitPrep's planner: the foods you have, typed or by voice, a fitness goal and daily calorie and protein targets, then Generate My 7-Day Plan.",
+    },
     color: '#1abc9c'
   },
   {
@@ -126,6 +143,13 @@ export const projects: Project[] = [
     tags: ['TypeScript', 'NLP', 'AI'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/edulens-ai', demo: 'https://edulens-ai-lep9.onrender.com' },
+    media: {
+      still: '/projects/edulens-demo.webp',
+      clip: '/projects/edulens-demo.mp4',
+      from: 'edulens-ai-lep9.onrender.com/#/demo',
+      recorded: '2026-10-16',
+      shows: "One run of the live Evidence Mode demo on its built-in weak answer: the gatekeeper, diagnostic agent, Bloom's classifier and remediation engine run in turn, the answer scores 22%, and the adaptive response drops the next question to easy.",
+    },
     color: '#9b59b6'
   },
   {
@@ -152,7 +176,7 @@ export const projects: Project[] = [
     description: 'A distributed multi-agent system built with Google’s ADK and A2A protocol. Orchestrates AI microservices to autonomously research and generate courses.',
     tags: ['Python', 'Agents', 'Microservices'],
     category: 'ML',
-    links: { github: 'https://github.com/RohanMukka/multi-agent-course-builder', demo: 'https://course-creator-205520880647.us-west1.run.app/' },
+    links: { github: 'https://github.com/RohanMukka/multi-agent-course-builder' },
     color: '#e74c3c'
   },
   {
@@ -170,7 +194,7 @@ export const projects: Project[] = [
     description: 'A comprehensive data flow and safety management application featuring real-time stream control and processing.',
     tags: ['Python', 'Pipeline', 'Safety'],
     category: 'Web',
-    links: { github: 'https://github.com/RohanMukka/SafeFlow', demo: 'https://safeflow-frontend-2trn3wwwia-uc.a.run.app/' },
+    links: { github: 'https://github.com/RohanMukka/SafeFlow' },
     color: '#3498db'
   },
   {

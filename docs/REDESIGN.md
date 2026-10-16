@@ -15,7 +15,8 @@ after every step.
   Contact's "Let's talk."). Dark theme by default; light theme kept.
 - Steps 1 (cinematic lens), 2 (camera flight), 3 (scroll-pinned scenes),
   4 (playable particles), 5 (3D transitions) and 6 (custom cursor) are
-  done and approved. Step 7 (real project media) is next.
+  done and approved. Step 7 (real project media) is built and waits for
+  the owner's review; the owner will record more projects locally.
 - Review fixes (approved): a five-reviewer audit found six critical bugs,
   now fixed. Work's stacked tour captions blocked each
   other's buttons (only the active caption takes the pointer now, the rest
@@ -95,8 +96,38 @@ and approved before the next starts.
    resting pointer, on scroll and once a frame up to five times a second,
    so a pill never outlives what it named (a swaying node tag, a case
    study opening over the page).
-7. **Real project media**: screen recordings/screenshots of public demos in
-   case studies and hover previews.
+7. **Real project media** (built, awaiting review): footage of the
+   projects actually running, never mock-ups. A project's `media` in
+   `src/data/projects.ts` holds a still (WebP), an optional clip (muted MP4
+   loop), the address it was captured at, the date and what it shows (also
+   the alt text). Files live in `public/projects/`.
+   - Case studies get an **In use** section (`src/sections/work/InUse.tsx`)
+     above Architecture: the clip in a screen that lies tilted back like a
+     laptop lid and lifts flat as it scrolls up (tied to the case study's
+     own scroller), with a bar showing the address, "Recorded <date>" and a
+     pause button. It plays only while in view and is capped by viewport
+     height so it always fits under the header.
+   - Hover previews (`ProjectVisual`) show footage before the diagram; the
+     floating card only plays a clip while it is showing. Architecture
+     keeps the diagram (`<ProjectVisual architecture />`).
+   - What exists (2026-10-16): no featured repo's README has screenshots,
+     and the only featured project with a working public demo is EduLens
+     AI. Its clip is one real run of the live Evidence Mode demo
+     (`#/demo`) on the demo's own built-in weak answer, recorded headlessly
+     (Chrome screencast frames, encoded to H.264 by MediaRecorder; 9 s,
+     1440×900, 770 KB). FitPrep's still is its existing screenshot as a
+     16 KB WebP. The Course Builder and SafeFlow Cloud Run demos are gone
+     (404), so their demo links were removed.
+   - **Recording more (the owner, locally):** run the project (e.g. `docker
+     compose up`), record 6–12 s of it doing its main thing at 16:10
+     (1440×900 or larger), muted, under ~3 MB as MP4 (H.264), and save a
+     WebP still of the most telling frame. Put both in `public/projects/`
+     as `<slug>-demo.mp4` / `<slug>-demo.webp` and add `media` to the
+     project in `projects.ts` (`from` = the address shown, e.g.
+     `localhost:3000`). A project's case study and hover preview pick it up
+     with no other changes. A future chat can also record any public demo
+     the same way EduLens was recorded, but must not type into or submit a
+     demo's forms without asking.
 8. **Ambient sound**: off by default, soft ambient bed and subtle UI clicks.
 
 ## How it's built

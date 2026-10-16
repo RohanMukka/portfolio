@@ -8,6 +8,7 @@ import { setPageScrollPaused } from "../../lib/smoothScroll";
 import { NODE_COUNT } from "../../stage/piece";
 import { canDive, setFocus, stageState } from "../../stage/store";
 import ProjectVisual, { factFor } from "./ProjectVisual";
+import InUse from "./InUse";
 import { EASE, pad, ProjectLinks } from "./shared";
 
 // Case studies open over the page at #/work/<slug>, so they can be linked to
@@ -248,13 +249,22 @@ const CaseStudy = () => {
               ))}
             </section>
 
+            {project.media && (
+              <section className="pt-20 md:pt-32">
+                <Rise>
+                  <Label>In use</Label>
+                </Rise>
+                <InUse media={project.media} container={scroller} />
+              </section>
+            )}
+
             <section className="py-20 md:py-32">
               <Rise>
                 <Label>Architecture</Label>
               </Rise>
               <Rise delay={0.05}>
                 <div className="max-w-4xl aspect-[4/3] rounded-3xl overflow-hidden border border-primary-text/10">
-                  <ProjectVisual project={project} />
+                  <ProjectVisual project={project} architecture />
                 </div>
                 <p className="mt-5 text-sm font-semibold text-primary-secondary">{factFor(project)}</p>
               </Rise>
