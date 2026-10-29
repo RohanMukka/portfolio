@@ -1,0 +1,24 @@
+# Builds the site and checks its performance and accessibility budgets
+# (scripts/perf/budgets.mjs) on every push and pull request.
+name: Budgets
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  budgets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # The runner has Chrome but no graphics card: WebGL runs in software.
+      - run: npm run perf
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SOFTWARE_GL: "1"

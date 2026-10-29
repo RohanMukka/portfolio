@@ -4,6 +4,7 @@ import { isSoftwareRendering } from "../lib/rendering";
 import { PHONE } from "../lib/breakpoints";
 import { currentTheme } from "../lib/theme";
 import type { Stage as StageApi } from "./scene";
+import { wakeStage } from "./store";
 
 export const loadStage = () => import("./scene");
 
@@ -43,6 +44,19 @@ const WebGLStage = () => {
         const themeWatch = new MutationObserver(() => s.setTheme(currentTheme()));
         themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
         cleanups.push(() => themeWatch.disconnect());
+
+        // The stage only draws while something changes (src/stage/clock.ts);
+        // scrolling moves its camera, so every scroll wakes it. A wheel turn
+        // wakes it at once, so its first frame comes with the scroll's first
+        // step rather than a frame after it.
+        const onScroll = () => wakeStage("scroll");
+        const onWheel = () => wakeStage("wheel");
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("wheel", onWheel, { passive: true });
+        cleanups.push(() => {
+          window.removeEventListener("scroll", onScroll);
+          window.removeEventListener("wheel", onWheel);
+        });
 
         const onMove = (e: PointerEvent) => {
           if (e.pointerType === "touch") return;

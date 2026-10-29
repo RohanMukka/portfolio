@@ -320,9 +320,13 @@ html[data-stage-name] [data-hero-name] {
   margin-top: 4px;
 }
 
-/* A short bar running down the hero's scroll line, on a loop. */
+/* A short bar running down the hero's scroll line, on a loop, until the
+   visitor pauses motion (src/lib/motion.ts). */
 .scroll-cue {
   animation: scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+html[data-motion="paused"] .scroll-cue {
+  animation-play-state: paused;
 }
 @keyframes scroll-cue {
   from { transform: translateY(-100%); }

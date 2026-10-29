@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { ArrowDown, Moon, Sun } from "lucide-react";
+import { ArrowDown, Moon, Pause, Play, Sun } from "lucide-react";
 import { useActiveSection } from "../lib/useActiveSection";
 import { useMediaQuery } from "../lib/useMediaQuery";
 import { useModal } from "../lib/useModal";
+import { setMotionPaused, useMotionPaused } from "../lib/motion";
 import { currentTheme, setTheme, type Theme } from "../lib/theme";
 import { setPageScrollPaused } from "../lib/smoothScroll";
 import { MD } from "../lib/breakpoints";
@@ -39,6 +40,24 @@ const ThemeButton = ({ theme, onToggle }: { theme: Theme; onToggle: () => void }
     </AnimatePresence>
   </button>
 );
+
+// Pauses the page's ambient motion, or plays it again (see lib/motion.ts).
+// A toggle: the name stays the same and aria-pressed says which way it's set.
+const MotionButton = () => {
+  const paused = useMotionPaused();
+  return (
+    <button
+      type="button"
+      onClick={() => setMotionPaused(!paused)}
+      aria-label="Pause motion"
+      aria-pressed={paused}
+      data-cursor={paused ? "Play" : "Pause"}
+      className="relative grid place-items-center w-9 h-9 rounded-full border border-primary-text/15 text-primary-text hover:border-accent hover:text-accent transition-colors"
+    >
+      {paused ? <Play size={14} /> : <Pause size={14} />}
+    </button>
+  );
+};
 
 // A slim bar across the top: the name with a readout of the section you're
 // in, the sections as small caps (the current one underlined), and a theme
@@ -94,7 +113,8 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
           <div className="flex items-center justify-between gap-6 px-5 md:px-10 py-4">
             <a href="#" className="flex items-baseline gap-4 min-w-0">
               <span className="shrink-0 whitespace-nowrap font-display font-semibold text-lg tracking-tight text-primary-text">Rohan Mukka</span>
-              <span className="hud text-primary-tertiary hidden sm:inline truncate">
+              {/* Hidden where the section links leave it no room (md up to lg). */}
+              <span className="hud text-primary-tertiary hidden sm:inline md:hidden lg:inline truncate">
                 {activeIndex >= 0 ? `( ${pad(activeIndex + 1)} / ${pad(LINKS.length)} ) ${LINKS[activeIndex].name}` : "( Portfolio )"}
               </span>
             </a>
@@ -117,10 +137,14 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
                   </a>
                 );
               })}
-              <ThemeButton theme={theme} onToggle={toggleTheme} />
+              <div className="flex items-center gap-2">
+                <MotionButton />
+                <ThemeButton theme={theme} onToggle={toggleTheme} />
+              </div>
             </div>
 
-            <div className="flex md:hidden items-center gap-3">
+            <div className="flex md:hidden items-center gap-2">
+              <MotionButton />
               <ThemeButton theme={theme} onToggle={toggleTheme} />
               <button
                 type="button"

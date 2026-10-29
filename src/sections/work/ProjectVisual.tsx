@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useRef } from "react";
 import type { Project, ProjectMedia } from "../../data/projects";
 import { diagrams, type Diagram, type DiagramEdge, type DiagramNode } from "../../data/diagrams";
+import { useMotionPaused } from "../../lib/motion";
 
 // What a project looks like in Work: real footage of it running when there
 // is some, else its system diagram, else a type-only cover.
@@ -38,13 +39,15 @@ const SystemDiagram = ({ diagram, playing }: { diagram: Diagram; playing: boolea
 
   // The packets are SMIL animations, which the browser runs on the main
   // thread with a layout every frame, even off screen. They run only while
-  // the diagram is on screen (and, in the hover preview, showing).
+  // the diagram is on screen (and, in the hover preview, showing), and not
+  // while the visitor has paused motion.
   const svgRef = useRef<SVGSVGElement>(null);
+  const still = useMotionPaused();
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
     let onScreen = false;
-    const apply = () => (onScreen && playing ? svg.unpauseAnimations() : svg.pauseAnimations());
+    const apply = () => (onScreen && playing && !still ? svg.unpauseAnimations() : svg.pauseAnimations());
     const observer = new IntersectionObserver(([entry]) => {
       onScreen = entry.isIntersecting;
       apply();
@@ -52,7 +55,7 @@ const SystemDiagram = ({ diagram, playing }: { diagram: Diagram; playing: boolea
     observer.observe(svg);
     apply();
     return () => observer.disconnect();
-  }, [playing]);
+  }, [playing, still]);
 
   return (
     <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="block w-full h-full" role="img" aria-label={diagram.fact}>
@@ -118,12 +121,13 @@ export const factFor = (project: Project) => diagrams[project.title]?.fact;
 // the still.
 const Footage = ({ media, playing }: { media: ProjectMedia; playing: boolean }) => {
   const video = useRef<HTMLVideoElement>(null);
+  const still = useMotionPaused();
   useEffect(() => {
     const v = video.current;
     if (!v) return;
-    if (playing) v.play().catch(() => {});
+    if (playing && !still) v.play().catch(() => {});
     else v.pause();
-  }, [playing]);
+  }, [playing, still]);
   const fit = "block w-full h-full object-cover object-top";
   if (!media.clip) return <img src={media.still} alt={media.shows} loading="lazy" className={fit} />;
   return <video ref={video} src={media.clip} poster={media.still} muted loop playsInline preload="none" aria-label={media.shows} className={fit} />;

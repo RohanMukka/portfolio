@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useMediaQuery } from "../lib/useMediaQuery";
+import { stageState } from "../stage/store";
 
 type Mode = "default" | "link" | "label" | "text";
 
@@ -60,7 +61,9 @@ const Cursor = () => {
     };
     // Things also change under a still pointer: scrolling slides new ones in,
     // the network sways its tags away, a case study opens over the page. So
-    // look again on scroll, and a few times a second while the pointer rests.
+    // look again on scroll, and a few times a second while the pointer rests
+    // and the 3D stage is moving (once it has gone to sleep, nothing under
+    // the pointer moves until something wakes it).
     let frame = 0;
     const recheck = () => {
       if (away || frame) return;
@@ -69,7 +72,9 @@ const Cursor = () => {
         update(read(document.elementFromPoint(last.current.x, last.current.y)));
       });
     };
-    const poll = window.setInterval(recheck, 200);
+    const poll = window.setInterval(() => {
+      if (stageState.chapter < 0 || stageState.awake) recheck();
+    }, 200);
     const onLeave = (e: PointerEvent) => {
       if (e.relatedTarget) return;
       setShown(false);

@@ -22,7 +22,8 @@ export type TimelineReading = {
   progress: number[];
 };
 
-export const createTimeline = () => {
+// `onChange` hears when the offsets are measured again.
+export const createTimeline = (onChange: () => void = () => {}) => {
   let chapters: (Box | null)[] = [];
   let tracks: (Box | null)[] = [];
 
@@ -33,7 +34,10 @@ export const createTimeline = () => {
     tracks = CHAPTERS.map((id, i) => box(document.querySelector(`[data-progress="${id}"]`)) ?? chapters[i]);
   };
   measure();
-  const observer = new ResizeObserver(measure);
+  const observer = new ResizeObserver(() => {
+    measure();
+    onChange();
+  });
   observer.observe(document.body);
 
   return {

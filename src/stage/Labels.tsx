@@ -56,9 +56,9 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
   // Dragging across the network's side of the screen turns it; a quick
   // flick sends it coasting, a drag that stops before letting go doesn't.
   const endDrag = () => {
-    if (drag.current && performance.now() - drag.current.t > 90) stageState.spinSpeed = 0;
+    const coast = !drag.current || performance.now() - drag.current.t <= 90;
     drag.current = null;
-    releaseSpin();
+    releaseSpin(coast);
   };
   const dragHandlers = {
     onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {

@@ -7,7 +7,7 @@ import { caseStudies, caseStudyBySlug } from "../../data/caseStudies";
 import { setPageScrollPaused } from "../../lib/smoothScroll";
 import { useModal } from "../../lib/useModal";
 import { NODE_COUNT } from "../../stage/piece";
-import { canDive, setFocus, stageState } from "../../stage/store";
+import { canDive, setCovered, setDive, setFocus, stageState } from "../../stage/store";
 import ProjectVisual, { factFor } from "./ProjectVisual";
 import InUse from "./InUse";
 import { EASE, pad, ProjectLinks } from "./shared";
@@ -50,8 +50,8 @@ const Label = ({ children }: { children: React.ReactNode }) => (
 // which stops glowing.
 const surface = () => {
   if (stageState.dive >= 0) setFocus(-1);
-  stageState.dive = -1;
-  stageState.covered = false;
+  setDive(-1);
+  setCovered(false);
 };
 
 const CaseStudy = () => {
@@ -74,7 +74,7 @@ const CaseStudy = () => {
           const dive = node >= 0 && node < NODE_COUNT && canDive();
           setDives(dive);
           if (dive) {
-            stageState.dive = node;
+            setDive(node);
             setFocus(node);
           }
         }
@@ -153,7 +153,7 @@ const CaseStudy = () => {
           onAnimationComplete={(done) => {
             // Fully open: the stage behind has nothing to show until it closes.
             if (showing.current && typeof done === "object" && String((done as { clipPath?: string }).clipPath).startsWith("circle(150%")) {
-              stageState.covered = true;
+              setCovered(true);
             }
           }}
         >

@@ -13,6 +13,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { siLeetcode, siMonkeytype, siDevpost } from "simple-icons";
 import { GitHubCalendar } from "react-github-calendar";
 import { RevealLines } from "./SectionHeader";
+import { useMotionPaused } from "../lib/motion";
 
 import { RESUME_URL } from "../lib/resume";
 
@@ -51,6 +52,8 @@ const Footer = () => {
     "idle" | "sending" | "success"
   >("idle");
   const [viewsRevealed, setViewsRevealed] = useState(false);
+  // The terminal's cursors stop blinking while the visitor has paused motion.
+  const still = useMotionPaused();
 
   useEffect(() => {
     // Visitor Count logic
@@ -528,9 +531,9 @@ const Footer = () => {
                           ./get_views
                         </span>
                         <motion.div
-                          animate={{ opacity: viewsRevealed ? 0 : [1, 0, 1] }}
+                          animate={{ opacity: viewsRevealed ? 0 : still ? 1 : [1, 0, 1] }}
                           transition={
-                            viewsRevealed
+                            viewsRevealed || still
                               ? { duration: 0.2 }
                               : { repeat: Infinity, duration: 0.8 }
                           }
@@ -558,8 +561,8 @@ const Footer = () => {
                               Views
                             </span>
                             <motion.div
-                              animate={{ opacity: [1, 0, 1] }}
-                              transition={{ repeat: Infinity, duration: 0.8 }}
+                              animate={{ opacity: still ? 1 : [1, 0, 1] }}
+                              transition={still ? { duration: 0.2 } : { repeat: Infinity, duration: 0.8 }}
                               className="w-2 h-3.5 bg-green-500 ml-1"
                             />
                           </motion.div>

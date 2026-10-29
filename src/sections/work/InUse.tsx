@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { Pause, Play } from "lucide-react";
 import type { ProjectMedia } from "../../data/projects";
+import { motionPaused, onMotionPaused } from "../../lib/motion";
 
 const when = (day: string) =>
   new Date(`${day}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -14,7 +15,10 @@ const InUse = ({ media, container }: { media: ProjectMedia; container: React.Ref
   const screen = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
-  const [paused, setPaused] = useState(false);
+  // Starts paused while the visitor has paused motion (lib/motion.ts); the
+  // screen's own button still plays it.
+  const [paused, setPaused] = useState(motionPaused);
+  useEffect(() => onMotionPaused(() => setPaused(motionPaused())), []);
 
   const { scrollYProgress } = useScroll({ container, target: screen, offset: ["start end", "center center"] });
   const lift = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });

@@ -24,6 +24,10 @@
         } catch (e) {}
         document.documentElement.setAttribute("data-theme", theme);
         if (theme === "light") document.querySelector('meta[name="theme-color"]').setAttribute("content", "#f4f1ea");
+        // A saved "pause motion" choice (see src/lib/motion.ts), also before first paint.
+        try {
+          if (localStorage.getItem("motion") === "paused") document.documentElement.setAttribute("data-motion", "paused");
+        } catch (e) {}
       })();
     </script>
     <link rel="stylesheet" href="/index.css" />

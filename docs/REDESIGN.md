@@ -70,8 +70,40 @@ after every step.
     added; footer icons, the newsletter button and heading levels fixed.
   - axe now reports only colour contrast (dark 63, light 148). That's step
     A′, which waits on the owner's before/after call (brand colours).
-  - Still open for later steps: the fake newsletter (Step D), the render
-    loop that never sleeps (Step B).
+  - Still open for later steps: the fake newsletter (Step D).
+- **Audit Step B** (a render loop that sleeps) is done and approved by the
+  owner (2026-10-29), committed on the branch but not pushed:
+  - `src/stage/clock.ts`: the stage draws only while something it shows is
+    changing. Once all has settled its drift plays for 3.8 s, slows to a
+    stop over about a second, and then nothing runs (no frames, no draw
+    calls) until input wakes it within a frame or two. The shapes' own
+    motion runs on the clock's time, so it eases out and back in. The store's
+    setters (`setFocus`, `setDive`, `setCovered`, …) wake it; scroll, wheel,
+    pointer, resize, theme and layout changes do too; an open case study
+    stops it.
+  - Lenis no longer asks for a frame forever (`lib/smoothScroll.ts` runs its
+    loop only during a smooth scroll); the cursor stops re-checking what's
+    under it while the stage sleeps.
+  - A pause-motion button in the navbar (`lib/motion.ts`, remembered, off by
+    default; nothing is gated on `prefers-reduced-motion`). Paused, the
+    stage's drift, the hero's scroll cue, the footer's blinking cursors,
+    clips and diagram packets hold still; scrolling still moves the camera.
+  - `post.ts`: the bloom is UnrealBloomPass's, pass for pass, with the
+    full-screen passes folded together: 16 draw calls a frame (was 18) in the
+    dark theme, 4 (was 5) in light, two full-screen passes instead of four.
+    Compared with the old chain on identical frames, the mean difference is
+    0.03–0.24 of 255.
+  - On a production build at rest: 0 draw calls, 0 animation frames, 0
+    layouts and ~0.2% main thread, at the hero, About, Work, Credentials,
+    the footer and with a case study open (it was 1,080 draws/s and ~4% at
+    the footer). Scrolling is unchanged (p95 17 ms).
+  - `npm run perf` (`scripts/perf/budgets.mjs`) checks bundle sizes, the
+    at-rest counts, waking, an open case study and axe against a build;
+    `.github/workflows/perf.yml` runs it on every push (software WebGL).
+- Separate small fix, approved with Step B: "Let's talk." had its last letter's edge
+  clipped and its period hanging low where the page comes to rest
+  (`SectionHeader.tsx` lines clip only vertically; `FinalCTA.tsx` finishes
+  the letters' rise earlier).
 
 ## Upgrade plan: one step at a time
 
@@ -180,6 +212,9 @@ and approved before the next starts.
 - `src/stage/particles.ts`: the formations, all computed on the GPU from
   per-point seeds; moving between sections blends two formations.
 - `src/stage/post.ts`: the lens (bloom, grain, vignette, fringing).
+- `src/stage/clock.ts`: when the stage draws (only while something changes;
+  then it sleeps). Anything that changes what it shows must wake it: use
+  the store's setters, or `wakeStage(reason)`.
 - `src/stage/world.ts`: where each chapter's place is, the rest view of
   each, and the camera path between them. Shapes are written in their
   place's own frame (rest view on +z, 10 units away) and carried to it.
@@ -233,8 +268,16 @@ Then open http://localhost:3000 in a browser with hardware acceleration
 (Chrome on a laptop with a GPU). Useful while developing:
 
 - `?full` forces the 3D on a machine the site would put in lite mode.
-- `window.__stageStep(n)` (dev only) draws n frames by hand, for checking
-  the scene when the tab is hidden and the browser has stopped animating.
+- `window.__stageStep(n, simDt)` (dev only) draws n frames by hand, for
+  checking the scene when the tab is hidden and the browser has stopped
+  animating (`simDt` 0 holds the shapes still; `window.__stageSetTime(t)`
+  sets their time, for comparing two renders exactly).
+- `window.__stageClock` (dev only) is the clock: its `mode`, `timeScale`
+  and what last woke it (`reason`).
 - `window.__stageFrame` (dev only) is the stage's eased state;
   `window.__stageState` the shared state (e.g. set `focus` by hand);
   `window.__stageNodes()` Work's nodes projected to the screen.
+- `npm run build && npm run perf` checks the performance and accessibility
+  budgets (`scripts/perf/budgets.mjs`; CI runs it on every push). It needs
+  Chrome (`CHROME_PATH` if it isn't in the usual place) and `SOFTWARE_GL=1`
+  on a machine without a graphics card.

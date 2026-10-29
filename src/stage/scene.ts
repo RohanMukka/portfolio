@@ -19,12 +19,14 @@ import {
 } from "three";
 import type { Theme } from "../lib/theme";
 import { LG } from "../lib/breakpoints";
+import { motionPaused, onMotionPaused } from "../lib/motion";
+import { createClock, type ClockStep } from "./clock";
 import { BACKDROP } from "./glsl";
 import { createParticles } from "./particles";
 import { createLens } from "./post";
 import { sampleName } from "./name";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
-import { emitStageLabels, stageState, type LabelSet, type ScreenPoint } from "./store";
+import { emitStageLabels, onStageWake, stageState, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
 import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, placeRotations, VIEW_DISTANCE } from "./world";
 
@@ -233,6 +235,13 @@ export const createStage = (
   scene.add(piece.object);
   const lens = createLens(renderer, scene, camera, theme);
 
+  // Wakes the stage for anything that changes what it would draw (see
+  // clock.ts), once it's running; before that, start() draws the first frame.
+  let live = false;
+  const wake = (reason: string) => {
+    if (live) clock.wake(reason);
+  };
+
   // The hero name, drawn in points once its font is in and again whenever
   // the heading changes size. The page's own heading steps back (index.css,
   // html[data-stage-name]) only once a frame has drawn the name in points
@@ -244,6 +253,7 @@ export const createStage = (
     piece.setName?.(name);
     hasName = !!name;
     if (!name) delete document.documentElement.dataset.stageName;
+    wake("name");
   };
   // Called after each drawn frame. Before the intro opens its plates still
   // cover the hero, so the heading can go at once; if the stage arrived
@@ -265,8 +275,10 @@ export const createStage = (
     if (heading) nameWatch.observe(heading);
   });
 
-  // Eased state
-  const timeline = createTimeline();
+  // Eased state. The chapters' offsets change when the page's layout does
+  // (fonts, a filter, a phone turning), which changes what the stage shows
+  // without any scrolling.
+  const timeline = createTimeline(() => wake("layout"));
   const reading: TimelineReading = { chapter: 0, progress: CHAPTERS.map(() => 0) };
   const frame: Frame = {
     time: 0,
@@ -425,58 +437,75 @@ export const createStage = (
     camera.rotateZ(Math.max(-0.22, Math.min(0.22, -sideways * 0.35)) * travelling);
   };
 
-  let raf = 0;
   let running = false;
-  let last = 0;
-  const started = performance.now();
   let markDrawn = () => {};
   const firstFrame = new Promise<void>((resolve) => {
     markDrawn = resolve;
   });
 
-  const draw = (now: number) => {
-    // Capped, so a frame after the tab was hidden doesn't jump, but loose
-    // enough that slow machines still move in real time.
-    const dt = Math.min((now - last) / 1000, 0.25);
-    last = now;
-    frame.time = (now - started) / 1000;
+  // One frame (see clock.ts): eases everything toward where the page and the
+  // pointer say it should be, draws, and reports whether anything is still
+  // on its way. Eased values move on real time (`dt`); the shapes' own
+  // motion (frame.time) runs on the clock's time (`simDt`), which slows to a
+  // stop once nothing is happening.
+  const step: ClockStep = (dt, simDt, now) => {
+    // Nothing to draw while a case study covers the page.
+    if (stageState.covered) return null;
+    frame.time += simDt;
 
     timeline.read(window.scrollY, height, reading);
     const k = first ? 1 : ease(4.5, dt);
     frame.chapter += (reading.chapter - frame.chapter) * k;
+    let changing = Math.abs(reading.chapter - frame.chapter) > 1e-4;
     reading.progress.forEach((p, i) => {
       frame.progress[i] += (p - frame.progress[i]) * (first ? 1 : ease(7, dt));
+      changing ||= Math.abs(p - frame.progress[i]) > 1e-4;
     });
     first = false;
 
     frame.focus.forEach((w, i) => {
-      frame.focus[i] += ((stageState.focus === i ? 1 : 0) - w) * ease(6, dt);
+      const to = stageState.focus === i ? 1 : 0;
+      frame.focus[i] += (to - w) * ease(6, dt);
+      changing ||= Math.abs(to - frame.focus[i]) > 1e-3;
     });
 
     const pointer = frame.pointer;
+    const on = pointerTarget.active ? 1 : 0;
+    const press = pointerTarget.down ? 1 : 0;
     pointer.x += (pointerTarget.x - pointer.x) * ease(5, dt);
     pointer.y += (pointerTarget.y - pointer.y) * ease(5, dt);
-    pointer.on += ((pointerTarget.active ? 1 : 0) - pointer.on) * ease(3, dt);
-    pointer.press += ((pointerTarget.down ? 1 : 0) - pointer.press) * ease(pointerTarget.down ? 4 : 2, dt);
+    pointer.on += (on - pointer.on) * ease(3, dt);
+    pointer.press += (press - pointer.press) * ease(pointerTarget.down ? 4 : 2, dt);
+    // Where the pointer is only shows while it's over the stage.
+    const pointerMoving = Math.abs(pointerTarget.x - pointer.x) > 1e-3 || Math.abs(pointerTarget.y - pointer.y) > 1e-3;
+    changing ||= (pointer.on > 1e-3 && pointerMoving) || Math.abs(on - pointer.on) > 1e-3 || Math.abs(press - pointer.press) > 1e-3;
 
     // A spun network coasts on after it's let go, slowing to a stop, then
     // drifts back round to face you, where its tags read best.
-    if (!stageState.spinning) {
+    if (stageState.spinning) {
+      changing = true;
+    } else {
       stageState.spin += stageState.spinSpeed * dt;
       stageState.spinSpeed *= Math.exp(-2.2 * dt);
       if (Math.abs(stageState.spinSpeed) < 0.15) {
         const facing = Math.round(stageState.spin / (2 * Math.PI)) * 2 * Math.PI;
         stageState.spin += (facing - stageState.spin) * ease(0.6, dt);
+        changing ||= Math.abs(facing - stageState.spin) > 1e-3;
+      } else {
+        changing = true;
       }
     }
     frame.spin = stageState.spin;
 
     // Diving into a node as its case study opens, or pulling back out.
     if (stageState.dive >= 0) diveNode = stageState.dive;
-    frame.dive += ((stageState.dive >= 0 ? 1 : 0) - frame.dive) * ease(stageState.dive >= 0 ? 2.4 : 3, dt);
+    const diveTo = stageState.dive >= 0 ? 1 : 0;
+    frame.dive += (diveTo - frame.dive) * ease(stageState.dive >= 0 ? 2.4 : 3, dt);
+    changing ||= Math.abs(diveTo - frame.dive) > 1e-4;
     stageState.chapter = frame.chapter;
 
     frame.intro = stageState.openedAt ? Math.min(1, (now - stageState.openedAt) / INTRO_MS) : 0;
+    changing ||= frame.intro > 0 && frame.intro < 1;
     // AboutSideways slides its panels over 4% → 96% of the pinned scroll.
     frame.aboutAt = Math.min(1, Math.max(0, (frame.progress[1] - 0.04) / 0.92)) * (STOP_COUNT - 1);
     if (frame.chapter > 0.05 && frame.chapter < 2.5) placeStops();
@@ -492,19 +521,24 @@ export const createStage = (
     dustUniforms.uTime.value = frame.time;
 
     piece.update(frame);
-    // Nothing to draw while a case study covers the page.
-    if (stageState.covered) return;
     lens.render(frame.time);
     markDrawn();
     handOffName();
     sendLabels();
     adapt(dt);
+    return changing;
   };
 
-  const render = (now: number) => {
-    raf = requestAnimationFrame(render);
-    draw(now);
-  };
+  const clock = createClock(step, {
+    paused: motionPaused,
+    covered: () => stageState.covered,
+    onMode: (mode) => {
+      stageState.awake = mode !== "asleep" && mode !== "covered";
+    },
+  });
+  const unwatchWake = onStageWake(wake);
+  // Pausing motion lets the drift wind down; playing it again picks it up.
+  const unwatchMotion = onMotionPaused(() => wake("motion"));
 
   // If the first couple of seconds after the intro run slow (an integrated
   // GPU on a big screen, say), drop the bloom; if that's still not enough,
@@ -532,48 +566,60 @@ export const createStage = (
     }
   };
 
-  // While developing: the eased state, and a way to step frames by hand
-  // when the page is in a hidden tab (where the browser stops animating).
+  // While developing: the eased state and the clock, a way to step frames by
+  // hand when the page is in a hidden tab (where the browser stops
+  // animating; pass simDt 0 to hold the shapes still), and a way to set the
+  // shapes' own time, so two renders can be compared exactly.
   if (import.meta.env.DEV) {
     Object.assign(window, {
       __stageFrame: frame,
       __stageState: stageState,
+      __stageClock: clock,
       __stageNodes: () => piece.nodes?.().map((n) => n.clone().project(camera)),
-      __stageStep: (frames = 1) => {
-        for (let i = 0; i < frames; i++) draw(last + 100);
+      __stageStep: (frames = 1, simDt?: number) => {
+        for (let i = 0; i < frames; i++) step(0.1, simDt ?? 0.1 * clock.timeScale, performance.now());
+      },
+      __stageSetTime: (seconds: number) => {
+        frame.time = seconds;
       },
     });
   }
 
   applyTheme(opts.theme);
 
-  // Compile the scene's shaders before the first frame, in parallel where the
-  // browser allows it. Linked on first render instead, the particles' program
-  // held the main thread for over a second. The lens draws the scene into a
-  // buffer, and programs differ by target, so compile against one.
+  // Compile the scene's and the lens's shaders before the first frame, in
+  // parallel where the browser allows it. Linked on first render instead,
+  // the particles' program held the main thread for over a second. The lens
+  // draws the scene into a buffer, and programs differ by target, so the
+  // scene compiles against one.
   const buffer = new WebGLRenderTarget(1, 1);
   renderer.setRenderTarget(buffer);
-  const compiled = renderer
-    .compileAsync(scene, camera)
+  const sceneCompiled = renderer.compileAsync(scene, camera);
+  renderer.setRenderTarget(null);
+  const compiled = Promise.all([sceneCompiled, lens.compile()])
     .catch(() => undefined)
     .then(() => {
       buffer.dispose();
       markReady();
     });
-  renderer.setRenderTarget(null);
 
   return {
     firstFrame,
-    setTheme: applyTheme,
+    setTheme: (next) => {
+      applyTheme(next);
+      wake("theme");
+    },
     setPointer: (ndc) => {
       pointerTarget.active = !!ndc;
       if (ndc) {
         pointerTarget.x = ndc.x;
         pointerTarget.y = ndc.y;
       }
+      wake("pointer");
     },
     setPress: (down) => {
       pointerTarget.down = down;
+      wake("press");
     },
     resize: (w, h) => {
       width = Math.max(1, w);
@@ -591,24 +637,28 @@ export const createStage = (
       lens.setSize(width, height, renderer.getPixelRatio());
       backdropUniforms.uAspect.value = frame.aspect;
       dustUniforms.uViewH.value = frame.viewH;
+      wake("resize");
     },
     start: () => {
       if (running) return;
       running = true;
       compiled.then(() => {
         if (!running) return;
-        cancelAnimationFrame(raf);
-        last = performance.now();
-        raf = requestAnimationFrame(render);
+        live = true;
+        clock.wake("start");
       });
     },
     stop: () => {
       running = false;
-      cancelAnimationFrame(raf);
+      live = false;
+      clock.stop();
     },
     dispose: () => {
       running = false;
-      cancelAnimationFrame(raf);
+      live = false;
+      clock.stop();
+      unwatchWake();
+      unwatchMotion();
       timeline.dispose();
       nameWatch.disconnect();
       clearTimeout(nameTimer);

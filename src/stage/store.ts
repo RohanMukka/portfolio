@@ -2,7 +2,9 @@
 // free of three.js so sections can import it without pulling the 3D code
 // into the first bundle.
 
-// The stage reads and writes these every frame.
+// The stage reads and writes these every frame it draws. The page changes
+// them through the functions below, which also wake the stage (it only
+// draws while something it shows is changing; see clock.ts).
 export const stageState = {
   /** The Work node in focus (hovered, or the tour's stop), by featured project (0-based), or -1. */
   focus: -1,
@@ -25,29 +27,63 @@ export const stageState = {
   dive: -1,
   /** True while a case study fully covers the page: the stage stops drawing. */
   covered: false,
+  /** True while the stage is drawing frames; false once it has settled and
+      gone to sleep (the cursor stops re-checking what's under it then). */
+  awake: false,
 };
+
+// The stage registers how to wake it; until it has loaded, waking does nothing.
+let wake: (reason: string) => void = () => {};
+export const onStageWake = (fn: (reason: string) => void) => {
+  wake = fn;
+  return () => {
+    wake = () => {};
+  };
+};
+export const wakeStage = (reason: string) => wake(reason);
 
 // Whether opening a case study now should dive into its node: only with a
 // 3D stage, and only from around Work, where the network is in view.
 export const canDive = () => stageState.chapter >= 0 && Math.abs(stageState.chapter - 2) < 0.6;
 
-// Dragging the Work network turns it; let go and it coasts to a stop.
+// Dragging the Work network turns it; let go and it coasts to a stop
+// (`coast` false: the drag had stopped before letting go, so it stays put).
 export const dragSpin = (radians: number, perSecond: number) => {
   stageState.spin += radians;
   stageState.spinSpeed = perSecond;
   stageState.spinning = true;
+  wake("spin");
 };
 
-export const releaseSpin = () => {
+export const releaseSpin = (coast = true) => {
+  if (!coast) stageState.spinSpeed = 0;
   stageState.spinning = false;
+  wake("spin");
 };
 
 export const setFocus = (index: number) => {
+  if (stageState.focus === index) return;
   stageState.focus = index;
+  wake("focus");
 };
 
 export const openStage = () => {
-  if (!stageState.openedAt) stageState.openedAt = performance.now();
+  if (stageState.openedAt) return;
+  stageState.openedAt = performance.now();
+  wake("intro");
+};
+
+// A case study opening dives into its node (or -1 to pull back out); once
+// it fully covers the page the stage has nothing to draw.
+export const setDive = (node: number) => {
+  stageState.dive = node;
+  wake("dive");
+};
+
+export const setCovered = (covered: boolean) => {
+  if (stageState.covered === covered) return;
+  stageState.covered = covered;
+  if (!covered) wake("uncovered");
 };
 
 // Screen positions of points in the scene that the page labels (the Work
