@@ -1,52 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './ResumeButton.css';
 import { Download } from 'lucide-react';
+import { RESUME_FILE, RESUME_URL } from '../lib/resume';
 
 interface ResumeButtonProps {
   isCompact?: boolean;
 }
 
+// A plain download link: the file starts downloading on the click itself,
+// and the button's fill animation plays alongside as feedback.
 const ResumeButton = ({ isCompact = false }: ResumeButtonProps) => {
-  const [isChecked, setIsChecked] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
-  const handleDownload = () => {
-    if (!isChecked) {
-      setIsChecked(true);
-      const baseUrl = import.meta.env.BASE_URL || '/';
-      setTimeout(() => {
-        const link = document.createElement('a');
-        link.href = `${baseUrl}Rohan_Mukka_Resume.pdf`;
-        link.download = 'Rohan_Mukka_Resume.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => {
-          setIsChecked(false);
-        }, 1500); 
-      }, 3500);
-    }
-  };
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setTimeout(() => setPlaying(false), 1400);
+    return () => window.clearTimeout(timer);
+  }, [playing]);
 
   return (
-    <label className={`resume-label ${isCompact ? 'compact' : ''}`}>
-      <input 
-        type="checkbox" 
-        className="resume-input" 
-        checked={isChecked}
-        onChange={handleDownload}
-        disabled={isChecked} 
-      />
+    <a
+      href={RESUME_URL}
+      download={RESUME_FILE}
+      aria-label="Resume (PDF)"
+      onClick={() => setPlaying(true)}
+      className={`resume-label ${isCompact ? 'compact' : ''} ${playing ? 'is-playing' : ''}`}
+    >
       <span className="resume-circle">
-        <Download className="resume-icon" />
-        <div className="resume-square"></div>
+        <Download className="resume-icon" aria-hidden="true" />
+        <span className="resume-square" />
       </span>
       {!isCompact && (
         <>
-          <p className="resume-title text-base font-semibold">Resume</p>
-          <p className="resume-title text-base font-semibold">Resume</p>
+          <span className="resume-title text-base font-semibold">Resume</span>
+          <span className="resume-title text-base font-semibold">Resume</span>
         </>
       )}
-    </label>
+    </a>
   );
 };
 

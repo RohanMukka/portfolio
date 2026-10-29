@@ -31,13 +31,31 @@ const Blueprint = ({ id }: { id: string }) => (
   </>
 );
 
-const SystemDiagram = ({ diagram }: { diagram: Diagram }) => {
+const SystemDiagram = ({ diagram, playing }: { diagram: Diagram; playing: boolean }) => {
   const gridId = useId();
   const byId = Object.fromEntries(diagram.nodes.map((n) => [n.id, n]));
   const paths = diagram.edges.map((e) => edgePath(byId[e.from], byId[e.to], e.route));
 
+  // The packets are SMIL animations, which the browser runs on the main
+  // thread with a layout every frame, even off screen. They run only while
+  // the diagram is on screen (and, in the hover preview, showing).
+  const svgRef = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    let onScreen = false;
+    const apply = () => (onScreen && playing ? svg.unpauseAnimations() : svg.pauseAnimations());
+    const observer = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      apply();
+    });
+    observer.observe(svg);
+    apply();
+    return () => observer.disconnect();
+  }, [playing]);
+
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="block w-full h-full" role="img" aria-label={diagram.fact}>
+    <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="block w-full h-full" role="img" aria-label={diagram.fact}>
       <Blueprint id={gridId} />
       {paths.map((d) => (
         <path key={d} d={d} fill="none" stroke="var(--text-primary)" strokeOpacity="0.28" strokeWidth="1.25" />
@@ -116,7 +134,7 @@ const Footage = ({ media, playing }: { media: ProjectMedia; playing: boolean }) 
 const ProjectVisual = ({ project, architecture = false, playing = true }: { project: Project; architecture?: boolean; playing?: boolean }) => {
   const diagram = diagrams[project.title];
   if (project.media && !architecture) return <Footage media={project.media} playing={playing} />;
-  if (diagram) return <SystemDiagram diagram={diagram} />;
+  if (diagram) return <SystemDiagram diagram={diagram} playing={playing} />;
   return <TypeCover project={project} />;
 };
 

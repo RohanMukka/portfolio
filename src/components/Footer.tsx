@@ -14,7 +14,7 @@ import { siLeetcode, siMonkeytype, siDevpost } from "simple-icons";
 import { GitHubCalendar } from "react-github-calendar";
 import { RevealLines } from "./SectionHeader";
 
-const RESUME_URL = `${import.meta.env.BASE_URL}Rohan_Mukka_Resume.pdf`;
+import { RESUME_URL } from "../lib/resume";
 
 const SITEMAP = [
   { name: "About", href: "#architecture" },
@@ -145,7 +145,7 @@ const Footer = () => {
                   aria-label="LeetCode"
                 >
                   <svg
-                    role="img"
+                    aria-hidden="true"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     width="20"
@@ -222,7 +222,7 @@ const Footer = () => {
                 aria-label="Devpost"
               >
                 <svg
-                  role="img"
+                  aria-hidden="true"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   width="20"
@@ -241,7 +241,7 @@ const Footer = () => {
                   aria-label="MonkeyType"
                 >
                   <svg
-                    role="img"
+                    aria-hidden="true"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     width="20"
@@ -261,7 +261,7 @@ const Footer = () => {
                       >
                         <div className="w-10 h-10 rounded-full bg-[#e2b714]/20 flex items-center justify-center text-[#e2b714]">
                           <svg
-                            role="img"
+                            aria-hidden="true"
                             viewBox="0 0 24 24"
                             fill="currentColor"
                             width="20"
@@ -271,9 +271,9 @@ const Footer = () => {
                           </svg>
                         </div>
                         <div>
-                          <h4 className="text-[#e2b714] font-bold text-lg leading-tight uppercase tracking-wider">
+                          <p className="text-[#e2b714] font-bold text-lg leading-tight uppercase tracking-wider">
                             Monkeytype
-                          </h4>
+                          </p>
                           <p
                             className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
                           >
@@ -357,9 +357,9 @@ const Footer = () => {
 
           {/* Sitemaps */}
           <div className="md:col-span-2 space-y-6">
-            <h4 className="hud text-primary-tertiary">
+            <h3 className="hud text-primary-tertiary">
               Sitemap
-            </h4>
+            </h3>
             <ul className="space-y-3">
               {SITEMAP.map((item) => (
                 <li key={item.name}>
@@ -376,9 +376,9 @@ const Footer = () => {
 
           {/* Resources */}
           <div className="md:col-span-2 space-y-6">
-            <h4 className="hud text-primary-tertiary">
+            <h3 className="hud text-primary-tertiary">
               External
-            </h4>
+            </h3>
             <ul className="space-y-3">
               {[
                 { name: "Devpost", href: "https://devpost.com/rohan-mukka-1" },
@@ -405,9 +405,9 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div className="md:col-span-4 space-y-6">
-            <h4 className="hud text-primary-tertiary">
+            <h3 className="hud text-primary-tertiary">
               Stay Updated
-            </h4>
+            </h3>
             <p className="text-sm text-primary-secondary leading-relaxed">
               Subscribe to my monthly newsletter for insights on web engineering
               and AI.
@@ -473,6 +473,7 @@ const Footer = () => {
                     />
                     <button
                       type="submit"
+                      aria-label="Subscribe"
                       disabled={newsletterStatus === "sending"}
                       className="p-2 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all disabled:opacity-50 min-w-[42px] flex justify-center items-center"
                     >

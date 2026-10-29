@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { Moon, Sun } from "lucide-react";
+import { ArrowDown, Moon, Sun } from "lucide-react";
 import { useActiveSection } from "../lib/useActiveSection";
+import { useMediaQuery } from "../lib/useMediaQuery";
+import { useModal } from "../lib/useModal";
 import { currentTheme, setTheme, type Theme } from "../lib/theme";
 import { setPageScrollPaused } from "../lib/smoothScroll";
+import { MD } from "../lib/breakpoints";
+import { RESUME_FILE, RESUME_URL } from "../lib/resume";
 
 const LINKS = [
   { name: "About", id: "architecture" },
@@ -40,13 +44,20 @@ const ThemeButton = ({ theme, onToggle }: { theme: Theme; onToggle: () => void }
 // in, the sections as small caps (the current one underlined), and a theme
 // button. It stays off the landing page until the visitor scrolls, and a
 // hairline along its top fills with the page's progress. Phones get a
-// full-screen menu.
+// full-screen menu, which behaves as a dialog: the bar (with its Close
+// button) and the menu keep focus, the page behind goes inert, and Escape
+// closes it.
 const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setThemeState] = useState<Theme>(currentTheme);
   const active = useActiveSection(LINKS.map((l) => l.id), 100);
   const activeIndex = LINKS.findIndex((l) => l.id === active);
   const shown = isScrolled || mobileOpen;
+  const menuBox = useRef<HTMLDivElement>(null);
+  const closeMenu = useCallback(() => setMobileOpen(false), []);
+  // The menu only exists on phones; a window that grows past them closes it
+  // rather than leaving the page inert behind a menu that's no longer drawn.
+  const wide = useMediaQuery(`(min-width: ${MD}px)`);
 
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
@@ -63,8 +74,14 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
     return () => setPageScrollPaused(false);
   }, [mobileOpen]);
 
+  useEffect(() => {
+    if (wide) setMobileOpen(false);
+  }, [wide]);
+
+  useModal(mobileOpen, menuBox, closeMenu);
+
   return (
-    <>
+    <div ref={menuBox} {...(mobileOpen ? { role: "dialog", "aria-modal": true, "aria-label": "Menu" } : {})}>
       <motion.nav
         className="fixed top-0 inset-x-0 z-50"
         inert={!shown}
@@ -76,7 +93,7 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
           <motion.div className="absolute top-0 left-0 h-px w-full bg-accent origin-left" style={{ scaleX: progress }} />
           <div className="flex items-center justify-between gap-6 px-5 md:px-10 py-4">
             <a href="#" className="flex items-baseline gap-4 min-w-0">
-              <span className="font-display font-semibold text-lg tracking-tight text-primary-text">Rohan Mukka</span>
+              <span className="shrink-0 whitespace-nowrap font-display font-semibold text-lg tracking-tight text-primary-text">Rohan Mukka</span>
               <span className="hud text-primary-tertiary hidden sm:inline truncate">
                 {activeIndex >= 0 ? `( ${pad(activeIndex + 1)} / ${pad(LINKS.length)} ) ${LINKS[activeIndex].name}` : "( Portfolio )"}
               </span>
@@ -109,6 +126,7 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
                 type="button"
                 onClick={() => setMobileOpen((o) => !o)}
                 aria-expanded={mobileOpen}
+                aria-controls="site-menu"
                 className="hud px-3 py-2 rounded-full border border-primary-text/15 text-primary-text"
               >
                 {mobileOpen ? "Close" : "Menu"}
@@ -121,6 +139,7 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
+            id="site-menu"
             className="md:hidden fixed inset-0 z-40 bg-background flex flex-col justify-end px-6 pb-16 pt-28"
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
@@ -143,11 +162,24 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
                 </motion.a>
               ))}
             </nav>
-            <p className="mt-10 hud text-primary-tertiary">© {new Date().getFullYear()} Rohan Mukka</p>
+            {/* Phones have no floating Resume button (it would sit over the
+                page's own buttons), so the menu carries it. */}
+            <motion.a
+              href={RESUME_URL}
+              download={RESUME_FILE}
+              onClick={closeMenu}
+              className="mt-8 self-start inline-flex items-center gap-2 py-2 hud text-primary-text"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 + LINKS.length * 0.06, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Resume (PDF) <ArrowDown size={14} />
+            </motion.a>
+            <p className="mt-6 hud text-primary-tertiary">© {new Date().getFullYear()} Rohan Mukka</p>
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };
 

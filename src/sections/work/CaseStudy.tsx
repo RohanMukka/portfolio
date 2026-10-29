@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { projects, FEATURED_TITLES } from "../../data/projects";
 import { caseStudies, caseStudyBySlug } from "../../data/caseStudies";
 import { setPageScrollPaused } from "../../lib/smoothScroll";
+import { useModal } from "../../lib/useModal";
 import { NODE_COUNT } from "../../stage/piece";
 import { canDive, setFocus, stageState } from "../../stage/store";
 import ProjectVisual, { factFor } from "./ProjectVisual";
@@ -39,21 +40,6 @@ const Rise: React.FC<RiseProps> = ({ children, delay = 0, className = "", as = "
       {children}
     </Tag>
   );
-};
-
-const TABBABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
-
-// Tab and Shift+Tab wrap around inside the open dialog instead of leaving it.
-const trapTab = (e: KeyboardEvent, box: HTMLElement) => {
-  const items = Array.from(box.querySelectorAll<HTMLElement>(TABBABLE)).filter((el) => el.getClientRects().length > 0);
-  if (!items.length) return;
-  const first = items[0];
-  const last = items[items.length - 1];
-  const at = document.activeElement;
-  if (!box.contains(at) || (e.shiftKey ? at === first || at === box : at === last)) {
-    e.preventDefault();
-    (e.shiftKey ? last : first).focus();
-  }
 };
 
 const Label = ({ children }: { children: React.ReactNode }) => (
@@ -137,31 +123,16 @@ const CaseStudy = () => {
   }, []);
 
   // While open the dialog keeps focus: the page behind it is inert, Tab wraps
-  // around inside it, and closing hands focus back to whatever opened it.
-  useEffect(() => {
-    if (!isOpen) return;
-    const opener = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : null;
-    const page = document.getElementById("root");
-    if (page) page.inert = true;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-      else if (e.key === "Tab" && scroller.current) trapTab(e, scroller.current);
-    };
-    window.addEventListener("keydown", onKey);
-    scroller.current?.focus();
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      if (page) page.inert = false;
-      opener?.focus({ preventScroll: true });
-    };
-  }, [isOpen, close]);
+  // around inside it, Escape closes it, and closing hands focus back to
+  // whatever opened it.
+  useModal(isOpen, scroller, close);
 
   const project = found && projects.find((p) => p.title === found.title);
   const at = found ? ORDER.indexOf(found.title) : -1;
   const nextTitle = ORDER[(at + 1) % ORDER.length];
 
-  // Rendered beside the app's root rather than inside it, so the page can be
-  // made inert while the dialog is open.
+  // Rendered beside the app's root rather than inside it, so the whole page
+  // can be made inert while the dialog is open.
   return createPortal(
     <AnimatePresence>
       {found && project && (

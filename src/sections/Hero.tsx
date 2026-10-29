@@ -8,13 +8,12 @@ import LiteStream from './hero/LiteStream';
 import { isSoftwareRendering } from '../lib/rendering';
 import { Magnetic, RevealWords, fadeUp } from './hero/shared';
 import { openStage } from '../stage/store';
+import { RESUME_FILE, RESUME_URL } from '../lib/resume';
 
 // The name while the intro plays, and as it pulls into focus. Plain opacity,
 // transform and filter values, so the browser animates them itself.
 const NAME_HIDDEN = { opacity: 0, filter: 'blur(8px)', transform: 'scale(1.04)' };
 const NAME_SHOWN = { opacity: 1, filter: 'blur(0px)', transform: 'scale(1)', transitionEnd: { filter: 'none' } };
-
-const RESUME_URL = `${import.meta.env.BASE_URL}Rohan_Mukka_Resume.pdf`;
 
 const TextLink = ({ href, children, download }: { href: string; children: React.ReactNode; download?: string }) => (
   <Magnetic
@@ -121,7 +120,7 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
           <motion.div className="flex flex-wrap md:justify-end gap-x-8 gap-y-2" {...fadeUp(0.35, entered)}>
             <TextLink href="#projects">View work</TextLink>
             <TextLink href="#contact">Get in touch</TextLink>
-            <TextLink href={RESUME_URL} download="Rohan_Mukka_Resume.pdf">Resume</TextLink>
+            <TextLink href={RESUME_URL} download={RESUME_FILE}>Resume</TextLink>
           </motion.div>
         </motion.div>
 

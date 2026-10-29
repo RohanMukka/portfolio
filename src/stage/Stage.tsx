@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Background from "../components/Background";
 import { isSoftwareRendering } from "../lib/rendering";
+import { PHONE } from "../lib/breakpoints";
 import { currentTheme } from "../lib/theme";
 import type { Stage as StageApi } from "./scene";
 
@@ -26,7 +27,7 @@ const WebGLStage = () => {
         try {
           stage = createStage(canvas, {
             theme: currentTheme(),
-            mobile: window.matchMedia("(max-width: 767px)").matches,
+            mobile: window.matchMedia(PHONE).matches,
           });
         } catch {
           setFailed(true);
@@ -69,7 +70,11 @@ const WebGLStage = () => {
         });
 
         s.start();
-        setReady(true);
+        // Fade the canvas in once it has something on it, not while its
+        // shaders are still compiling.
+        s.firstFrame.then(() => {
+          if (!cancelled) setReady(true);
+        });
       })
       .catch(() => {
         if (!cancelled) setFailed(true);

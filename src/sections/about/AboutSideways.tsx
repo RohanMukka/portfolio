@@ -3,6 +3,7 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-mot
 import { ArrowUpRight } from "lucide-react";
 import { scrollToY } from "../../lib/smoothScroll";
 import { useMediaQuery } from "../../lib/useMediaQuery";
+import { WIDE } from "../../lib/breakpoints";
 import { DEVPOST, PANELS, PORTRAIT } from "./content";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -126,6 +127,6 @@ const Stacked = () => (
   </div>
 );
 
-const AboutSideways = () => (useMediaQuery("(min-width: 1024px)") ? <Pinned /> : <Stacked />);
+const AboutSideways = () => (useMediaQuery(WIDE) ? <Pinned /> : <Stacked />);
 
 export default AboutSideways;

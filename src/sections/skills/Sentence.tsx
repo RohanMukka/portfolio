@@ -20,6 +20,9 @@ const UNITS: Unit[] = [...TEXT.matchAll(/\[([^\]]+)\]([^\s[]*)|(\S+)/g)].map((m)
   return { text: label ?? name, trail: m[2], tech: name };
 });
 
+// The sentence as plain text, for screen readers.
+const PLAIN = UNITS.map((u) => u.text + u.trail).join(" ");
+
 // How far through the painting (0 → 1) a technology lights up.
 export const paintedAt = (tech: string) => (UNITS.findIndex((u) => u.tech === tech) + 1) / UNITS.length;
 
@@ -30,15 +33,16 @@ const Word = ({ unit, index, total, progress }: { unit: Unit; index: number; tot
 
   return (
     <>
-      <motion.span style={{ opacity }} className={unit.tech ? "relative group inline-block" : "inline"}>
+      <motion.span style={{ opacity }} className={unit.tech ? "relative group inline-block" : "inline"} aria-hidden="true">
         {unit.tech ? (
           <>
             <span className="font-extrabold underline decoration-accent/60 decoration-2 underline-offset-[0.18em] cursor-default">
               {unit.text}
             </span>
+            {/* On paper in both themes, so dark brand logos (GitHub, Next.js) still read. */}
             {icon && (
-              <span className="pointer-events-none absolute left-1/2 bottom-full mb-3 -translate-x-1/2 translate-y-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 p-2.5 rounded-xl bg-bg-elevated shadow-xl border border-glass-border">
-                <img src={icon} alt="" className="block w-9 h-9 object-contain" />
+              <span className="pointer-events-none absolute left-1/2 bottom-full mb-3 -translate-x-1/2 translate-y-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 p-2.5 rounded-xl bg-[#fbfaf6] shadow-xl border border-glass-border">
+                <img src={icon} alt="" loading="lazy" decoding="async" className="block w-9 h-9 object-contain" />
               </span>
             )}
           </>
@@ -53,8 +57,10 @@ const Word = ({ unit, index, total, progress }: { unit: Unit; index: number; tot
 
 // The stack as one sentence in your own voice. Words fill in from faint to
 // full colour as `progress` runs 0 → 1; hovering a technology shows its logo.
+// Screen readers get the plain sentence instead of the painted words.
 const Sentence = ({ progress }: { progress: MotionValue<number> }) => (
   <p className="font-display font-semibold text-[clamp(1.6rem,3vw,3rem)] leading-[1.18] tracking-[-0.03em] text-primary-text">
+    <span className="sr-only">{PLAIN}</span>
     {UNITS.map((u, i) => (
       <React.Fragment key={i}>
         <Word unit={u} index={i} total={UNITS.length} progress={progress} />

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, useVelocity } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { FEATURED_TITLES, type Project } from "../../data/projects";
 import { useMediaQuery } from "../../lib/useMediaQuery";
+import { WIDE } from "../../lib/breakpoints";
 import { NODE_COUNT } from "../../stage/piece";
 import { setFocus } from "../../stage/store";
 import { EASE, pad, ProjectLinks, TagList } from "./shared";
@@ -15,11 +16,19 @@ const nodeOf = (p: Project) => {
   return i < NODE_COUNT ? i : -1;
 };
 
+// The floating preview: its size (a 4:3 picture over a caption bar), and the
+// gap it keeps from the row it shows.
+const CARD_W = 380;
+const CARD_H = 328;
+const CARD_GAP = 16;
+// Room the navbar takes at the top of the window.
+const TOP_CLEAR = 80;
+
 // An editorial list. Hovering a row lights that project's node in the 3D
-// network beside it and floats its footage (or diagram) by the cursor in a gradient
-// frame that leans with the cursor's speed; clicking a row opens its case
-// study, or its details inline for projects without one. Plain scrolling,
-// no pin.
+// network beside it and floats its footage (or diagram) beside the row in a
+// gradient frame that follows the cursor across and leans with its speed;
+// clicking a row opens its case study, or its details inline for projects
+// without one. Plain scrolling, no pin.
 // `start` numbers the first row (lists that continue another count on from it).
 const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) => {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -29,7 +38,7 @@ const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) 
   const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
   // On wide screens the network's tag already shows a featured project's
   // headline fact, so the card shows its tagline instead.
-  const wide = useMediaQuery("(min-width: 1024px)");
+  const wide = useMediaQuery(WIDE);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -40,12 +49,57 @@ const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) 
 
   const showPreview = canHover && hovered !== null && hovered !== open;
 
+  // The card sits above the hovered row (below it when there's no room
+  // above), centred on the cursor across, so it never covers the row it's
+  // showing. Placed from the row itself, it's right even when rows slide in
+  // under a resting pointer while the page scrolls.
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLElement | null>(null);
+  const pointerX = useRef(0);
+  const visible = useRef(false);
+  visible.current = showPreview;
+  const place = (jump: boolean) => {
+    const row = rowRef.current;
+    if (!row) return;
+    const r = row.getBoundingClientRect();
+    // Its height, or (before its first project has rendered) what it will be.
+    const h = Math.max(cardRef.current?.offsetHeight ?? 0, CARD_H);
+    const left = Math.min(Math.max(pointerX.current - CARD_W / 2, 16), window.innerWidth - CARD_W - 16);
+    const above = r.top - CARD_GAP - h;
+    const top = above >= TOP_CLEAR ? above : r.bottom + CARD_GAP;
+    x.set(left);
+    y.set(top);
+    // A card that isn't showing yet appears in place rather than flying in.
+    if (jump) {
+      sx.jump(left);
+      sy.jump(top);
+    }
+  };
+
+  // Rows move under the card as the page scrolls; it keeps to its row.
+  useEffect(() => {
+    if (!showPreview) return;
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        place(false);
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [showPreview]);
+
   return (
     <div
       className="relative"
       onMouseMove={(e) => {
-        x.set(e.clientX);
-        y.set(e.clientY);
+        pointerX.current = e.clientX;
+        place(!visible.current);
       }}
       onMouseLeave={() => {
         setHovered(null);
@@ -58,7 +112,10 @@ const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) 
           const isHovered = hovered === p.title;
           const dim = hovered !== null && !isHovered && !isOpen;
           return (
-            <li key={p.title} className="border-b border-primary-text/10" onMouseEnter={() => {
+            <li key={p.title} className="border-b border-primary-text/10" onMouseEnter={(e) => {
+                rowRef.current = e.currentTarget;
+                pointerX.current = e.clientX;
+                place(!visible.current);
                 setHovered(p.title);
                 setShown(p);
                 setFocus(nodeOf(p));
@@ -130,11 +187,12 @@ const HoverIndex = ({ items, start = 1 }: { items: Project[]; start?: number }) 
         })}
       </ol>
 
-      {/* Cursor-following preview (mouse only), framed in the hero's colours. */}
+      {/* Floating preview (mouse only), framed in the hero's colours. */}
       {canHover && (
         <motion.div
-          className="pointer-events-none fixed left-0 top-0 z-40 -ml-[190px] -mt-[160px] w-[380px] rounded-[20px] p-[3px] shadow-2xl"
-          style={{ x: sx, y: sy, rotate: tilt, background: "linear-gradient(135deg, #1d3fbf, #e0457b 55%, #ff7a3d)" }}
+          ref={cardRef}
+          className="pointer-events-none fixed left-0 top-0 z-40 rounded-[20px] p-[3px] shadow-2xl"
+          style={{ width: CARD_W, x: sx, y: sy, rotate: tilt, background: "linear-gradient(135deg, #1d3fbf, #e0457b 55%, #ff7a3d)" }}
           animate={{ opacity: showPreview ? 1 : 0, scale: showPreview ? 1 : 0.85 }}
           transition={{ duration: 0.3, ease: EASE }}
           aria-hidden="true"

@@ -29,7 +29,8 @@ export type Frame = {
   halfW: number;
   halfH: number;
   aspect: number;
-  /** Phone-sized window: the shapes centre themselves above the text. */
+  /** Narrow layout (below lg, where the page stacks its text full width):
+      the shapes centre themselves above the text. */
   mobile: boolean;
   /** Drawing-buffer height in device pixels, and tan(fov / 2): for sizing points. */
   viewH: number;

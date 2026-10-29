@@ -36,7 +36,9 @@ export const Magnetic = ({ href, className, children, download }: {
 
 // A line whose words rise one by one from behind a mask, once `play` is on.
 // `{ em }` parts are set in the italic serif, in the accent colour unless
-// `emClassName` says otherwise.
+// `emClassName` says otherwise. Screen readers get the line as one sentence;
+// the animated words are hidden from them (one by one, they'd be read as
+// separate items).
 export type RevealPart = string | { em: string };
 
 export const RevealWords = ({ parts, delay = 0, play = true, className = "", emClassName = "text-accent" }: {
@@ -53,9 +55,10 @@ export const RevealWords = ({ parts, delay = 0, play = true, className = "", emC
   );
   return (
     <p className={className}>
+      <span className="sr-only">{words.map((w) => w.text).join(" ")}</span>
       {words.map((w, i) => (
         <React.Fragment key={i}>
-          <span className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]">
+          <span className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]" aria-hidden="true">
             <motion.span
               className={`inline-block ${w.em ? `font-serif italic font-normal tracking-normal ${emClassName}` : ""}`}
               initial={{ y: "110%" }}

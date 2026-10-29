@@ -14,11 +14,18 @@
     position: relative;
     height: 55px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: inherit;
+    text-decoration: none;
 }
 
 .resume-label.compact {
     width: 55px;
     border-radius: 50%;
+}
+
+.resume-label:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
 }
 
 .resume-label:hover {
@@ -44,10 +51,6 @@
     margin: auto;
     opacity: 0;
     visibility: hidden;
-}
-
-.resume-input {
-    display: none;
 }
 
 .resume-title {
@@ -117,51 +120,44 @@
     transition: all 0.4s ease;
 }
 
-.resume-label:has(.resume-input:checked) {
+/* Playing: a short fill-and-orbit while the download starts (ResumeButton.tsx). */
+.resume-label.is-playing {
+    border-color: var(--text-primary);
+}
+
+.resume-label.is-playing:not(.compact) {
     width: 57px;
-    animation: installed 0.4s ease 3.5s forwards;
-    border-color: var(--text-primary);
 }
 
-.resume-label:has(.resume-input:checked)::before {
-    animation: rotate 3s ease-in-out 0.4s forwards;
+.resume-label.is-playing::before {
+    animation: rotate 1s ease-in-out 0.1s forwards;
     background-color: var(--text-primary);
 }
 
-.resume-input:checked+.resume-circle {
-    animation:
-        pulse 1s forwards,
-        circleDelete 0.2s ease 3.5s forwards;
+.resume-label.is-playing .resume-circle {
+    animation: pulse 1s forwards;
     rotate: 180deg;
-    background-color: var(--surface-subtle);
     border-color: var(--text-primary);
-    /* Ensure border matches */
 }
 
-.resume-input:checked+.resume-circle::before {
-    animation: installing 3s ease-in-out forwards;
+.resume-label.is-playing .resume-circle::before {
+    animation: installing 1s ease-in-out forwards;
     background-color: var(--text-primary);
-    /* Purple color for the transition */
 }
 
-.resume-input:checked+.resume-circle .resume-icon {
+.resume-label.is-playing .resume-icon {
     opacity: 0;
     visibility: hidden;
 }
 
-.resume-input:checked~.resume-circle .resume-square {
+.resume-label.is-playing .resume-square {
     opacity: 1;
     visibility: visible;
-    background-color: #ffffff;
 }
 
-.resume-input:checked~.resume-title {
+.resume-label.is-playing .resume-title {
     opacity: 0;
     visibility: hidden;
-}
-
-.resume-input:checked~.resume-title:last-child {
-    animation: showInstalledMessage 0.4s ease 3.5s forwards;
 }
 
 @keyframes pulse {
@@ -207,27 +203,5 @@
     100% {
         opacity: 0;
         visibility: hidden;
-    }
-}
-
-@keyframes installed {
-    100% {
-        width: 150px;
-        border-color: var(--text-primary);
-    }
-}
-
-@keyframes circleDelete {
-    100% {
-        opacity: 0;
-        visibility: hidden;
-    }
-}
-
-@keyframes showInstalledMessage {
-    100% {
-        opacity: 1;
-        visibility: visible;
-        right: 56px;
     }
 }

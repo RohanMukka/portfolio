@@ -30,6 +30,49 @@ after every step.
   1.2 s; and the case study traps focus, makes the page inert and hands
   focus back on close (it renders in a portal on `<body>`).
 
+- Second audit (2026-10-16): `docs/AUDIT-2026-10-16.md`. The six fixes
+  hold on the branch (the live site still ships the Monkeytype key until
+  `main` is merged; rotate it). Re-scored 55/100. It proposes steps A–F
+  (correctness and a11y debt, a demand-driven render loop, X-Ray mode with
+  telemetry, live project stops, safe zones, load path), each waiting on
+  the owner's go-ahead.
+- **Audit Step A** (correctness and a11y debt) is done and approved by the
+  owner (2026-10-29), committed on the branch but not pushed. Each item was
+  checked on a production build in headless Chrome:
+  - The hero name hand-off waits for a drawn frame (`scene.ts` `handOffName`,
+    `firstFrame`); on slow 3G + 4× CPU the name never leaves the screen (it
+    used to vanish for ~1.2 s), and the canvas fades in only once it has
+    drawn.
+  - `src/lib/useModal.ts` (inert outside, Tab wrap, Escape, focus back) runs
+    the case study and the phone menu. The menu is now a dialog, carries a
+    Resume link, and closes itself if the window grows past phone size.
+  - The floating Resume is an `<a download>`: the download starts on the
+    click (it waited 3.5 s), keyboards reach it, and it's named. The floating
+    buttons are inert until they show, and phones no longer get them (they
+    covered the tour's Code button and the email).
+  - The More-work preview sits above (or below) its row and never covers it;
+    it no longer starts in the top-left corner.
+  - Tour captions take input only while mostly showing (no clickable
+    7%-opacity buttons); the ticks are named "01 NexusRAG" etc.; dragging
+    to spin no longer selects text.
+  - The hero line and the Skills sentence reach screen readers as one
+    sentence each (`sr-only` copy, animated words `aria-hidden`). The total
+    of single-word text leaves went 224 → 152; the rest are words that stand
+    alone (tags, nav links, numbers), so the audit's "< 40" target was the
+    wrong measure.
+  - The case study's diagram packets (SMIL) pause off screen: 60 → ~2
+    layouts/s with the diagram out of view.
+  - `src/lib/breakpoints.ts`: the stage uses the page's lg breakpoint, so
+    768–1023 px puts shapes above the text as on phones. Some overlap is
+    left (More work, Credentials) for Step E's safe zones.
+  - Skill logos are local SVGs in `public/icons` (from the simple-icons
+    package, in brand colours) instead of Wikimedia hotlinks; `robots.txt`
+    added; footer icons, the newsletter button and heading levels fixed.
+  - axe now reports only colour contrast (dark 63, light 148). That's step
+    A′, which waits on the owner's before/after call (brand colours).
+  - Still open for later steps: the fake newsletter (Step D), the render
+    loop that never sleeps (Step B).
+
 ## Upgrade plan: one step at a time
 
 The owner wants these done **one at a time**, shown in the local preview

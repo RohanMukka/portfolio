@@ -62,6 +62,8 @@ const TagLayer = ({ set, tags, hoverable }: { set: LabelSet; tags: Tag[]; hovera
   };
   const dragHandlers = {
     onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
+      // A drag spins the network; it shouldn't also start selecting text.
+      e.preventDefault();
       e.currentTarget.setPointerCapture(e.pointerId);
       drag.current = { x: e.clientX, t: performance.now() };
       dragSpin(0, 0);

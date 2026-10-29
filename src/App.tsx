@@ -54,8 +54,15 @@ const App = () => {
       <Navbar isScrolled={isScrolled} />
 
       {/* Fixed UI Elements. They wait until the hero is behind you: the hero
-          has its own Resume link, and the big type runs edge to edge. */}
-      <div className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60] flex flex-col gap-4 items-center transition-all duration-500 ${pastHero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'}`}>
+          has its own Resume link, and the big type runs edge to edge. Until
+          then they're inert too, so Tab can't land on an invisible button.
+          Phones don't get them: there they'd sit on top of the page's own
+          buttons and links; the navbar's name goes back to the top and the
+          phone menu carries the Resume link. */}
+      <div
+        inert={!pastHero}
+        className={`fixed bottom-10 right-10 z-[60] hidden md:flex flex-col gap-4 items-center transition-all duration-500 ${pastHero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'}`}
+      >
         <BackToTop />
         <ResumeButton isCompact={isScrolled} />
       </div>

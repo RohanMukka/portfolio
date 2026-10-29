@@ -191,7 +191,11 @@ html.has-cursor select {
 }
 
 /* While the stage's particles draw the hero name (src/stage/name.ts), the
-   page's own heading keeps its place but steps back. */
+   page's own heading keeps its place but steps back, cross-fading with the
+   canvas as it fades in (Stage.tsx). */
+[data-hero-name] {
+  transition: opacity 0.7s ease;
+}
 html[data-stage-name] [data-hero-name] {
   opacity: 0;
 }
@@ -212,6 +216,8 @@ html[data-stage-name] [data-hero-name] {
 }
 .stage-drag {
   cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .stage-drag:active {
   cursor: grabbing;

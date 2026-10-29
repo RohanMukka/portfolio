@@ -18,6 +18,7 @@ import {
   WebGLRenderTarget,
 } from "three";
 import type { Theme } from "../lib/theme";
+import { LG } from "../lib/breakpoints";
 import { BACKDROP } from "./glsl";
 import { createParticles } from "./particles";
 import { createLens } from "./post";
@@ -40,6 +41,8 @@ export type Stage = {
   start: () => void;
   stop: () => void;
   dispose: () => void;
+  /** Settles once a frame has actually been drawn, so the canvas can fade in with something on it. */
+  firstFrame: Promise<void>;
 };
 
 const THEMES = {
@@ -231,13 +234,26 @@ export const createStage = (
   const lens = createLens(renderer, scene, camera, theme);
 
   // The hero name, drawn in points once its font is in and again whenever
-  // the heading changes size. While the points draw it, the page's own
-  // heading steps back (index.css, html[data-stage-name]).
+  // the heading changes size. The page's own heading steps back (index.css,
+  // html[data-stage-name]) only once a frame has drawn the name in points
+  // (handOffName), so there's never a moment with no name on screen.
   let nameTimer = 0;
+  let hasName = false;
   const drawName = () => {
     const name = sampleName(opts.mobile ? 4500 : 12000, frame.halfH);
     piece.setName?.(name);
-    if (name) document.documentElement.dataset.stageName = "";
+    hasName = !!name;
+    if (!name) delete document.documentElement.dataset.stageName;
+  };
+  // Called after each drawn frame. Before the intro opens its plates still
+  // cover the hero, so the heading can go at once; if the stage arrived
+  // after the intro had begun (a slow connection), the heading waits for the
+  // points to finish forming over it, then the two cross-fade.
+  const handOffName = () => {
+    const root = document.documentElement;
+    if (!hasName || "stageName" in root.dataset) return;
+    if (frame.intro > 0 && frame.intro < 1) return;
+    root.dataset.stageName = "";
   };
   const nameWatch = new ResizeObserver(() => {
     clearTimeout(nameTimer);
@@ -413,6 +429,10 @@ export const createStage = (
   let running = false;
   let last = 0;
   const started = performance.now();
+  let markDrawn = () => {};
+  const firstFrame = new Promise<void>((resolve) => {
+    markDrawn = resolve;
+  });
 
   const draw = (now: number) => {
     // Capped, so a frame after the tab was hidden doesn't jump, but loose
@@ -475,6 +495,8 @@ export const createStage = (
     // Nothing to draw while a case study covers the page.
     if (stageState.covered) return;
     lens.render(frame.time);
+    markDrawn();
+    handOffName();
     sendLabels();
     adapt(dt);
   };
@@ -541,6 +563,7 @@ export const createStage = (
   renderer.setRenderTarget(null);
 
   return {
+    firstFrame,
     setTheme: applyTheme,
     setPointer: (ndc) => {
       pointerTarget.active = !!ndc;
@@ -560,8 +583,9 @@ export const createStage = (
       camera.updateProjectionMatrix();
       frame.aspect = width / height;
       // The layout follows the window (phones turning, windows resizing);
-      // the point budget set at start doesn't.
-      frame.mobile = width < 768;
+      // the point budget set at start doesn't. Below lg the page stacks its
+      // text full width, so the shapes move above it, as on phones.
+      frame.mobile = width < LG;
       frame.halfW = frame.halfH * frame.aspect;
       frame.viewH = height * renderer.getPixelRatio();
       lens.setSize(width, height, renderer.getPixelRatio());
