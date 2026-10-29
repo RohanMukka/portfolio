@@ -50,7 +50,10 @@ const Letter = ({ glyph, progress, start, accentClassName }: {
 };
 
 // A title's lines, each letter rising into place as `progress` goes 0 -> 1.
-// "\n" breaks a line; *stars* set words in the accent serif.
+// "\n" breaks a line; *stars* set words in the accent serif. Each line clips
+// only top and bottom (the mask the letters rise from behind): with tight
+// tracking a line's last letter runs a few pixels past its box, and a full
+// clip would cut it off.
 export const RevealLines = ({ title, progress, accentClassName = "text-accent" }: {
   title: string;
   progress: MotionValue<number>;
@@ -62,7 +65,7 @@ export const RevealLines = ({ title, progress, accentClassName = "text-accent" }
   return (
     <>
       {lines.map((line, li) => (
-        <span key={li} className="block overflow-hidden pb-[0.08em] -mb-[0.08em]" aria-hidden="true">
+        <span key={li} className="block overflow-y-clip pb-[0.08em] -mb-[0.08em]" aria-hidden="true">
           {line.map((glyph, gi) => {
             const start = (n++ / Math.max(1, total)) * 0.65;
             return (

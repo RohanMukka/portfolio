@@ -45,7 +45,11 @@ const FinalCTA = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [copied, setCopied] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const { scrollYProgress: p } = useScroll({ target: headingRef, offset: ['start 95%', 'start 40%'] });
+  // The letters finish rising by the time the heading's middle is 85% of the
+  // way down the window, so wherever it comes to rest in view (centred in
+  // the ring, or lower on a short screen after the navbar's Contact link)
+  // the line is whole.
+  const { scrollYProgress: p } = useScroll({ target: headingRef, offset: ['start 95%', 'center 85%'] });
   const count = String(SECTION_COUNT).padStart(2, '0');
 
   const handleSubmit = async (e: React.FormEvent) => {
