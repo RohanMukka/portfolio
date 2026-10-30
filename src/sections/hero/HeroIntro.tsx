@@ -108,6 +108,19 @@ const HeroIntro = ({ phase, nameRef, onReady, onOpened }: {
     return () => observer.disconnect();
   }, [nameRef]);
 
+  // The page's HTML drew this intro's first frame before any script ran
+  // (index.html, #boot); now that the real one is in place, it fades out.
+  useEffect(() => {
+    const boot = document.getElementById("boot");
+    if (!boot) return;
+    const frame = requestAnimationFrame(() => boot.classList.add("gone"));
+    const timer = window.setTimeout(() => boot.remove(), 600);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+    };
+  }, []);
+
   useEffect(() => {
     if (!ready) return;
     animate(progress, 100, { duration: 0.5, ease: EASE });

@@ -144,6 +144,24 @@ after every step.
   - axe now finds no WCAG violations in either theme, and the budget check
     no longer tolerates any (`KNOWN_AXE` is empty).
   - Not done from the audit's list: time-based caption swaps in the tour.
+- **Audit Step F** (load path) is done and approved by the owner
+  (2026-10-30), committed and pushed to the branch:
+  - `index.html` draws the intro's first frame itself (`#boot`: the brand
+    line at the name's height on the page background, and the loading
+    counter), so something shows before the scripts arrive; `HeroIntro`
+    fades it out once its own line is in place (within 2–9 px).
+  - Fonts are self-hosted (owner approved the download, 2026-10-30): the
+    Latin subsets of Inter, Inter Tight, Instrument Serif italic and
+    JetBrains Mono from Google Fonts (SIL OFL), one variable WOFF2 per
+    family, 147 KB in `public/fonts`, declared at the top of index.css. The
+    page no longer contacts Google at all. They aren't preloaded: measured
+    on slow 3G, an early font download slowed the main script by ~1 s,
+    which delayed the intro (it waits on the script and the 3D chunk).
+  - Slow 3G + 4× CPU on a phone: first paint 8.6 → 4.6 s, loading line
+    on screen 8.5 → 4.6 s, LCP 13.5 → 12.5–12.8 s, intro opening ~14.5 →
+    14.1–14.4 s. The remaining wait is the 161 KB main script and the 3D
+    chunk; cutting those (e.g. framer-motion's LazyMotion, prerendering
+    the hero) is the next lever.
 - **Audit step A′** (contrast) is done: the owner compared before/after and
   chose the new colours (2026-10-30). Light secondary/tertiary text is more
   opaque (#003399d9 / #003399b8), dark tertiary is #718096, orange text on
