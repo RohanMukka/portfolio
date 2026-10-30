@@ -104,6 +104,14 @@ after every step.
   clipped and its period hanging low where the page comes to rest
   (`SectionHeader.tsx` lines clip only vertically; `FinalCTA.tsx` finishes
   the letters' rise earlier).
+- **Audit step A′** (contrast) is done: the owner compared before/after and
+  chose the new colours (2026-10-30). Light secondary/tertiary text is more
+  opaque (#003399d9 / #003399b8), dark tertiary is #718096, orange text on
+  paper is #a94d1c (the brand orange stays for lines, dots and fills), and
+  white-on-orange buttons are fixed (deeper orange on paper, near-black text
+  on the dark orange). axe's contrast failures went from 63 (dark) and 150
+  (light) to 46 each, all of them the Skills sentence's not-yet-painted
+  words (Step E's paint rework).
 
 ## Upgrade plan: one step at a time
 

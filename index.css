@@ -21,8 +21,8 @@
     --bg-primary: #f4f1ea;
     --bg-elevated: #fbfaf6;
     --text-primary: #002366;
-    --text-secondary: #003399aa;
-    --text-tertiary: #00339977;
+    --text-secondary: #003399d9; /* 6.76:1 on the paper (WCAG AA) */
+    --text-tertiary: #003399b8; /* 4.82:1 */
     --glass-bg: rgba(251, 250, 246, 0.82);
     --glass-border: rgba(0, 35, 102, 0.12);
     --glass-shadow: rgba(0, 35, 102, 0.05);
@@ -41,7 +41,7 @@
     --bg-elevated: #16161a;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
-    --text-tertiary: #64748b;
+    --text-tertiary: #718096; /* 4.92:1 on the dark background */
     --glass-bg: rgba(15, 23, 42, 0.86);
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-shadow: rgba(0, 0, 0, 0.5);
@@ -385,4 +385,24 @@ html[data-motion="paused"] .scroll-cue {
     radial-gradient(60vmax 60vmax at 95% 0%, rgba(30, 58, 138, 0.55), transparent 70%),
     radial-gradient(70vmax 70vmax at 0% 100%, rgba(49, 46, 129, 0.5), transparent 70%),
     var(--bg-primary);
+}
+
+/* Text in the brand orange, and on it, kept readable (WCAG AA 4.5:1). The
+   orange stays the brand orange for lines, dots and fills; on paper, orange
+   text is a shade deeper (3.79 → 4.94:1), and so is an orange button behind
+   white text (4.28 → 5.58:1); on the dark theme's brighter orange, button
+   text is near-black (2.80 → 7.05:1). */
+:root:not([data-theme='dark']) .text-accent {
+  color: #a94d1c;
+}
+:root:not([data-theme='dark']) .bg-accent.text-white {
+  background-color: #a94d1c;
+}
+[data-theme='dark'] .bg-accent.text-white {
+  color: #0a0a0d;
+}
+/* The footer's views terminal dims its prompt line; on paper that drops it
+   under 4.5:1. */
+:root:not([data-theme='dark']) footer .opacity-80 {
+  opacity: 1;
 }
