@@ -283,9 +283,9 @@ and approved before the next starts.
   Co-Authored-By or Claude trailers (see CLAUDE.md). Check with
   `git log --format='%an <%ae>'` before pushing.
 - Commit on `rohan/hero-redesign-wip`; push only when the owner asks; never
-  push or merge to `main` until the owner approves. When it is merged,
-  `Hero.tsx` and `about/content.ts` will conflict with main's a860d17: keep
-  the branch's versions.
+  push or merge to `main` until the owner approves. main's one commit the
+  branch lacked (a860d17) was merged in on 2026-10-30 keeping the branch's
+  files, so merging the branch into `main` is now conflict-free.
 
 ## Running it
 
