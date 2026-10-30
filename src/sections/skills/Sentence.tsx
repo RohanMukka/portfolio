@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, useTransform, type MotionValue } from "framer-motion";
+import { motion, useTransform, type MotionStyle, type MotionValue } from "framer-motion";
 import { skillGroups } from "../../data/skills";
 
 // [Name|label] marks a technology (Name must match data/skills.ts); anything
@@ -20,6 +20,9 @@ const UNITS: Unit[] = [...TEXT.matchAll(/\[([^\]]+)\]([^\s[]*)|(\S+)/g)].map((m)
   return { text: label ?? name, trail: m[2], tech: name };
 });
 
+// A word's colour as it paints (--paint 0 → 1).
+const PAINTED = "color-mix(in srgb, var(--text-primary) calc(var(--paint) * 100%), var(--text-tertiary))";
+
 // The sentence as plain text, for screen readers.
 const PLAIN = UNITS.map((u) => u.text + u.trail).join(" ");
 
@@ -27,13 +30,14 @@ const PLAIN = UNITS.map((u) => u.text + u.trail).join(" ");
 export const paintedAt = (tech: string) => (UNITS.findIndex((u) => u.tech === tech) + 1) / UNITS.length;
 
 const Word = ({ unit, index, total, progress }: { unit: Unit; index: number; total: number; progress: MotionValue<number> }) => {
-  // Each word lights up during its own slice of the painting.
-  const opacity = useTransform(progress, [index / total, (index + 1) / total], [0.14, 1]);
+  // Each word paints during its own slice of the painting, from the page's
+  // quietest text colour (still readable: 4.8:1 or better) to full colour.
+  const paint = useTransform(progress, [index / total, (index + 1) / total], [0, 1]);
   const icon = unit.tech ? ICONS.get(unit.tech) : undefined;
 
   return (
     <>
-      <motion.span style={{ opacity }} className={unit.tech ? "relative group inline-block" : "inline"} aria-hidden="true">
+      <motion.span style={{ "--paint": paint, color: PAINTED } as MotionStyle} className={unit.tech ? "relative group inline-block" : "inline"} aria-hidden="true">
         {unit.tech ? (
           <>
             <span className="font-extrabold underline decoration-accent/60 decoration-2 underline-offset-[0.18em] cursor-default">
@@ -55,11 +59,11 @@ const Word = ({ unit, index, total, progress }: { unit: Unit; index: number; tot
   );
 };
 
-// The stack as one sentence in your own voice. Words fill in from faint to
+// The stack as one sentence in your own voice. Words fill in from quiet to
 // full colour as `progress` runs 0 → 1; hovering a technology shows its logo.
 // Screen readers get the plain sentence instead of the painted words.
 const Sentence = ({ progress }: { progress: MotionValue<number> }) => (
-  <p className="font-display font-semibold text-[clamp(1.6rem,3vw,3rem)] leading-[1.18] tracking-[-0.03em] text-primary-text">
+  <p data-stage-safe className="font-display font-semibold text-[clamp(1.6rem,3vw,3rem)] leading-[1.18] tracking-[-0.03em] text-primary-text">
     <span className="sr-only">{PLAIN}</span>
     {UNITS.map((u, i) => (
       <React.Fragment key={i}>

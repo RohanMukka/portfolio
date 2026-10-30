@@ -18,10 +18,10 @@ const Panel = ({ i, panel }: { i: number; panel: (typeof PANELS)[number] }) => (
     <p className="hud text-accent">
       {pad(i + 1)} — {panel.kicker}
     </p>
-    <h3 className="font-display font-bold text-4xl lg:text-[4.25rem] tracking-[-0.045em] leading-[1.02] text-primary-text max-w-[16ch]">
+    <h3 data-stage-safe className="font-display font-bold text-4xl lg:text-[4.25rem] tracking-[-0.045em] leading-[1.02] text-primary-text max-w-[16ch]">
       {panel.heading}
     </h3>
-    <p className="text-lg text-primary-secondary leading-relaxed max-w-xl">{panel.body}</p>
+    <p data-stage-safe className="text-lg text-primary-secondary leading-relaxed max-w-xl">{panel.body}</p>
     {i === 0 && (
       <img
         src={PORTRAIT}

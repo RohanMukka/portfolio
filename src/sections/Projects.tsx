@@ -30,7 +30,8 @@ const Projects = () => {
       {/* The rest, as a list that keeps to the left on wide screens; the 3D
           network fills the right. */}
       <div id="more-work" className="max-w-6xl mx-auto px-6 pt-16">
-        <div className="lg:w-[60%]">
+        {/* data-stage-safe: the 3D swarm fades behind the list (src/stage/scene.ts). */}
+        <div data-stage-safe className="lg:w-[60%]">
           <h3 className="font-display font-bold text-3xl md:text-4xl tracking-[-0.04em] text-primary-text">More work</h3>
           {/* Editorial filters: label, count, and an underline on the active one. */}
           <div className="flex flex-wrap gap-x-7 gap-y-3 pt-6 pb-2">

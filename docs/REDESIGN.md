@@ -126,6 +126,24 @@ after every step.
     in-memory store. It records nothing until the branch is live on Vercel.
   - Not done from the audit's list: the 3D scene overlay (camera path,
     focal plane, pointer radius drawn into the scene).
+- **Audit Step E** (legibility) is done and approved by the owner
+  (2026-10-30), committed and pushed to the branch:
+  - Text safe zones: blocks of text carry `data-stage-safe` (tour captions,
+    About's headings and body, the More-work list, the Skills sentence, the
+    Credentials column); the stage passes up to 8 on-screen ones to the
+    particle shader as rectangles, and points behind them fade to 12%.
+    Glow under tour titles fell to 0–0.2% of title pixels under 3:1; on
+    tablets the network and crystal fade behind the text.
+  - Hero → About: while travelling, depth-of-field blur is held to a quarter
+    and points are capped at 12 px (`uTravel`), so the flight is fine points
+    rather than a cloud of discs; the hero's copy fades out by a quarter of
+    the hero's scroll instead of nearly half.
+  - Skills: words paint from the quietest text colour to full colour
+    (`color-mix` on a `--paint` variable) instead of from 14% opacity, so
+    the sentence is readable before it's painted.
+  - axe now finds no WCAG violations in either theme, and the budget check
+    no longer tolerates any (`KNOWN_AXE` is empty).
+  - Not done from the audit's list: time-based caption swaps in the tour.
 - **Audit step A′** (contrast) is done: the owner compared before/after and
   chose the new colours (2026-10-30). Light secondary/tertiary text is more
   opaque (#003399d9 / #003399b8), dark tertiary is #718096, orange text on

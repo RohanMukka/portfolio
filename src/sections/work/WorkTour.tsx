@@ -35,7 +35,8 @@ const Caption = ({ project, index, at, active }: { project: Project; index: numb
 
   return (
     <div className="absolute inset-0 flex items-end lg:items-center pointer-events-none" inert={!active}>
-      <motion.div style={{ opacity, y }} className={`w-full ${active ? "pointer-events-auto" : ""}`}>
+      {/* data-stage-safe: the 3D swarm fades behind it (src/stage/scene.ts). */}
+      <motion.div data-stage-safe style={{ opacity, y }} className={`w-full ${active ? "pointer-events-auto" : ""}`}>
         <p className="hud text-primary-tertiary">
           <span className="text-accent">{pad(index + 1)}</span> / {pad(STOPS.length)} · {project.category}
         </p>

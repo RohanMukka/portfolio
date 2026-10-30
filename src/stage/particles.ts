@@ -14,11 +14,12 @@ import {
   ShaderMaterial,
   Vector2,
   Vector3,
+  Vector4,
 } from "three";
 import type { Theme } from "../lib/theme";
 import { NOISE, PALETTE } from "./glsl";
 import { placePositions, placeRotations, toWorld } from "./world";
-import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, perChapter, type Frame, type Piece } from "./piece";
+import { LAYER_COUNT, NODE_COUNT, SAFE_ZONES, STOP_COUNT, perChapter, type Frame, type Piece } from "./piece";
 
 // "Data becomes a system": tens of thousands of points that tell the page's
 // story one shape per chapter.
@@ -64,6 +65,7 @@ const DIM = { dark: [1, 0.85, 0.9, 0.55, 0.6, 1], light: [1.15, 1, 1, 0.6, 0.7, 
 const PHONE_DIM = [1, 0.6, 0.5, 0.4, 0.45, 1];
 
 const vertexShader = /* glsl */ `
+  #define SAFE_ZONES ${SAFE_ZONES}
   #define TAU 6.28318530718
   #define PI 3.14159265359
 
@@ -99,6 +101,10 @@ const vertexShader = /* glsl */ `
   uniform float uLayers[4];
   uniform float uPress;
   uniform float uLight;
+  uniform vec4 uSafe[SAFE_ZONES];
+  uniform float uSafeCount;
+  uniform float uSafeOn;
+  uniform float uTravel;
   uniform sampler2D uName;
   uniform float uNameCount;
   uniform vec2 uNameSize;
@@ -427,11 +433,27 @@ const vertexShader = /* glsl */ `
     glow *= smoothstep(uFocus * 0.2, uFocus * 0.55, -mv.z);
     // Depth of field: points off the focal plane (what the camera looks at)
     // open into larger, fainter, flatter discs.
-    float blur = clamp(abs(-mv.z - uFocus) * 0.3 - 0.2, 0.0, 1.0);
-    gl_PointSize = clamp(uSize * size * (1.0 + blur * 2.2) * uViewH / (2.0 * uTanHalf * max(-mv.z, 0.4)), 0.0, 36.0);
+    // Flying between places the swarm swirls past the lens; out of focus it
+    // would open into a cloud of large discs, so travel holds the blur and
+    // the point size down.
+    float blur = clamp(abs(-mv.z - uFocus) * 0.3 - 0.2, 0.0, 1.0) * (1.0 - 0.75 * uTravel);
+    gl_PointSize = clamp(uSize * size * (1.0 + blur * 2.2) * uViewH / (2.0 * uTanHalf * max(-mv.z, 0.4)), 0.0, mix(36.0, 12.0, uTravel));
     vColor = palette(hue);
     vAlpha = clamp(glow, 0.0, 1.6) * uDim / (1.0 + blur * 2.5);
     vBlur = blur;
+    // Text safe zones: points that land behind a block of the page's text
+    // (marked data-stage-safe, passed as NDC rectangles) fade far back, so
+    // glow never sits under words.
+    vec2 ndc = gl_Position.xy / max(gl_Position.w, 1e-4);
+    float behindText = 0.0;
+    for (int k = 0; k < SAFE_ZONES; k++) {
+      if (float(k) >= uSafeCount) break;
+      vec4 r = uSafe[k];
+      vec2 q = abs(ndc - (r.xy + r.zw) * 0.5) - (r.zw - r.xy) * 0.5;
+      float outside = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
+      behindText = max(behindText, smoothstep(0.05, -0.02, outside));
+    }
+    vAlpha *= mix(1.0, 0.12, behindText * uSafeOn);
     // Faded-out points cost nothing to draw.
     if (vAlpha < 0.002) gl_PointSize = 0.0;
   }
@@ -520,6 +542,10 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     uColB: { value: new Color() },
     uColC: { value: new Color() },
     uLight: { value: 0 },
+    uSafe: { value: Array.from({ length: SAFE_ZONES }, () => new Vector4()) },
+    uSafeCount: { value: 0 },
+    uSafeOn: { value: 1 },
+    uTravel: { value: 0 },
   };
 
   const material = new ShaderMaterial({
@@ -599,6 +625,11 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       uniforms.uNodeFocus.value = f.focus;
       uniforms.uFocusAmt.value = Math.max(...f.focus);
       uniforms.uRing.value.set(f.ring.x, f.ring.y, f.ring.r);
+      f.safe.forEach((r, i) => uniforms.uSafe.value[i].set(r.x0, r.y0, r.x1, r.y1));
+      uniforms.uSafeCount.value = f.safeCount;
+      // Diving into a node, the camera flies through it: no dimming then.
+      uniforms.uSafeOn.value = 1 - f.dive;
+      uniforms.uTravel.value = f.travel;
       placeNetwork(f);
       uniforms.uNetRot.value.copy(netRot);
       uniforms.uNetCenter.value.copy(netCenter);

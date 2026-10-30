@@ -51,9 +51,18 @@ export type Frame = {
   focusDist: number;
   /** How built each layer of the Skills stack is (0 → 1), top to bottom. */
   layers: number[];
+  /** Blocks of the page's text on screen (data-stage-safe), in normalised
+      device coordinates; the first `safeCount` are live. Points behind them fade. */
+  safe: { x0: number; y0: number; x1: number; y1: number }[];
+  safeCount: number;
+  /** 0 at a place, rising to 1 halfway between two: how much the camera is travelling. */
+  travel: number;
 };
 
 export const STOP_COUNT = 5;
+
+/** How many blocks of text at once the swarm keeps clear of (see Frame.safe). */
+export const SAFE_ZONES = 8;
 
 export type Labels = { set: LabelSet; points: Vector3[]; visible: number };
 

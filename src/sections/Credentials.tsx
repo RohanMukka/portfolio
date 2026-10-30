@@ -45,7 +45,8 @@ const Credentials = () => {
       <div className="max-w-6xl mx-auto w-full">
         <SectionHeader className="mb-2" index="04" label="Credentials" title={"Degrees &\n*certificates*"} />
 
-        <div className="lg:w-[62%]">
+        {/* data-stage-safe: the 3D swarm fades behind this column (src/stage/scene.ts). */}
+        <div data-stage-safe className="lg:w-[62%]">
           <ol ref={listRef} className="relative">
             <span className="absolute left-[7px] top-0 bottom-0 w-px bg-primary-text/10" aria-hidden="true" />
             <motion.span

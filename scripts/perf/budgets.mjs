@@ -33,9 +33,8 @@ const BUNDLES = [
   { name: "3D stage script", match: /^scene-.*\.js$/, maxKb: 140 },
   { name: "stylesheet", match: /^index-.*\.css$/, maxKb: 14 },
 ];
-// Known violations, fixed in a later step: colour contrast is now only the
-// Skills sentence's not-yet-painted words (audit Step E reworks the paint).
-const KNOWN_AXE = new Set(["color-contrast"]);
+// Known WCAG violations to tolerate (none: any violation fails).
+const KNOWN_AXE = new Set();
 
 const CHROME =
   process.env.CHROME_PATH ??

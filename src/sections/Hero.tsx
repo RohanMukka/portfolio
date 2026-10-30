@@ -47,7 +47,9 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
   const nameY = useTransform(p, [0, 1], ['0%', '-35%']);
   const nameFade = useTransform(p, [0.2, 0.75], [1, 0]);
   const copyY = useTransform(p, [0, 1], ['0%', '-120%']);
-  const fade = useTransform(p, [0, 0.45], [1, 0]);
+  // Gone before the camera's flight to About gets going, so it never sits
+  // ghosted over the swarm in motion.
+  const fade = useTransform(p, [0, 0.25], [1, 0]);
   // The top row clears out quickly, before the navbar drops in over it.
   const topFade = useTransform(p, [0, 0.15], [1, 0]);
 

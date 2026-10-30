@@ -25,7 +25,7 @@ import { BACKDROP } from "./glsl";
 import { createParticles } from "./particles";
 import { createLens } from "./post";
 import { sampleName } from "./name";
-import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
+import { LAYER_COUNT, NODE_COUNT, SAFE_ZONES, STOP_COUNT, type Frame, type Piece } from "./piece";
 import { emitStageLabels, onStageWake, stageState, stageStats, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
 import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, placeRotations, VIEW_DISTANCE } from "./world";
@@ -340,6 +340,9 @@ export const createStage = (
     dive: 0,
     focusDist: VIEW_DISTANCE,
     layers: [0, 0, 0, 0],
+    safe: Array.from({ length: SAFE_ZONES }, () => ({ x0: 0, y0: 0, x1: 0, y1: 0 })),
+    safeCount: 0,
+    travel: 0,
   };
   const pointerTarget = { x: 0, y: 0, active: false, down: false };
   let width = 1;
@@ -373,6 +376,25 @@ export const createStage = (
     const f = frame.aboutAt - i;
     frame.stop.x = frame.stops[i].x + (frame.stops[i + 1].x - frame.stops[i].x) * f;
     frame.stop.y = frame.stops[i].y + (frame.stops[i + 1].y - frame.stops[i].y) * f;
+  };
+
+  // Blocks of the page's text (data-stage-safe) that the swarm fades behind:
+  // the ones on screen, in normalised device coordinates. Skipped when inert
+  // (the tour's captions not showing) or nearly transparent.
+  const placeSafeZones = () => {
+    let n = 0;
+    for (const el of document.querySelectorAll<HTMLElement>("[data-stage-safe]")) {
+      if (n === SAFE_ZONES) break;
+      if (el.closest("[inert]") || parseFloat(el.style.opacity || "1") < 0.3) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width < 1 || r.bottom < 0 || r.top > height || r.right < 0 || r.left > width) continue;
+      const zone = frame.safe[n++];
+      zone.x0 = (r.left / width) * 2 - 1;
+      zone.x1 = (r.right / width) * 2 - 1;
+      zone.y0 = 1 - (r.bottom / height) * 2;
+      zone.y1 = 1 - (r.top / height) * 2;
+    }
+    frame.safeCount = n;
   };
 
   const project = new Vector3();
@@ -550,6 +572,8 @@ export const createStage = (
     if (frame.chapter > 0.05 && frame.chapter < 2.5) placeStops();
     if (frame.chapter > 3.5) placeRing();
     // Each Skills layer locks into place as its stretch of the scene scrolls by.
+    frame.travel = Math.sin(Math.PI * (frame.chapter % 1));
+    placeSafeZones();
     frame.layers.forEach((_, k) => {
       const at = stageState.layerAt[k];
       frame.layers[k] = stageState.layers[k] = smooth(at - 0.05, at + 0.04, frame.progress[3]);
