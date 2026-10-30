@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { Suspense, lazy, useState, useEffect, useCallback } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
@@ -13,6 +13,12 @@ import Cursor from "./components/Cursor";
 import Stage from "./stage/Stage";
 import StageLabels from "./stage/Labels";
 import { startSmoothScroll } from "./lib/smoothScroll";
+import { startVitals } from "./lib/vitals";
+import { startTelemetry } from "./lib/telemetry";
+import { useXRayOpen, watchXRayKey } from "./lib/xray";
+
+// X-Ray (the page measuring itself) loads only when it's opened.
+const XRay = lazy(() => import("./xray/XRay"));
 
 const App = () => {
   const [introDone, setIntroDone] = useState(false);
@@ -20,6 +26,13 @@ const App = () => {
   const [pastHero, setPastHero] = useState(false);
 
   const finishIntro = useCallback(() => setIntroDone(true), []);
+  const xray = useXRayOpen();
+
+  useEffect(() => {
+    startVitals();
+    startTelemetry();
+    return watchXRayKey();
+  }, []);
 
   useEffect(() => {
     // The intro plays in the hero at the top of the page, so always start
@@ -51,6 +64,11 @@ const App = () => {
       <Stage />
       <StageLabels />
       <Cursor />
+      {xray && (
+        <Suspense fallback={null}>
+          <XRay />
+        </Suspense>
+      )}
       <Navbar isScrolled={isScrolled} />
 
       {/* Fixed UI Elements. They wait until the hero is behind you: the hero

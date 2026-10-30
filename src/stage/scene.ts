@@ -26,7 +26,7 @@ import { createParticles } from "./particles";
 import { createLens } from "./post";
 import { sampleName } from "./name";
 import { LAYER_COUNT, NODE_COUNT, STOP_COUNT, type Frame, type Piece } from "./piece";
-import { emitStageLabels, onStageWake, stageState, type LabelSet, type ScreenPoint } from "./store";
+import { emitStageLabels, onStageWake, stageState, stageStats, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
 import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, placeRotations, VIEW_DISTANCE } from "./world";
 
@@ -138,6 +138,38 @@ const dustFragment = /* glsl */ `
 
 const ease = (rate: number, dt: number) => 1 - Math.exp(-rate * dt);
 
+// GPU time per frame, for X-Ray, where the browser exposes WebGL timer
+// queries (many don't, for privacy; then it's null and X-Ray says so). One
+// query at a time: a frame is timed only once the last result is read.
+const createGpuTimer = (gl: WebGLRenderingContext | WebGL2RenderingContext) => {
+  if (!("createQuery" in gl)) return null;
+  const ext = gl.getExtension("EXT_disjoint_timer_query_webgl2");
+  if (!ext) return null;
+  let running: WebGLQuery | null = null;
+  let pending: WebGLQuery | null = null;
+  return {
+    begin: () => {
+      if (pending) return;
+      running = gl.createQuery();
+      if (running) gl.beginQuery(ext.TIME_ELAPSED_EXT, running);
+    },
+    end: () => {
+      if (!running) return;
+      gl.endQuery(ext.TIME_ELAPSED_EXT);
+      pending = running;
+      running = null;
+    },
+    poll: (): number | null => {
+      if (!pending || !gl.getQueryParameter(pending, gl.QUERY_RESULT_AVAILABLE)) return null;
+      const nanoseconds = gl.getQueryParameter(pending, gl.QUERY_RESULT) as number;
+      const disjoint = gl.getParameter(ext.GPU_DISJOINT_EXT);
+      gl.deleteQuery(pending);
+      pending = null;
+      return disjoint ? null : nanoseconds / 1e6;
+    },
+  };
+};
+
 // Settles once the stage's shaders are compiled and it can draw without
 // stalling. The intro waits on it (HeroIntro.tsx), capped like its other tasks.
 let markReady = () => {};
@@ -153,6 +185,10 @@ export const createStage = (
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping; // keep page colours exact
+  // Draw calls are counted per frame (X-Ray), across the lens's passes.
+  renderer.info.autoReset = false;
+  const gpuTimer = createGpuTimer(renderer.getContext());
+  stageStats.gpuTimers = !!gpuTimer;
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(FOV, 1, 0.1, 400);
@@ -239,7 +275,9 @@ export const createStage = (
   // clock.ts), once it's running; before that, start() draws the first frame.
   let live = false;
   const wake = (reason: string) => {
-    if (live) clock.wake(reason);
+    if (!live) return;
+    stageStats.reason = reason;
+    clock.wake(reason);
   };
 
   // The hero name, drawn in points once its font is in and again whenever
@@ -451,6 +489,7 @@ export const createStage = (
   const step: ClockStep = (dt, simDt, now) => {
     // Nothing to draw while a case study covers the page.
     if (stageState.covered) return null;
+    const cpuStart = performance.now();
     frame.time += simDt;
 
     timeline.read(window.scrollY, height, reading);
@@ -521,7 +560,16 @@ export const createStage = (
     dustUniforms.uTime.value = frame.time;
 
     piece.update(frame);
+    renderer.info.reset();
+    const gpu = gpuTimer?.poll();
+    if (gpu !== undefined && gpu !== null) stageStats.gpuMs = gpu;
+    gpuTimer?.begin();
     lens.render(frame.time);
+    gpuTimer?.end();
+    stageStats.drawCalls = renderer.info.render.calls;
+    if (dt > 0) stageStats.timeScale = simDt / dt;
+    stageStats.cpuMs[stageStats.frames % stageStats.cpuMs.length] = performance.now() - cpuStart;
+    stageStats.frames++;
     markDrawn();
     handOffName();
     sendLabels();
@@ -529,11 +577,31 @@ export const createStage = (
     return changing;
   };
 
+  // For X-Ray: the lens's passes, and what the stage holds on the GPU (its
+  // point attributes plus the lens's buffers).
+  const attributeBytes = [piece.object, dust, backdrop].reduce(
+    (sum, object) => sum + Object.values((object as Points).geometry.attributes).reduce((n, a) => n + (a.array as ArrayLike<number> & { byteLength: number }).byteLength, 0),
+    0,
+  );
+  const describeLens = () => {
+    const { passes, bytes } = lens.describe();
+    stageStats.passes = passes;
+    stageStats.gpuBytes = attributeBytes + bytes;
+  };
+
   const clock = createClock(step, {
     paused: motionPaused,
     covered: () => stageState.covered,
     onMode: (mode) => {
       stageState.awake = mode !== "asleep" && mode !== "covered";
+      // For X-Ray: time in each mode, and the last minute's changes.
+      const now = performance.now();
+      if (stageStats.modeSince) stageStats.modeMs[stageStats.mode] += now - stageStats.modeSince;
+      stageStats.mode = mode;
+      stageStats.modeSince = now;
+      stageStats.reason = clock.reason;
+      stageStats.history.push({ mode, at: now });
+      while (stageStats.history.length > 1 && stageStats.history[1].at < now - 60000) stageStats.history.shift();
     },
   });
   const unwatchWake = onStageWake(wake);
@@ -556,6 +624,7 @@ export const createStage = (
     if (!slow) return;
     if (sampled.steps === 1) {
       lens.lighten();
+      describeLens();
     } else if (renderer.getPixelRatio() > 1) {
       renderer.setPixelRatio(1);
       renderer.setSize(width, height, false);
@@ -607,6 +676,7 @@ export const createStage = (
     firstFrame,
     setTheme: (next) => {
       applyTheme(next);
+      describeLens();
       wake("theme");
     },
     setPointer: (ndc) => {
@@ -635,6 +705,7 @@ export const createStage = (
       frame.halfW = frame.halfH * frame.aspect;
       frame.viewH = height * renderer.getPixelRatio();
       lens.setSize(width, height, renderer.getPixelRatio());
+      describeLens();
       backdropUniforms.uAspect.value = frame.aspect;
       dustUniforms.uViewH.value = frame.viewH;
       wake("resize");

@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Gauge } from "lucide-react";
+import { setXRayOpen } from "../../lib/xray";
 import { scrollToY } from "../../lib/smoothScroll";
 import { useMediaQuery } from "../../lib/useMediaQuery";
 import { WIDE } from "../../lib/breakpoints";
@@ -31,6 +32,16 @@ const Panel = ({ i, panel }: { i: number; panel: (typeof PANELS)[number] }) => (
         decoding="async"
         className="w-28 h-28 rounded-full object-cover border border-primary-text/10 bg-[#fbfaf6]"
       />
+    )}
+    {/* "I don't trust a system I can't measure": so the page measures itself (src/xray). */}
+    {panel.kicker === "How I work" && (
+      <button
+        type="button"
+        onClick={() => setXRayOpen(true)}
+        className="self-start inline-flex items-center gap-2 text-sm font-semibold text-primary-text hover:text-accent transition-colors"
+      >
+        Measure this page <Gauge size={16} />
+      </button>
     )}
     {i === PANELS.length - 1 && (
       <a

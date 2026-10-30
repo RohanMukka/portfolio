@@ -13,6 +13,7 @@ import {
   type WebGLRenderer,
 } from "three";
 import type { Theme } from "../lib/theme";
+import type { StagePass } from "./store";
 
 // The stage's camera "lens". The scene is drawn into a half-float buffer; in
 // the dark theme its brightest points bloom into soft glow (on paper glow
@@ -54,6 +55,8 @@ export type Lens = {
   setSize: (width: number, height: number, pixelRatio: number) => void;
   /** Drops the bloom, the costliest part, when the machine is struggling. */
   lighten: () => void;
+  /** The passes a frame runs and the memory its buffers take, for X-Ray. */
+  describe: () => { passes: StagePass[]; bytes: number };
   dispose: () => void;
 };
 
@@ -245,6 +248,19 @@ export const createLens = (renderer: WebGLRenderer, scene: Scene, camera: Camera
       draw(finish, null);
     },
     setTheme,
+    describe: () => {
+      const size = (t: WebGLRenderTarget) => ({ width: t.width, height: t.height });
+      const passes: StagePass[] = [{ name: "Scene", ...size(sceneTarget), draws: 3 }];
+      if (bloom) {
+        passes.push({ name: "Bright pass", ...size(bright), draws: 1 });
+        KERNELS.forEach((radius, i) => passes.push({ name: `Blur ${i + 1} (r ${radius}, ×2)`, ...size(down[i]), draws: 2 }));
+        passes.push({ name: "Bloom composite", ...size(composite), draws: 1 });
+      }
+      passes.push({ name: "Finish → screen", ...size(sceneTarget), draws: 1 });
+      // Half-float RGBA: 8 bytes a pixel.
+      const targets = [sceneTarget, bright, ...across, ...down, composite];
+      return { passes, bytes: targets.reduce((sum, t) => sum + t.width * t.height * 8, 0) };
+    },
     setSize: (width, height, pixelRatio) => {
       const w = Math.max(1, Math.floor(width * pixelRatio));
       const h = Math.max(1, Math.floor(height * pixelRatio));

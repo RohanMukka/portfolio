@@ -32,6 +32,32 @@ export const stageState = {
   awake: false,
 };
 
+// What the stage measures about itself, for the X-Ray view (src/xray). The
+// stage writes it as it draws; nothing here costs anything while X-Ray is
+// closed beyond a few numbers per frame.
+export type StagePass = { name: string; width: number; height: number; draws: number };
+export const stageStats = {
+  /** CPU time to prepare and submit each of the last FRAME_LOG frames (ms), a ring buffer. */
+  cpuMs: new Float32Array(240),
+  /** GPU time of the last measured frame (ms), or null where the browser doesn't expose GPU timers. */
+  gpuMs: null as number | null,
+  gpuTimers: false,
+  /** Frames drawn since the stage started, and draw calls in the last one. */
+  frames: 0,
+  drawCalls: 0,
+  /** The lens's passes, and the GPU memory the stage's buffers and targets take (bytes). */
+  passes: [] as StagePass[],
+  gpuBytes: 0,
+  /** The clock: its mode, what last woke it, and how long it has spent in each mode (ms). */
+  mode: "asleep",
+  reason: "",
+  timeScale: 0,
+  modeMs: { active: 0, ambient: 0, dozing: 0, asleep: 0, covered: 0 } as Record<string, number>,
+  modeSince: 0,
+  /** Mode changes over the last minute, for the timeline strip. */
+  history: [] as { mode: string; at: number }[],
+};
+
 // The stage registers how to wake it; until it has loaded, waking does nothing.
 let wake: (reason: string) => void = () => {};
 export const onStageWake = (fn: (reason: string) => void) => {

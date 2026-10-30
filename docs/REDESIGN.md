@@ -104,6 +104,28 @@ after every step.
   clipped and its period hanging low where the page comes to rest
   (`SectionHeader.tsx` lines clip only vertically; `FinalCTA.tsx` finishes
   the letters' rise earlier).
+- **Audit Step C** (X-Ray and telemetry) is done and approved by the owner
+  (2026-10-30), committed on the branch but not pushed:
+  - `src/xray/XRay.tsx`, a lazy 3 KB chunk opened by `?xray`, the X key
+    (not in text fields) or "Measure this page" under About's "I don't trust
+    a system I can't measure" panel; Escape or × closes it. It shows the
+    clock's mode, what woke it, its time scale, % asleep this visit and the
+    last minute as a colour strip; CPU and GPU ms per frame (GPU where the
+    browser exposes WebGL timer queries, else "not exposed"), draw calls,
+    a sparkline; the lens's passes and sizes; GPU memory (point attributes
+    plus render targets) and JS heap (Chromium); this visit's LCP, CLS and
+    INP (`lib/vitals.ts`, no library); and the last 7 days of visits.
+  - The stage writes these into `stageStats` (`stage/store.ts`); the lens
+    describes its passes (`describe()` in `post.ts`).
+  - Telemetry: `lib/telemetry.ts` sends LCP, CLS, INP, % asleep and the
+    render mode once as a visit ends (production only) to
+    `api/telemetry.ts`, which only increments per-day bucket counts in the
+    same Upstash Redis as `/api/views` (no IP, browser string, cookie or ID;
+    days expire after 14); `api/stats.ts` serves 7-day p75s (bucket upper
+    edges) to X-Ray. Logic in `api/_telemetry.ts`, unit-tested against an
+    in-memory store. It records nothing until the branch is live on Vercel.
+  - Not done from the audit's list: the 3D scene overlay (camera path,
+    focal plane, pointer radius drawn into the scene).
 - **Audit step A′** (contrast) is done: the owner compared before/after and
   chose the new colours (2026-10-30). Light secondary/tertiary text is more
   opaque (#003399d9 / #003399b8), dark tertiary is #718096, orange text on
