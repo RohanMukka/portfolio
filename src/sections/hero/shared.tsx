@@ -3,12 +3,16 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
-// A link that leans toward the cursor while it's near.
-export const Magnetic = ({ href, className, children, download }: {
+// A link that leans toward the cursor while it's near. `external` opens it in
+// a new tab.
+export const Magnetic = ({ href, className, children, download, external, onClick, label }: {
   href: string;
   className?: string;
   children: React.ReactNode;
   download?: string;
+  external?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  label?: string;
 }) => {
   const ref = useRef<HTMLAnchorElement>(null);
   const x = useMotionValue(0);
@@ -28,7 +32,18 @@ export const Magnetic = ({ href, className, children, download }: {
   };
 
   return (
-    <motion.a ref={ref} href={href} download={download} className={className} onMouseMove={onMove} onMouseLeave={onLeave} style={{ x: sx, y: sy }}>
+    <motion.a
+      ref={ref}
+      href={href}
+      download={download}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      aria-label={label}
+      onClick={onClick}
+      className={className}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      style={{ x: sx, y: sy }}
+    >
       {children}
     </motion.a>
   );

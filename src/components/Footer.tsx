@@ -134,7 +134,7 @@ const Footer = () => {
                 Rohan Mukka
               </span>
               <span className="hud text-primary-tertiary">
-                Software engineer
+                AI / ML engineer
               </span>
             </div>
             <div className="flex gap-4">

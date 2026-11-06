@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Check, Copy } from 'lucide-react';
 import Crosshair from './hero/Crosshair';
 import FullWidthName from './hero/FullWidthName';
 import HeroIntro, { INTRO_OPEN, type IntroPhase } from './hero/HeroIntro';
@@ -9,16 +9,36 @@ import { isSoftwareRendering } from '../lib/rendering';
 import { Magnetic, RevealWords, fadeUp } from './hero/shared';
 import { openStage } from '../stage/store';
 import { RESUME_FILE, RESUME_URL } from '../lib/resume';
+import { EMAIL, GITHUB_URL, LINKEDIN_URL, copyEmail } from '../lib/contact';
 
 // The name while the intro plays, and as it pulls into focus. Plain opacity,
 // transform and filter values, so the browser animates them itself.
 const NAME_HIDDEN = { opacity: 0, filter: 'blur(8px)', transform: 'scale(1.04)' };
 const NAME_SHOWN = { opacity: 1, filter: 'blur(0px)', transform: 'scale(1)', transitionEnd: { filter: 'none' } };
 
-const TextLink = ({ href, children, download }: { href: string; children: React.ReactNode; download?: string }) => (
+// What the link's arrow says: leaves the site, downloads, copies, copied.
+const ICONS = {
+  out: <ArrowUpRight size={16} className="transition-transform duration-500 group-hover:rotate-45 group-hover:text-accent" />,
+  down: <ArrowDown size={16} className="transition-transform duration-500 group-hover:translate-y-0.5 group-hover:text-accent" />,
+  copy: <Copy size={14} className="transition-colors duration-500 group-hover:text-accent" />,
+  done: <Check size={16} className="text-accent" />,
+};
+
+const TextLink = ({ href, children, download, external, icon = 'out', onClick, label }: {
+  href: string;
+  children: React.ReactNode;
+  download?: string;
+  external?: boolean;
+  icon?: keyof typeof ICONS;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  label?: string;
+}) => (
   <Magnetic
     href={href}
     download={download}
+    external={external}
+    onClick={onClick}
+    label={label}
     className="group inline-flex items-center gap-2 py-2 text-xs md:text-sm font-medium uppercase tracking-[0.22em] text-primary-text"
   >
     <span className="relative">
@@ -26,7 +46,7 @@ const TextLink = ({ href, children, download }: { href: string; children: React.
       <span className="absolute left-0 -bottom-1 h-px w-full bg-primary-text origin-right scale-x-100 group-hover:scale-x-0 transition-transform duration-500" />
       <span className="absolute left-0 -bottom-1 h-px w-full bg-accent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 delay-100" />
     </span>
-    <ArrowUpRight size={16} className="transition-transform duration-500 group-hover:rotate-45 group-hover:text-accent" />
+    {ICONS[icon]}
   </Magnetic>
 );
 
@@ -59,6 +79,19 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
     setPhase('opening');
     openStage();
   }, []);
+  // The Email link copies the address (most visitors have no mail app set
+  // up); if the clipboard is blocked it opens the mailto link instead.
+  const [copied, setCopied] = useState(false);
+  const onEmail = useCallback(async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (await copyEmail()) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } else {
+      window.location.href = `mailto:${EMAIL}`;
+    }
+  }, []);
+
   const opened = useCallback(() => {
     setPhase('open');
     onIntroDone();
@@ -89,9 +122,11 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
             className="hud grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-primary-secondary"
             {...fadeUp(0.15, entered)}
           >
-            <span>( Portfolio ©{new Date().getFullYear()} )</span>
-            <span className="text-right md:text-center">Software engineer</span>
-            <span className="col-span-2 md:col-span-1 md:text-right">
+            {/* Phones: role and availability share the first row, the degree
+                gets its own (it doesn't fit half a phone's width). */}
+            <span>AI / ML engineer</span>
+            <span className="order-last md:order-none col-span-2 md:col-span-1 md:text-center">M.S. CS, Oklahoma · 4.0</span>
+            <span className="text-right">
               <span className="text-accent">●</span> Available for work
             </span>
           </motion.div>
@@ -114,15 +149,34 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
           style={{ opacity: fade, y: copyY }}
           className="relative z-[3] px-6 md:px-14 pb-10 md:pb-14 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
-          <RevealWords
-            play={entered}
-            className="max-w-[640px] font-display font-semibold text-primary-text text-[clamp(1.5rem,2.4vw,2.25rem)] leading-[1.05] tracking-[-0.035em]"
-            parts={['I build full-stack products and', { em: 'ML systems' }, 'that hold up in production.']}
-          />
+          <div className="max-w-[640px]">
+            <RevealWords
+              play={entered}
+              className="font-display font-semibold text-primary-text text-[clamp(1.5rem,2.4vw,2.25rem)] leading-[1.05] tracking-[-0.035em]"
+              parts={['I build', { em: 'AI systems' }, 'that can prove they work.']}
+            />
+            <motion.p
+              className="mt-4 max-w-[560px] text-sm md:text-base text-primary-secondary leading-relaxed"
+              {...fadeUp(0.3, entered)}
+            >
+              Retrieval that checks its own answers, models that can't ship under the bar, benchmarks audited for leaks
+              before they're trusted.
+            </motion.p>
+          </div>
+          {/* The four things a recruiter comes for, one click each. */}
           <motion.div className="flex flex-wrap md:justify-end gap-x-8 gap-y-2" {...fadeUp(0.35, entered)}>
-            <TextLink href="#projects">View work</TextLink>
-            <TextLink href="#contact">Get in touch</TextLink>
-            <TextLink href={RESUME_URL} download={RESUME_FILE}>Resume</TextLink>
+            <TextLink href={RESUME_URL} download={RESUME_FILE} icon="down" label="Download résumé (PDF)">Resume</TextLink>
+            <TextLink href={GITHUB_URL} external>GitHub</TextLink>
+            <TextLink
+              href={`mailto:${EMAIL}`}
+              icon={copied ? 'done' : 'copy'}
+              onClick={onEmail}
+              label={`Email ${EMAIL} (copies the address)`}
+            >
+              {copied ? 'Copied' : 'Email'}
+            </TextLink>
+            <TextLink href={LINKEDIN_URL} external>LinkedIn</TextLink>
+            <span className="sr-only" aria-live="polite">{copied ? 'Email address copied' : ''}</span>
           </motion.div>
         </motion.div>
 

@@ -24,7 +24,7 @@ export const PANELS = [
   },
   {
     kicker: "How I work",
-    heading: "I don't trust a system I can't measure.",
+    heading: "Every system ships with its own instruments.",
     body: "NexusRAG scores its own answers. MLFlowForge won't ship a model under 0.70 AP. ReviewGuard audits its benchmark before believing it.",
   },
   {

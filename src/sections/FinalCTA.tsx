@@ -2,13 +2,13 @@ import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import { Send, CheckCircle2, ArrowUpRight, Copy, Check } from 'lucide-react';
 import { RevealLines, SECTION_COUNT } from '../components/SectionHeader';
+import { EMAIL, GITHUB_URL, LINKEDIN_URL, copyEmail } from '../lib/contact';
 
-const EMAIL = 'rohanmukka07@gmail.com';
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const SOCIALS = [
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/rohanmukka' },
-  { label: 'GitHub', href: 'https://github.com/rohanmukka' },
+  { label: 'LinkedIn', href: LINKEDIN_URL },
+  { label: 'GitHub', href: GITHUB_URL },
 ];
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -81,14 +81,11 @@ const FinalCTA = () => {
     }
   };
 
-  const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(EMAIL);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      // clipboard blocked; the mailto link still works
-    }
+  const onCopy = async () => {
+    // If the clipboard is blocked, the mailto link beside it still works.
+    if (!(await copyEmail())) return;
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
   };
 
   return (
@@ -151,7 +148,7 @@ const FinalCTA = () => {
                 </a>
                 <button
                   type="button"
-                  onClick={copyEmail}
+                  onClick={onCopy}
                   className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-primary-text/20 hud text-primary-text hover:border-accent hover:text-accent transition-colors"
                 >
                   {copied ? <Check size={14} /> : <Copy size={14} />}

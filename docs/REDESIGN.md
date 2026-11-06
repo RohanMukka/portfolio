@@ -185,8 +185,8 @@ after every step.
   `MONKEYTYPE_APE_KEY`, Production only). The public email is
   `rohanmukka07@gmail.com`; the site already uses it everywhere, and only
   the résumé PDF (the OU address) still differs.
-- **Phase 1, step 1 (project descriptions)** is built (2026-11-06), waiting
-  for the owner's review:
+- **Phase 1, step 1 (project descriptions)** is done and approved by the
+  owner (2026-11-06), committed on the branch (`023b46b`) but not pushed:
   - `projects.ts`: every description rewritten from its README. SafeFlow
     (a five-agent ADK system, now ML) and JAI (Gemini résumé tailoring) were
     false; Spend Smart is a budgeting simulator, FeeAutomation a Stripe fee
@@ -203,6 +203,24 @@ after every step.
     15–20% is labelled the README's estimate, StreamSense's events
     synthetic, ReviewGuard's 0.805 business-level.
   - Titles, featured order and the hero are unchanged (steps 2 and 3).
+- **Phase 1, step 2 (hero and role)** is done and approved by the owner
+  (2026-11-06), committed on the branch but not pushed. The owner picked
+  hero option A from audit #3 §2.1:
+  - Headline "I build *AI systems* that can prove they work." with a
+    sub-line (retrieval that checks its answers, models gated, benchmarks
+    audited). Top row: "AI / ML engineer", "M.S. CS, Oklahoma · 4.0",
+    "Available for work"; on phones the degree takes its own row.
+  - Link row: Resume (download), GitHub, Email, LinkedIn. Email copies
+    the address (a live region says so; "Copied" for 1.8 s) and falls back
+    to the mailto link if the clipboard is blocked. "View work" and "Get in
+    touch" are gone (the scroll cue and the Email link cover them).
+    `src/lib/contact.ts` holds the address and profile links for the hero
+    and Contact.
+  - `<title>`, description and OG text now say AI/ML engineer; so does the
+    footer's label.
+  - About panel 4's heading is now "Every system ships with its own
+    instruments." (the hero makes the old heading's point); X-Ray keeps
+    "I don't trust a system I can't measure" as its own subtitle.
 
 ## Upgrade plan: one step at a time
 

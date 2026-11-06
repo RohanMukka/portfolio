@@ -33,7 +33,7 @@ const Panel = ({ i, panel }: { i: number; panel: (typeof PANELS)[number] }) => (
         className="w-28 h-28 rounded-full object-cover border border-primary-text/10 bg-[#fbfaf6]"
       />
     )}
-    {/* "I don't trust a system I can't measure": so the page measures itself (src/xray). */}
+    {/* "Every system ships with its own instruments": this page's are X-Ray (src/xray). */}
     {panel.kicker === "How I work" && (
       <button
         type="button"
