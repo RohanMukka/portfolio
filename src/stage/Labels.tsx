@@ -20,7 +20,6 @@ type Tag = { name: string; detail?: string; open?: () => void };
 // without one, its code).
 const SHORT: Record<string, string> = {
   "Multi-Agent Course Builder": "Course Builder",
-  "Fake Review Detection": "Fake Reviews",
 };
 const WORK: Tag[] = FEATURED_TITLES.slice(0, NODE_COUNT).map((title) => ({
   name: SHORT[title] ?? title,

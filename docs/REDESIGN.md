@@ -221,6 +221,26 @@ after every step.
   - About panel 4's heading is now "Every system ships with its own
     instruments." (the hero makes the old heading's point); X-Ray keeps
     "I don't trust a system I can't measure" as its own subtitle.
+- **Phase 1, step 3 (featured work)** is done and approved by the owner
+  (2026-11-06), committed on the branch but not pushed. Facts come from
+  the SafeFlow and ReviewGuard READMEs.
+  - Featured order (`FEATURED_TITLES`, the tour, the stage's node tags and
+    the case-study order): ReviewGuard, NexusRAG, MLFlowForge, SafeFlow,
+    EduLens AI, StreamSense, JobForge, Multi-Agent Course Builder. Spend
+    Smart moves to More work (its diagram stays for the hover preview).
+  - "Fake Review Detection" is renamed ReviewGuard (the repo's own name;
+    the slug was already `reviewguard`), tagline "Fake Review Detection,
+    Audited". Its case study gains a fourth decision, "Report it when
+    fusion loses": behavior alone 0.917 against fusion's 0.853, 5 of 5
+    folds, with label-free business profiles.
+  - SafeFlow has a case study (`#/work/safeflow`: 5 agents, 0.5 s state
+    pushes, 3 alert languages; decisions: tools that change the stadium
+    go through the gateway, it reads its own traces before acting, a
+    person approves operational actions) and a diagram whose fact is
+    "Agents never write to the database themselves" (the description
+    already covers traces and approval). The README's Cloud Run demo is
+    down, so there's no demo link; it says "built for" the hackathon,
+    not that it placed.
 
 ## Upgrade plan: one step at a time
 

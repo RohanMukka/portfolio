@@ -134,6 +134,31 @@ export const caseStudies: Record<string, CaseStudy> = {
     ],
     stack: ["Google ADK", "A2A", "Python", "Google Search", "Cloud Run"],
   },
+  SafeFlow: {
+    slug: "safeflow",
+    summary:
+      "A crowd-safety command center for World Cup stadiums, built for the Google Cloud Rapid Agent Hackathon 2026. Five Google ADK agents on Gemini read turnstile data, reroute crowds, dispatch stewards, broadcast alerts and write the after-action report, while their reasoning streams to the operator live.",
+    numbers: [
+      { value: "5", label: "ADK agents: a sequential supervisor and four specialists" },
+      { value: "0.5 s", label: "between stadium state pushes to the 3D command center" },
+      { value: "3", label: "languages for every alert: English, Spanish and Portuguese" },
+    ],
+    decisions: [
+      {
+        title: "Agents act only through the gateway",
+        body: "The tools that change the stadium are REST calls to the FastAPI gateway, which owns every MongoDB Atlas write. The model picks the action; the gateway carries it out.",
+      },
+      {
+        title: "Read its own traces before acting",
+        body: "Every request and tool call is traced with OpenTelemetry into Arize Phoenix. Before a mitigation, the Analysis Agent queries those spans to see how past steward dispatches changed how fast congestion cleared.",
+      },
+      {
+        title: "A person approves operational actions",
+        body: "Operational actions wait for an operator's approval at /api/agent/approve. The agents propose; someone in the control room signs off.",
+      },
+    ],
+    stack: ["Google ADK", "Gemini 2.5 Flash", "FastAPI", "MongoDB Atlas", "OpenTelemetry", "Arize Phoenix", "React Three Fiber", "Cloud Run"],
+  },
   "EduLens AI": {
     slug: "edulens",
     summary:
@@ -159,7 +184,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     ],
     stack: ["React 18", "TypeScript", "Groq · Llama 3.1", "WebSockets", "PostgreSQL", "Drizzle ORM"],
   },
-  "Fake Review Detection": {
+  ReviewGuard: {
     slug: "reviewguard",
     summary:
       "A two-branch fake review detector for YelpCHI, and an audit of how much of the performance usually reported on that benchmark is real.",
@@ -180,6 +205,10 @@ export const caseStudies: Record<string, CaseStudy> = {
       {
         title: "Control for graph shortcuts",
         body: "A GNN reaches 0.816 against 0.706 without a graph, but two degree counts recover 0.788. Most of the gain is a count the split meant to hide.",
+      },
+      {
+        title: "Report it when fusion loses",
+        body: "With label-free business profiles, behavior alone scores 0.917 against the fusion model's 0.853 and wins 5 of 5 folds: 19 strong features diluted by 266 weak text dimensions. Fusion only helps when the branches are about as strong as each other.",
       },
     ],
     stack: ["Python", "PyTorch", "scikit-learn", "TF-IDF + SVD", "Focal loss", "GNN"],

@@ -149,6 +149,30 @@ export const diagrams: Record<string, Diagram> = {
       { from: "bloom", to: "teacher" },
     ],
   },
+  SafeFlow: {
+    fact: "Agents never write to the database themselves",
+    nodes: [
+      { id: "ui", label: "Command center", sub: "React · 3D stadium", col: 0, row: 0 },
+      { id: "api", label: "Gateway", sub: "FastAPI · approvals", col: 1, row: 0 },
+      { id: "db", label: "MongoDB Atlas", sub: "gates · stewards", col: 2, row: 0 },
+      { id: "sup", label: "Supervisor", sub: "ADK · sequential", col: 1, row: 1 },
+      { id: "analysis", label: "Analysis", sub: "reads past traces", col: 0, row: 2 },
+      { id: "mitigation", label: "Mitigation", sub: "reroute · dispatch", col: 1, row: 2 },
+      { id: "comms", label: "Comms", sub: "EN · ES · PT", col: 2, row: 2 },
+      { id: "phoenix", label: "Phoenix", sub: "OTel traces", col: 0, row: 3 },
+      { id: "report", label: "Post-mortem", sub: "after-action report", col: 2, row: 3 },
+    ],
+    edges: [
+      { from: "ui", to: "api" },
+      { from: "api", to: "db" },
+      { from: "api", to: "sup" },
+      { from: "sup", to: "analysis", route: "hv" },
+      { from: "sup", to: "mitigation" },
+      { from: "sup", to: "comms", route: "hv" },
+      { from: "phoenix", to: "analysis" },
+      { from: "comms", to: "report" },
+    ],
+  },
   "Spend Smart": {
     fact: "A budget simulator, one event card a month",
     nodes: [
@@ -167,7 +191,7 @@ export const diagrams: Record<string, Diagram> = {
       { from: "ui", to: "auth" },
     ],
   },
-  "Fake Review Detection": {
+  ReviewGuard: {
     fact: "0.805 business-level AUC on unseen businesses",
     nodes: [
       { id: "text", label: "Review text", sub: "YelpCHI", col: 0, row: 1 },

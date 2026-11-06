@@ -128,8 +128,8 @@ export const projects: Project[] = [
     color: '#3498db'
   },
   {
-    title: 'Fake Review Detection',
-    tagline: 'Text + Behavior Fusion',
+    title: 'ReviewGuard',
+    tagline: 'Fake Review Detection, Audited',
     description: 'A two-branch fake review detector for YelpCHI, and an audit of the benchmark: a timestamp alone scored 0.965 AUC, so dates were dropped and models were scored on businesses they never saw.',
     tags: ['Python', 'PyTorch', 'GNN'],
     category: 'Research',
@@ -208,16 +208,18 @@ export const projects: Project[] = [
   }
 ];
 
-// Shown first (and alone, until "Show all") in the Work section.
+// Shown first (and alone, until "Show all") in the Work section. ReviewGuard
+// leads, since auditing its own benchmark is the strongest story here;
+// Course Builder is last because its demo is gone.
 export const FEATURED_TITLES = [
+  "ReviewGuard",
   "NexusRAG",
+  "MLFlowForge",
+  "SafeFlow",
+  "EduLens AI",
   "StreamSense",
   "JobForge",
-  "MLFlowForge",
   "Multi-Agent Course Builder",
-  "EduLens AI",
-  "Spend Smart",
-  "Fake Review Detection",
 ];
 
 export const CATEGORIES = ["All", "Web", "ML", "Research", "System", "Blockchain"] as const;
