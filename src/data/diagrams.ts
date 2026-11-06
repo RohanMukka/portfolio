@@ -150,21 +150,25 @@ export const diagrams: Record<string, Diagram> = {
     ],
   },
   "Spend Smart": {
-    fact: "Spending charted live as it's logged",
+    fact: "A budget simulator, one event card a month",
     nodes: [
-      { id: "ui", label: "React app", sub: "TypeScript", col: 0, row: 1.5 },
-      { id: "auth", label: "Firebase", sub: "auth · data", col: 1, row: 1.5 },
-      { id: "budget", label: "Budgets", sub: "by category", col: 2, row: 1 },
-      { id: "charts", label: "Charts", sub: "spending trends", col: 2, row: 2 },
+      { id: "budget", label: "Budget", sub: "rent · food · savings", col: 0, row: 1 },
+      { id: "card", label: "Event card", sub: "one a month", col: 1, row: 1 },
+      { id: "month", label: "Month end", sub: "tax · interest", col: 2, row: 1 },
+      { id: "score", label: "Score", sub: "tips · PDF", col: 2, row: 2 },
+      { id: "ui", label: "React app", sub: "TypeScript · Recharts", col: 0, row: 2.5 },
+      { id: "auth", label: "Firebase", sub: "sign-in", col: 1, row: 2.5 },
     ],
     edges: [
+      { from: "budget", to: "card" },
+      { from: "card", to: "month" },
+      { from: "month", to: "score" },
+      { from: "ui", to: "budget" },
       { from: "ui", to: "auth" },
-      { from: "auth", to: "budget", route: "hv" },
-      { from: "auth", to: "charts", route: "hv" },
     ],
   },
   "Fake Review Detection": {
-    fact: "0.805 AUC on businesses it never saw",
+    fact: "0.805 business-level AUC on unseen businesses",
     nodes: [
       { id: "text", label: "Review text", sub: "YelpCHI", col: 0, row: 1 },
       { id: "sem", label: "Text branch", sub: "TF-IDF · SVD 256", col: 1, row: 1 },

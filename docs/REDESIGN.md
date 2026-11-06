@@ -170,6 +170,39 @@ after every step.
   on the dark orange). axe's contrast failures went from 63 (dark) and 150
   (light) to 46 each, all of them the Skills sentence's not-yet-painted
   words (Step E's paint rework).
+- **Third and fourth audits (2026-10-30)**: `docs/AUDIT-2026-10-30-full.md`
+  (measured: build, Lighthouse, a desktop and phone walk, links, every
+  README; scored 60/100; live site still ships the Monkeytype key, four
+  project descriptions are false or wrong) and `docs/AUDIT-2026-10-30.md`, on positioning,
+  copy and proof of work (the owner chose AI/ML engineer as the target role,
+  and to keep the 3D story and brand colours). Scored 61/100. It found false
+  project descriptions (SafeFlow, JAI) and undersold research (SemEval 2026,
+  EEG), rewrites the hero, About, case studies and footer, and plans three
+  phases (copy and truth, layout and system, widgets and polish). Each step
+  waits on the owner's go-ahead.
+- **Phase 0 (owner, 2026-10-31):** the leaked Monkeytype ApeKey is deleted
+  (a new one exists; if the footer card stays it goes in Vercel as
+  `MONKEYTYPE_APE_KEY`, Production only). The public email is
+  `rohanmukka07@gmail.com`; the site already uses it everywhere, and only
+  the résumé PDF (the OU address) still differs.
+- **Phase 1, step 1 (project descriptions)** is built (2026-11-06), waiting
+  for the owner's review:
+  - `projects.ts`: every description rewritten from its README. SafeFlow
+    (a five-agent ADK system, now ML) and JAI (Gemini résumé tailoring) were
+    false; Spend Smart is a budgeting simulator, FeeAutomation a Stripe fee
+    portal (now Web), IPMS is the *Internship Program* Management System
+    (team project, Rohan's modules); FitPrep is JavaScript, not TypeScript;
+    Fake Review Detection's text mentioned transformers it never ran;
+    NexusRAG never reranked; StreamSense's load is synthetic and there's no
+    "Flink-style" stage. Filler adjectives are gone.
+  - New `Research` category (filter in More work, kicker in the tour and
+    case study): Fake Review Detection, Polarization (SemEval 2026 Task 9,
+    with co-authors), EEG emotion recognition, the diagnostic system.
+  - `diagrams.ts`: Spend Smart's diagram is the simulator's loop; the
+    ReviewGuard fact says "business-level". `caseStudies.ts`: NexusRAG's
+    15–20% is labelled the README's estimate, StreamSense's events
+    synthetic, ReviewGuard's 0.805 business-level.
+  - Titles, featured order and the hero are unchanged (steps 2 and 3).
 
 ## Upgrade plan: one step at a time
 

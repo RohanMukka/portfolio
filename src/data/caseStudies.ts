@@ -15,7 +15,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     summary:
       "A retrieval-augmented generation system that ingests PDFs, CSVs and web pages, finds context with hybrid dense and keyword search, streams grounded answers, and checks every answer for faithfulness to its sources.",
     numbers: [
-      { value: "15–20%", label: "better recall on keyword-heavy queries from RRF fusion" },
+      { value: "~15–20%", label: "better recall on keyword-heavy queries from RRF fusion (the README's estimate)" },
       { value: "<50 ms", label: "added by keeping a parallel BM25 index" },
       { value: "5 turns", label: "of conversation memory for follow-up questions" },
     ],
@@ -40,7 +40,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     summary:
       "A real-time pipeline that pushes e-commerce clickstream events through Kafka, aggregates them in rolling windows and serves a live dashboard, built to exercise consumer-group failover, partitioning, backpressure and dead-letter queues.",
     numbers: [
-      { value: "5,000+", label: "events per second ingested" },
+      { value: "5,000+", label: "synthetic events per second ingested" },
       { value: "6", label: "Kafka partitions shared by a consumer group" },
       { value: "~40%", label: "smaller messages with LZ4 compression" },
     ],
@@ -164,7 +164,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     summary:
       "A two-branch fake review detector for YelpCHI, and an audit of how much of the performance usually reported on that benchmark is real.",
     numbers: [
-      { value: "0.805", label: "AUC on businesses never seen in training" },
+      { value: "0.805", label: "business-level AUC on businesses never seen in training" },
       { value: "0.951", label: "AUC from a business's fake rate alone: the leak it exposes" },
       { value: "0.965", label: "AUC from the raw timestamp alone, so dates were dropped" },
     ],

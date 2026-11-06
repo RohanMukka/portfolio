@@ -15,7 +15,7 @@ export interface Project {
   tagline: string;
   description: string;
   tags: string[];
-  category: 'Web' | 'ML' | 'System' | 'Blockchain';
+  category: 'Web' | 'ML' | 'Research' | 'System' | 'Blockchain';
   links: { github?: string; demo?: string };
   media?: ProjectMedia;
   color: string;
@@ -25,8 +25,8 @@ export const projects: Project[] = [
   {
     title: 'BEneFIT',
     tagline: 'Stake Your Success, Own Your Fitness.',
-    description: 'Decentralized fitness accountability with ETH staking and smart contracts. Users stake ETH and earn it back by completing workout goals verified by oracles.',
-    tags: ['Ethereum', 'Web3', 'React', 'Solidity'],
+    description: 'Stake ETH on a fitness goal and earn it back by meeting it: solo lock-and-release or group redistribution, enforced by smart contracts, with activity checked through APIs.',
+    tags: ['Ethereum', 'Solidity', 'Hardhat', 'React'],
     category: 'Blockchain',
     links: { github: 'https://github.com/RohanMukka/BEneFIT' },
     color: '#627EEA'
@@ -34,7 +34,7 @@ export const projects: Project[] = [
   {
     title: 'Spend Smart',
     tagline: 'Master Your Money',
-    description: 'Personal finance tracker with TypeScript and Firebase. Features real-time visualization of spending habits and budget categorization.',
+    description: 'Split a monthly budget, draw an event card each month, and watch taxes, interest and surprises play out on savings and debt, ending in a score and tips.',
     tags: ['TypeScript', 'Firebase', 'React'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/spendsmart', demo: 'https://spendsmart-three.vercel.app/' },
@@ -42,18 +42,18 @@ export const projects: Project[] = [
   },
   {
     title: 'Diagnostic AI',
-    tagline: 'Hybrid ML Logic',
-    description: 'A robust diagnostic system leveraging explicit domain knowledge and learned data patterns for high-precision diagnostic insights.',
-    tags: ['Python', 'ML', 'Diagnostics'],
-    category: 'ML',
+    tagline: 'Rules First, Learning After',
+    description: 'Medical diagnosis that tries OWL ontology and SWRL rules first and falls back to a decision-tree classifier when they are inconclusive: 25% more accurate than either alone.',
+    tags: ['Python', 'OWL', 'SWRL', 'scikit-learn'],
+    category: 'Research',
     links: { github: 'https://github.com/RohanMukka/A-Robust-Diagnostic-System-Leveraging-Explicit-Domain-Knowledge-and-Learned-Data-Patterns' },
     color: '#3776ab'
   },
   {
     title: 'FitPrep',
     tagline: 'Plan. Eat. Lift.',
-    description: 'Comprehensive fitness planning platform for individualized nutrition and workout tracking. Deployed with optimal edge performance.',
-    tags: ['React', 'Health', 'TypeScript'],
+    description: 'A 7-day meal and workout plan built from the foods you already have, typed or spoken, with per-meal macros and charts.',
+    tags: ['React', 'JavaScript', 'Chart.js'],
     category: 'Web',
     links: { github: 'https://github.com/RohanMukka/fitprep', demo: 'https://fitprep.vercel.app' },
     media: {
@@ -66,9 +66,9 @@ export const projects: Project[] = [
   },
   {
     title: 'IPMS',
-    tagline: 'Project Management Redefined',
-    description: 'Integrated Project Management System featuring enterprise-grade tracking and collaborative workspace environments.',
-    tags: ['JavaScript', 'System', 'Teamwork'],
+    tagline: 'Internship Program Management',
+    description: "OU's internship program management system, built as a team. I built the request, tracking and evaluation modules, with automated supervisor and coordinator approvals and reminders.",
+    tags: ['React', 'Node.js', 'MongoDB'],
     category: 'System',
     links: { github: 'https://github.com/IPMS-Project/IPMS' },
     color: '#3498db'
@@ -76,8 +76,8 @@ export const projects: Project[] = [
   {
     title: 'JAI',
     tagline: 'Job Application Intelligence',
-    description: 'High-performance framework focused on JavaScript AI integration and neural pattern recognition development.',
-    tags: ['TypeScript', 'AI', 'JavaScript'],
+    description: 'A Chrome extension and Next.js dashboard that rewrites your LaTeX résumé for each job description with Gemini, compiles it in Overleaf and autofills the application.',
+    tags: ['TypeScript', 'Next.js', 'Gemini', 'MongoDB'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/JAI' },
     color: '#f7df1e'
@@ -93,46 +93,46 @@ export const projects: Project[] = [
   },
   {
     title: 'Emotion Recog',
-    tagline: 'AI That Feels',
-    description: 'Deep learning classification of human emotions through high-resolution EEG signal interpretation and signal processing.',
-    tags: ['Python', 'DL', 'Biosensor'],
-    category: 'ML',
+    tagline: 'Four Emotions from EEG',
+    description: 'Classifies four emotions from EEG (GAMEEMO: 28 subjects, 14 channels at 128 Hz) by fusing a random forest on band power with a CNN on the raw signal: about 90% accurate.',
+    tags: ['Python', 'CNN', 'Random Forest', 'MNE'],
+    category: 'Research',
     links: { github: 'https://github.com/RohanMukka/Multiclass-Emotion-Recognition-from-EEG-Signals' },
     color: '#9b59b6'
   },
   {
     title: 'FeeAutomation',
-    tagline: 'FinTech Optimization',
-    description: 'Enterprise automation tool for fee processing, financial management, and automated transaction auditing.',
-    tags: ['JavaScript', 'Finance', 'Automation'],
-    category: 'System',
+    tagline: 'Academic Fees, Paid Online',
+    description: 'Students see their fee breakdown, pay through Stripe and download receipts; admins manage fee structures, track payments and run reports.',
+    tags: ['React', 'Express', 'MySQL', 'Stripe'],
+    category: 'Web',
     links: { github: 'https://github.com/RohanMukka/FeeAutomation' },
     color: '#f1c40f'
   },
   {
     title: 'Patient Assistant DB',
     tagline: 'Healthcare Networking',
-    description: 'A robust database management system designed to connect, manage, and scale patient and healthcare assistant networks.',
-    tags: ['Java', 'Database', 'Healthcare', 'SQL'],
+    description: 'A relational database and Java client for a patient assistance network: clients, volunteers, employees and donors as roles of one Person table, with teams, donations and reports.',
+    tags: ['Java', 'JDBC', 'SQL Server'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/Patient-Assistant-Network-Database-System' },
     color: '#e74c3c'
   },
   {
     title: 'Polarization Detection',
-    tagline: 'Multilingual NLP',
-    description: 'A machine learning pipeline for analyzing text across multiple languages to detect social and political sentiment polarization.',
-    tags: ['Python', 'NLP', 'Machine Learning'],
-    category: 'ML',
+    tagline: 'SemEval 2026 · 22 Languages',
+    description: 'A SemEval 2026 Task 9 study, with Kamal Poshala and Kushi Reddy Kankar: mBERT, mT5, LoRA adapters and LLM prompting compared across 22 languages. Multilingual LoRA generalized best.',
+    tags: ['Python', 'LoRA', 'mT5', 'mBERT'],
+    category: 'Research',
     links: { github: 'https://github.com/RohanMukka/Multilingual-Polarization-Detection' },
     color: '#3498db'
   },
   {
     title: 'Fake Review Detection',
     tagline: 'Text + Behavior Fusion',
-    description: 'Fake Review Detection on Yelp using a combination of Transformer Semantics and Reviewer Behavior modeling.',
-    tags: ['Python', 'NLP', 'Transformers'],
-    category: 'ML',
+    description: 'A two-branch fake review detector for YelpCHI, and an audit of the benchmark: a timestamp alone scored 0.965 AUC, so dates were dropped and models were scored on businesses they never saw.',
+    tags: ['Python', 'PyTorch', 'GNN'],
+    category: 'Research',
     links: { github: 'https://github.com/RohanMukka/Combining-Transformer-Semantics-and-Reviewer-Behavior-for-Fake-Review-Detection-on-Yelp' },
     color: '#c0392b'
   },
@@ -155,7 +155,7 @@ export const projects: Project[] = [
   {
     title: 'JobForge',
     tagline: 'Distributed Job Processing',
-    description: 'Fault-tolerant background job processing system — Redis Streams, priority queues, exponential backoff, worker health checks, and a real-time React dashboard.',
+    description: 'A fault-tolerant task queue built from scratch on Redis Streams: priority queues, exponential-backoff retries, a dead-letter queue, worker heartbeats and a live React dashboard.',
     tags: ['Python', 'Redis', 'React'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/JobForge' },
@@ -164,7 +164,7 @@ export const projects: Project[] = [
   {
     title: 'MLFlowForge',
     tagline: 'End-to-end MLOps',
-    description: 'MLOps pipeline for fraud detection — Airflow DAGs, MLflow model registry, Evidently drift monitoring, automated retraining, FastAPI serving.',
+    description: 'An MLOps pipeline for fraud detection: Airflow DAGs, an MLflow registry with a quality gate, Evidently drift monitoring, automatic retraining and FastAPI serving.',
     tags: ['Airflow', 'MLflow', 'PyTorch'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/MLFlowForge' },
@@ -182,25 +182,25 @@ export const projects: Project[] = [
   {
     title: 'NexusRAG',
     tagline: 'Production-grade RAG',
-    description: 'RAG system with multi-source ingestion, hybrid retrieval (dense + BM25 + reranking), streaming chat, RAGAS evaluation dashboard, and hallucination detection.',
-    tags: ['LLM', 'ChromaDB', 'NextJS'],
+    description: 'A RAG system with multi-source ingestion, hybrid retrieval (dense + BM25, fused with RRF), streaming chat, RAGAS-style evaluation and per-claim hallucination detection.',
+    tags: ['LLM', 'ChromaDB', 'Next.js'],
     category: 'ML',
     links: { github: 'https://github.com/RohanMukka/NexusRAG' },
     color: '#16a085'
   },
   {
     title: 'SafeFlow',
-    tagline: 'Data Safety Management',
-    description: 'A comprehensive data flow and safety management application featuring real-time stream control and processing.',
-    tags: ['Python', 'Pipeline', 'Safety'],
-    category: 'Web',
+    tagline: 'Agents for Crowd Safety',
+    description: 'Five Google ADK agents on Gemini reroute stadium crowds, dispatch stewards and broadcast alerts, checking their own past traces in Arize Phoenix first and waiting for human approval.',
+    tags: ['Google ADK', 'Gemini', 'FastAPI', 'OpenTelemetry'],
+    category: 'ML',
     links: { github: 'https://github.com/RohanMukka/SafeFlow' },
     color: '#3498db'
   },
   {
     title: 'StreamSense',
     tagline: 'Real-Time Event Analytics',
-    description: 'Event streaming analytics platform processing 5k+ events/sec with Kafka, Flink-style processing, Redis, FastAPI, and Next.js.',
+    description: 'A Kafka pipeline that ingests 5,000+ synthetic clickstream events a second, aggregates them in rolling windows into Redis and PostgreSQL, and survives a consumer crash.',
     tags: ['Kafka', 'Redis', 'Python'],
     category: 'System',
     links: { github: 'https://github.com/RohanMukka/StreamSense' },
@@ -220,7 +220,7 @@ export const FEATURED_TITLES = [
   "Fake Review Detection",
 ];
 
-export const CATEGORIES = ["All", "Web", "ML", "System", "Blockchain"] as const;
+export const CATEGORIES = ["All", "Web", "ML", "Research", "System", "Blockchain"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 // Featured projects first, in FEATURED_TITLES order, then the rest.
