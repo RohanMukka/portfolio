@@ -363,6 +363,48 @@ after every step.
     already unused before this; they're among audit gap 8's dead files.
   - **"Emotion Recog" is "Emotion Recognition"** in More work (and in this
     repo's README). Its row wraps to two lines, like Patient Assistant DB.
+- **Audit #5, gap 9 (ready to go live)** is done and approved (2026-11-12),
+  committed and pushed to the branch. The merge to `main` waits on the
+  owner's word only.
+  - **`vercel.json`** (headers only; Vercel still detects the Vite build
+    itself). Hashed `/assets/` files are cached for a year (`immutable`);
+    fonts and project media for 30 days. Every response gets a
+    Content-Security-Policy plus HSTS, nosniff, `X-Frame-Options: DENY`,
+    a referrer policy, `Cross-Origin-Opener-Policy` and a Permissions-Policy
+    turning off camera, microphone, location, payment, USB and topics.
+  - **The policy:** scripts only from the site, plus index.html's one inline
+    script (the saved theme, before first paint) by its SHA-256 hash. Outside
+    requests only to `api.monkeytype.com`, `github-contributions-api.jogruber.de`
+    (the footer cards) and `formsubmit.co` (the contact form); images also
+    from `leetcard.jacoblin.cool`. Styles allow inline (framer-motion and
+    React set styles; the risk is low). No frames, no plugins, no workers.
+    **Change the inline script and its hash must change** (`npm run perf`
+    fails and prints the new one). `.gitattributes` pins `index.html` to LF
+    so the hash is the same on every checkout.
+  - **Link preview:** `public/og.png`, 1200×630, rendered by `npm run og`
+    (`scripts/og/render.mjs`) in the site's fonts and dark colours: the role,
+    the name, the gradient line, the claim. Re-render it when the hero's
+    copy changes. `index.html` now has `og:image` (with size and alt),
+    `twitter:card` `summary_large_image`, a canonical link, and a JSON-LD
+    Person (name, job title, URL, GitHub, LinkedIn, Devpost, LeetCode; no
+    school, since the owner took it off the hero). `public/sitemap.xml`
+    lists the one page; `robots.txt` points to it. Case studies stay on hash
+    routes, so search engines see only the home page (the audit's other half
+    of gap 9; not done).
+  - **`npm run perf` now serves the build with `vercel.json`'s headers** and
+    has two new checks: the policy lists the inline script's hash, and the
+    page (including the three footer cards' requests, which it now hovers)
+    sets off no policy violations. axe runs with the policy bypassed (it's
+    injected inline, which the policy rightly refuses). Proved the check can
+    fail: with Monkeytype taken out of the policy it fails and names the
+    blocked request. All 18 budgets pass. A one-off walk of all eight case
+    studies (one plays a video), X-Ray and the whole page, desktop and
+    phone, found nothing blocked and no errors.
+  - **Not verified on Vercel itself:** the branch's preview deploys are
+    behind Vercel's login (they redirect), so their headers couldn't be read
+    from here. Check them on the live site right after the merge
+    (`curl -I https://portfolio-rohan03.vercel.app/`), and paste the URL
+    into LinkedIn's Post Inspector to refresh its cached preview.
   - ReviewGuard's case study has a **Results** section ("Find the leaks
     yourself.") between its numbers and Architecture. The visitor picks
     what the model sees (review text, behavior, graph edges, and the two

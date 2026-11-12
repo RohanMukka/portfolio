@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "perf": "node scripts/perf/budgets.mjs"
+    "perf": "node scripts/perf/budgets.mjs",
+    "og": "node scripts/og/render.mjs",
+    "data:reviewguard": "node scripts/proof/reviewguard.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",

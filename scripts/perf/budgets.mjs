@@ -7,6 +7,9 @@
 //   waking    a wheel turn at rest draws again promptly
 //   covered   a case study open over the page: the stage draws nothing
 //   hero      the copy index.html shows before any script is the page's own
+//   headers   served with vercel.json's headers: its security policy lets
+//             the page's inline script run and blocks nothing it uses
+//             (including the footer cards' outside requests)
 //   axe       no WCAG 2.2 A/AA violations beyond the ones listed as known
 //
 // It counts things rather than timing them, so it holds on a CI machine
@@ -20,6 +23,7 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import zlib from "node:zlib";
+import crypto from "node:crypto";
 import { createRequire } from "node:module";
 import puppeteer from "puppeteer-core";
 
@@ -54,8 +58,16 @@ const check = (name, ok, detail) => {
   console.log(`${ok ? "pass" : "FAIL"}  ${name.padEnd(44)} ${detail}`);
 };
 
+// vercel.json's headers, applied the way Vercel applies them (every rule
+// whose source matches the path), so the page runs under the real policy.
+const RULES = JSON.parse(fs.readFileSync("vercel.json", "utf8")).headers.map((rule) => ({
+  match: new RegExp(`^${rule.source}$`),
+  headers: Object.fromEntries(rule.headers.map((h) => [h.key, h.value])),
+}));
+const headersFor = (pathname) => Object.assign({}, ...RULES.filter((r) => r.match.test(pathname)).map((r) => r.headers));
+
 // The build, served as a static site (unknown paths fall back to the page).
-const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".webp": "image/webp", ".png": "image/png", ".mp4": "video/mp4", ".pdf": "application/pdf", ".json": "application/json", ".txt": "text/plain" };
+const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".webp": "image/webp", ".png": "image/png", ".mp4": "video/mp4", ".pdf": "application/pdf", ".json": "application/json", ".txt": "text/plain", ".woff2": "font/woff2", ".xml": "application/xml" };
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, ORIGIN);
   let file = path.join(DIST, decodeURIComponent(url.pathname));
@@ -66,7 +78,7 @@ const server = http.createServer((req, res) => {
     }
     file = path.join(DIST, "index.html");
   }
-  res.writeHead(200, { "Content-Type": TYPES[path.extname(file)] ?? "application/octet-stream" });
+  res.writeHead(200, { ...headersFor(url.pathname), "Content-Type": TYPES[path.extname(file)] ?? "application/octet-stream" });
   fs.createReadStream(file).pipe(res);
 });
 
@@ -104,6 +116,18 @@ const run = async () => {
     check(`${bundle.name} size`, kb <= bundle.maxKb, `${kb.toFixed(1)} KB gzipped (budget ${bundle.maxKb})`);
   }
 
+  // The policy allows index.html's inline script by its hash.
+  const csp = headersFor("/")["Content-Security-Policy"] ?? "";
+  const inline = [...fs.readFileSync(path.join(DIST, "index.html"), "utf8").matchAll(/<script>([\s\S]*?)<\/script>/g)].map(
+    (m) => `'sha256-${crypto.createHash("sha256").update(m[1]).digest("base64")}'`,
+  );
+  const unlisted = inline.filter((h) => !csp.includes(h));
+  check(
+    "security policy allows the inline script",
+    inline.length > 0 && unlisted.length === 0,
+    unlisted.length ? `add ${unlisted.join(" ")} to script-src in vercel.json` : `${inline.length} inline script, hash listed`,
+  );
+
   await new Promise((r) => server.listen(PORT, r));
   const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: GL_FLAGS, protocolTimeout: 240000 });
   try {
@@ -118,6 +142,11 @@ const run = async () => {
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
+    // Chrome reports anything the security policy blocks on the console.
+    const blocked = [];
+    page.on("console", (m) => {
+      if (/Content Security Policy/i.test(m.text())) blocked.push(m.text());
+    });
     await page.evaluateOnNewDocument(instrument);
     const cdp = await page.createCDPSession();
     await cdp.send("Performance.enable");
@@ -158,6 +187,15 @@ const run = async () => {
 
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await sleep(500);
+    // The footer cards make the page's only outside requests; pointing at
+    // each link loads its card. Whether the request succeeds doesn't matter
+    // here (a blocked one is reported before it's sent).
+    for (const name of ["GitHub", "LeetCode", "Monkeytype"]) {
+      const link = await page.evaluateHandle((n) => [...document.querySelectorAll("#footer a")].find((a) => a.textContent.trim().startsWith(n)), name);
+      await link.hover();
+      await sleep(1500);
+    }
+    await page.mouse.move(5, 5);
     await atRest("footer");
 
     await page.mouse.move(640, 400);
@@ -180,8 +218,12 @@ const run = async () => {
     });
     await sleep(3000);
     await atRest("case study open");
+    check("security policy blocks nothing the page uses", blocked.length === 0, blocked.length ? blocked[0].slice(0, 160) : "no violations reported");
 
-    // Accessibility
+    // Accessibility. axe goes in as an inline script, which the policy
+    // rightly refuses; it's the test's, not the page's, so this step alone
+    // runs with the policy off.
+    await page.setBypassCSP(true);
     await page.goto(`${ORIGIN}/?full`, { waitUntil: "load" });
     await page.waitForFunction(() => !document.querySelector("#hero > .absolute.inset-0.z-20"), { timeout: 90000 });
     await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
