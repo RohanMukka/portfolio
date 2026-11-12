@@ -295,11 +295,9 @@ after every step.
     card sources are contacted only on hover); all 14 budgets pass. Before
     the cards came back, Lighthouse read phone 74 → 79 (LCP 4.7 → 3.9 s),
     desktop 95 → 97, best practices 96 → 100; it wasn't re-run after.
-  - Open question from the owner: whether the hero's "M.S. CS, Oklahoma ·
-    4.0" should stay now the degree is finished. Advice given: keep it and
-    add the year so it reads as completed; waiting on the owner.
-  - Noticed: About says "400+ algorithm problems"; the LeetCode card now
-    shows 514 solved.
+  - Hero degree line (owner, 2026-11-12): now "M.S. CS 2026 · 4.0". The
+    year shows the degree is finished; the owner dropped "Oklahoma".
+    About's heading says "500+ algorithm problems" (LeetCode shows 514).
   - Seen while measuring, not caused by this: the font-swap layout shift
     (audit gap 11) also shows on phones at 412 px wide (0.087, the same on
     the build from before this step). Lighthouse catches it or not

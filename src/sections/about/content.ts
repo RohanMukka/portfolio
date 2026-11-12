@@ -29,7 +29,7 @@ export const PANELS = [
   },
   {
     kicker: "Outside code",
-    heading: "400+ algorithm problems, a few hackathons, 50+ students mentored.",
+    heading: "500+ algorithm problems, a few hackathons, 50+ students mentored.",
     body: "I compete in and organise hackathons, and taught web development at the GDSC bootcamp.",
   },
 ];

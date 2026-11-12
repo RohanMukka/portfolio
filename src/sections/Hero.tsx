@@ -125,7 +125,7 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
             {/* Phones: role and availability share the first row, the degree
                 gets its own (it doesn't fit half a phone's width). */}
             <span>AI / ML engineer</span>
-            <span className="order-last md:order-none col-span-2 md:col-span-1 md:text-center">M.S. CS, Oklahoma · 4.0</span>
+            <span className="order-last md:order-none col-span-2 md:col-span-1 md:text-center">M.S. CS 2026 · 4.0</span>
             <span className="text-right">
               <span className="text-accent">●</span> Available for work
             </span>
