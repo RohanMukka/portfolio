@@ -157,12 +157,15 @@ const vertexShader = /* glsl */ `
     vec2 at = texture2D(uName, (cell + 0.5) / uNameSize).xy;
     float shimmer = pow(0.5 + 0.5 * sin(at.x * 1.7 + at.y * 0.8 - uTime * 1.3), 6.0);
     Shape o;
-    o.pos = vec3(at + (t.xy - 0.5) * 0.02, (t.z - 0.5) * 0.06);
-    o.glow = 0.85 + 0.3 * t.w + shimmer * 0.45;
+    // On a phone the letters are a third the size on the page, so the points
+    // are finer, sit tighter on the letter and glow less: at the desktop's
+    // settings they ran together and the name read as a smear.
+    o.pos = vec3(at + (t.xy - 0.5) * mix(0.02, 0.011, uMobile), (t.z - 0.5) * mix(0.06, 0.03, uMobile));
+    o.glow = (0.85 + 0.3 * t.w + shimmer * 0.45) * mix(1.0, 1.05, uMobile);
     // The brand gradient across the name; on paper it stays in the blues,
     // like the page's royal-blue type.
     o.hue = clamp(at.x / (uHalfW * 1.8) + 0.5, 0.0, 1.0) * mix(1.0, 0.3, uLight);
-    o.size = 0.95 + shimmer * 0.3;
+    o.size = (0.95 + shimmer * 0.3) * mix(1.0, 0.7, uMobile);
     return o;
   }
 

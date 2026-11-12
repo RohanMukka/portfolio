@@ -4,8 +4,9 @@ import { loadStage } from "../../stage/Stage";
 import { isSoftwareRendering } from "../../lib/rendering";
 import { EASE } from "./shared";
 
-const MAX_MS = 4000; // never hold visitors hostage to a slow asset
-const MIN_MS = 1200; // long enough to read as an intro, not a wait
+const MAX_MS = 4000; // never wait longer than this on the name's font
+const STAGE_MS = 1500; // nor this long on the 3D: the page's own name opens the hero, and the points take over when they're in
+const MIN_MS = 1200; // counted from the page's first paint: long enough to read as an intro, not a wait
 const HINT_MS = 2400; // long enough to also read the graphics tip
 const STEP_MS = 260; // a fast load still moves the line in steps you can see
 
@@ -16,21 +17,17 @@ export const INTRO_OPEN = { duration: 1.6, ease: [0.65, 0, 0.35, 1] as const };
 export type IntroPhase = "loading" | "opening" | "open";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const withCap = (p: Promise<unknown>) => Promise.race([p.catch(() => undefined), sleep(MAX_MS)]);
-
-const pageLoaded = () =>
-  document.readyState === "complete"
-    ? Promise.resolve()
-    : new Promise<void>((r) => window.addEventListener("load", () => r(), { once: true }));
+const withCap = (p: Promise<unknown>, ms: number) => Promise.race([p.catch(() => undefined), sleep(ms)]);
 
 // What the intro waits for. The name's own face comes first, so the name is
 // never measured or shown in a fallback font. Lite mode has no 3D stage.
 // The stage counts as in once its shaders are compiled (scene.ts), so the
-// first frame doesn't stall on them.
+// first frame doesn't stall on them; on a slow phone or connection it gets
+// STAGE_MS and then the intro opens without it (scene.ts hands the name
+// over to the points once they've formed).
 const LOAD_TASKS = [
-  () => document.fonts.load('800 1em "Inter Tight"').then(() => document.fonts.ready),
-  () => (isSoftwareRendering() ? Promise.resolve() : loadStage().then(({ stageReady }) => stageReady)),
-  pageLoaded,
+  () => withCap(document.fonts.load('800 1em "Inter Tight"').then(() => document.fonts.ready), MAX_MS),
+  () => (isSoftwareRendering() ? Promise.resolve() : withCap(loadStage().then(({ stageReady }) => stageReady), STAGE_MS)),
 ];
 
 // Real loading: `progress` runs 0 → 90 as the tasks settle, and `ready` turns
@@ -41,12 +38,15 @@ const useIntroLoad = (minMs: number) => {
 
   useEffect(() => {
     let cancelled = false;
-    const started = performance.now();
+    // The intro's first frame has been up since the page's first paint
+    // (index.html), so its minimum counts from the page's start, not
+    // from when this script arrived: a slow connection has already waited.
+    const started = 0;
     let done = 0;
-    let nextStep = started;
+    let nextStep = performance.now();
 
     const runs = LOAD_TASKS.map((task) =>
-      withCap(task()).then(async () => {
+      task().then(async () => {
         const at = Math.max(performance.now(), nextStep);
         nextStep = at + STEP_MS;
         await sleep(at - performance.now());
@@ -108,19 +108,9 @@ const HeroIntro = ({ phase, nameRef, onReady, onOpened }: {
     return () => observer.disconnect();
   }, [nameRef]);
 
-  // The page's HTML drew this intro's first frame before any script ran
-  // (index.html, #boot); now that the real one is in place, it fades out.
-  useEffect(() => {
-    const boot = document.getElementById("boot");
-    if (!boot) return;
-    const frame = requestAnimationFrame(() => boot.classList.add("gone"));
-    const timer = window.setTimeout(() => boot.remove(), 600);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.clearTimeout(timer);
-    };
-  }, []);
-
+  // index.html drew this intro's first frame before any script ran (the same
+  // line and counter, in the same place inside #root); React replaced it
+  // with this one in a single frame, so there is nothing to fade.
   useEffect(() => {
     if (!ready) return;
     animate(progress, 100, { duration: 0.5, ease: EASE });
@@ -159,7 +149,8 @@ const HeroIntro = ({ phase, nameRef, onReady, onOpened }: {
         <div className="relative h-full w-full">
           {hint && (
             <motion.p
-              className="absolute bottom-8 left-6 md:bottom-12 md:left-14 max-w-[300px] text-[10px] leading-relaxed uppercase tracking-[0.2em] text-primary-secondary"
+              className="absolute left-3.5 md:left-10 mt-5 max-w-[300px] text-[10px] leading-relaxed uppercase tracking-[0.2em] text-primary-secondary"
+              style={{ top: at }}
               initial={false}
               {...chrome}
             >
@@ -167,8 +158,10 @@ const HeroIntro = ({ phase, nameRef, onReady, onOpened }: {
               acceleration on in its settings for the full one.
             </motion.p>
           )}
+          {/* Under the line's right end: the hero's links have the corner. */}
           <motion.div
-            className="absolute bottom-8 right-6 md:bottom-12 md:right-14 flex items-baseline gap-3 text-primary-text"
+            className="absolute right-3.5 md:right-10 mt-5 flex items-baseline gap-3 text-primary-text"
+            style={{ top: at }}
             initial={false}
             {...chrome}
           >

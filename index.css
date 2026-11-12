@@ -2,8 +2,9 @@
 
 /* The site's fonts, served from public/fonts (Latin subsets from Google
    Fonts, SIL Open Font License): one variable file per family covers every
-   weight used. Not preloaded: on a slow connection an early font download
-   slows the main script, which is what the intro actually waits on. */
+   weight used. Not preloaded, and not asked for until the main script is in
+   (see --face-* below): on a slow connection an early font download slows
+   that script, which is what makes the page work. */
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -37,6 +38,63 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Stand-ins for the moment before each font arrives: a font the device
+   already has, resized so its letters take the same room (widths measured
+   against the real fonts on the hero's own text). The text is on screen from
+   the first paint, and when the real font swaps in, lines keep their breaks
+   and nothing below them moves. */
+@font-face {
+  font-family: "Inter Fallback";
+  font-weight: 400 600;
+  src: local("Arial"), local("Roboto");
+  size-adjust: 107.3%;
+  ascent-override: 90.3%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Tight Fallback";
+  font-weight: 500 800;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Roboto Bold"), local("Arial");
+  size-adjust: 93.5%;
+  ascent-override: 103.6%;
+  descent-override: 25.8%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Instrument Serif Fallback";
+  font-style: italic;
+  src: local("Times New Roman Italic"), local("TimesNewRomanPS-ItalicMT"), local("Times New Roman");
+  size-adjust: 83.4%;
+  ascent-override: 118.7%;
+  descent-override: 37.2%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "JetBrains Mono Fallback";
+  src: local("Courier New");
+  ascent-override: 102%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+}
+
+/* Which faces the page asks for. The first paint uses only the stand-ins
+   above, so no font file competes with the main script for a slow
+   connection; the script's first line adds .fonts to <html> (index.tsx) and
+   the real fonts load then, swapping in without moving anything. */
+:root {
+  --face-sans: "Inter Fallback", system-ui, sans-serif;
+  --face-display: "Inter Tight Fallback", system-ui, sans-serif;
+  --face-serif: "Instrument Serif Fallback", Georgia, serif;
+  --face-mono: "JetBrains Mono Fallback", ui-monospace, monospace;
+}
+:root.fonts {
+  --face-sans: "Inter", "Inter Fallback", system-ui, sans-serif;
+  --face-display: "Inter Tight", "Inter Tight Fallback", system-ui, sans-serif;
+  --face-serif: "Instrument Serif", "Instrument Serif Fallback", Georgia, serif;
+  --face-mono: "JetBrains Mono", "JetBrains Mono Fallback", ui-monospace, monospace;
+}
+
 @theme {
   --color-background: var(--bg-primary);
   --color-bg-elevated: var(--bg-elevated);
@@ -46,9 +104,9 @@
   --color-accent: var(--accent);
   --color-glass-border: var(--glass-border);
   --color-surface-subtle: var(--surface-subtle);
-  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
-  --font-serif: "Instrument Serif", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: var(--face-display);
+  --font-serif: var(--face-serif);
+  --font-mono: var(--face-mono);
 }
 
 
@@ -100,7 +158,7 @@
   }
 
   html {
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: var(--face-sans);
     line-height: 1.6;
     font-weight: 400;
     color-scheme: light;
@@ -123,7 +181,7 @@
   h4,
   h5,
   h6 {
-    font-family: "Inter Tight", "Inter", system-ui, sans-serif;
+    font-family: var(--face-display);
     font-weight: 700;
     letter-spacing: -0.035em;
   }
@@ -316,7 +374,7 @@ html[data-stage-name] [data-hero-name] {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--face-sans);
   font-size: 13px;
   letter-spacing: 0;
   text-transform: none;

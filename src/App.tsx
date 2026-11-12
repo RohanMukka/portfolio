@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useState, useEffect, useCallback } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
@@ -21,12 +21,10 @@ import { useXRayOpen, watchXRayKey } from "./lib/xray";
 const XRay = lazy(() => import("./xray/XRay"));
 
 const App = () => {
-  const [introDone, setIntroDone] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const [atFooter, setAtFooter] = useState(false);
 
-  const finishIntro = useCallback(() => setIntroDone(true), []);
   const xray = useXRayOpen();
 
   useEffect(() => {
@@ -60,15 +58,9 @@ const App = () => {
     return () => seen.disconnect();
   }, []);
 
-  // Hold the page still while the intro plays, then start smooth scrolling.
-  useEffect(() => {
-    if (introDone) return startSmoothScroll();
-    const root = document.documentElement;
-    root.style.overflow = "hidden";
-    return () => {
-      root.style.overflow = "";
-    };
-  }, [introDone]);
+  // Smooth scrolling from the start: the intro plays in the hero and never
+  // holds the page (it used to lock scrolling until its plates had opened).
+  useEffect(() => startSmoothScroll(), []);
 
   return (
     <div className="bg-transparent text-primary-text relative min-h-screen">
@@ -99,7 +91,7 @@ const App = () => {
       {/* overflow-x-clip, not -hidden: hidden makes <main> a scroll container,
           which silently breaks position: sticky (the pinned About story) inside it. */}
       <main className="relative w-full overflow-x-clip">
-        <Hero onIntroDone={finishIntro} />
+        <Hero />
         <Architecture />
         <Projects />
         <Skills />

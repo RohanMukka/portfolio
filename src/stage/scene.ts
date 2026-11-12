@@ -287,7 +287,7 @@ export const createStage = (
   let nameTimer = 0;
   let hasName = false;
   const drawName = () => {
-    const name = sampleName(opts.mobile ? 4500 : 12000, frame.halfH);
+    const name = sampleName(opts.mobile ? 5400 : 12000, frame.halfH);
     piece.setName?.(name);
     hasName = !!name;
     if (!name) delete document.documentElement.dataset.stageName;

@@ -12,20 +12,6 @@
     <meta property="og:title" content="Rohan Mukka · AI/ML Engineer" />
     <meta property="og:description" content="I build AI systems that can prove they work: retrieval, evaluation, MLOps and agents." />
     <meta name="twitter:card" content="summary" />
-    <!-- The intro's first frame (a line of the brand's colours on the page's
-         background, and a loading counter), drawn straight from the HTML so
-         something is on screen before the scripts arrive. The intro takes
-         over at the same place and this fades out (HeroIntro.tsx). -->
-    <style>
-      #boot { position: fixed; inset: 0; z-index: 200; background: #0a0a0d; transition: opacity 0.4s ease; }
-      [data-theme="light"] #boot { background: #f4f1ea; }
-      #boot.gone { opacity: 0; pointer-events: none; }
-      #boot-line { position: absolute; left: 14px; right: 14px; top: 46.5%; height: 8px; margin-top: -4px; border-radius: 9999px; background: linear-gradient(90deg, #3b6cff, #e0457b 55%, #ff7a3d); transform: scaleX(0.04); }
-      #boot-count { position: absolute; right: 70px; bottom: 62px; margin: 0; font: 500 10px/1 ui-monospace, monospace; letter-spacing: 0.3em; text-transform: uppercase; color: #94a3b8; }
-      [data-theme="light"] #boot-count { color: #003399d9; }
-      @media (max-width: 1023px) { #boot-line { top: 44.5%; } }
-      @media (max-width: 767px) { #boot-line { left: 10px; right: 10px; top: 41%; } #boot-count { right: 34px; bottom: 42px; } }
-    </style>
     <script>
       // Saved theme before first paint (see src/lib/theme.ts); dark by default.
       (function () {
@@ -42,10 +28,56 @@
       })();
     </script>
     <link rel="stylesheet" href="/index.css" />
+    <!-- Without scripts nothing is loading, so the loading line doesn't show. -->
+    <noscript><style>[data-intro-frame] > * { display: none; }</style></noscript>
   </head>
   <body>
-    <div id="boot" aria-hidden="true"><div id="boot-line"></div><p id="boot-count">Loading 000</p></div>
-    <div id="root"></div>
+    <div id="root">
+      <!-- The hero's copy and the intro's first frame, here so they are on
+           screen (and the links clickable) from the first paint, before any
+           script has arrived. React renders the same markup
+           in the same place and takes over (src/sections/Hero.tsx): change the
+           two together. npm run perf checks that they still say the same. -->
+      <div class="text-primary-text relative min-h-screen">
+        <main class="relative w-full overflow-x-clip">
+          <section class="relative h-[100dvh] min-h-[640px]">
+            <div class="relative h-full w-full flex flex-col">
+              <div class="relative z-[25] px-6 md:px-14 pt-8 md:pt-12">
+                <div data-hero-copy class="hud grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-primary-secondary">
+                  <span>AI / ML engineer</span>
+                  <span class="order-last md:order-none col-span-2 md:col-span-1 md:text-center">M.S. CS 2026 · 4.0</span>
+                  <span class="text-right"><span class="text-accent">●</span> Available for work</span>
+                </div>
+              </div>
+              <!-- The intro's first frame: its line of the brand's colours and its
+                   counter, at the middle of the space the name will take, which
+                   is exactly where the intro draws them (HeroIntro.tsx). -->
+              <div data-intro-frame class="relative flex-1" aria-hidden="true">
+                <div class="absolute inset-x-2.5 md:inset-x-3.5 top-1/2 h-2 -mt-1">
+                  <div class="h-full rounded-full bg-[linear-gradient(90deg,#3b6cff,#e0457b_55%,#ff7a3d)] scale-x-[0.04]"></div>
+                </div>
+                <div class="absolute right-6 md:right-[54px] top-1/2 mt-[30px] md:mt-[34px] flex items-baseline gap-3 text-primary-text">
+                  <span class="text-[10px] uppercase tracking-[0.3em] text-primary-secondary">Loading</span>
+                  <span class="font-display text-sm tabular-nums tracking-[0.1em]">000</span>
+                </div>
+              </div>
+              <div data-hero-copy class="relative z-[25] px-6 md:px-14 pb-10 md:pb-14 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div class="max-w-[640px]">
+                  <p class="font-display font-semibold text-primary-text text-[clamp(1.5rem,2.4vw,2.25rem)] leading-[1.05] tracking-[-0.035em]">I build <em class="font-serif italic font-normal tracking-normal text-accent">AI systems</em> that can prove they work.</p>
+                  <p class="mt-4 max-w-[560px] text-sm md:text-base text-primary-secondary leading-relaxed">Retrieval that checks its own answers, models that can't ship under the bar, benchmarks audited for leaks before they're trusted.</p>
+                </div>
+                <div class="flex flex-wrap md:justify-end gap-x-8 gap-y-2">
+                  <a href="/Rohan_Mukka_Resume.pdf" download="Rohan_Mukka_Resume.pdf" class="group inline-flex items-center gap-2 py-2 text-xs md:text-sm font-medium uppercase tracking-[0.22em] text-primary-text"><span class="relative">Resume<span class="absolute left-0 -bottom-1 h-px w-full bg-primary-text"></span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></a>
+                  <a href="https://github.com/rohanmukka" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 py-2 text-xs md:text-sm font-medium uppercase tracking-[0.22em] text-primary-text"><span class="relative">GitHub<span class="absolute left-0 -bottom-1 h-px w-full bg-primary-text"></span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+                  <a href="mailto:rohanmukka07@gmail.com" class="group inline-flex items-center gap-2 py-2 text-xs md:text-sm font-medium uppercase tracking-[0.22em] text-primary-text"><span class="relative">Email<span class="absolute left-0 -bottom-1 h-px w-full bg-primary-text"></span></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></a>
+                  <a href="https://linkedin.com/in/rohanmukka" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 py-2 text-xs md:text-sm font-medium uppercase tracking-[0.22em] text-primary-text"><span class="relative">LinkedIn<span class="absolute left-0 -bottom-1 h-px w-full bg-primary-text"></span></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

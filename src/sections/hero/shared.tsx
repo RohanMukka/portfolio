@@ -49,46 +49,6 @@ export const Magnetic = ({ href, className, children, download, external, onClic
   );
 };
 
-// A line whose words rise one by one from behind a mask, once `play` is on.
-// `{ em }` parts are set in the italic serif, in the accent colour unless
-// `emClassName` says otherwise. Screen readers get the line as one sentence;
-// the animated words are hidden from them (one by one, they'd be read as
-// separate items).
-export type RevealPart = string | { em: string };
-
-export const RevealWords = ({ parts, delay = 0, play = true, className = "", emClassName = "text-accent" }: {
-  parts: RevealPart[];
-  delay?: number;
-  play?: boolean;
-  className?: string;
-  emClassName?: string;
-}) => {
-  const words = parts.flatMap((part) =>
-    typeof part === "string"
-      ? part.split(" ").filter(Boolean).map((text) => ({ text, em: false }))
-      : part.em.split(" ").map((text) => ({ text, em: true })),
-  );
-  return (
-    <p className={className}>
-      <span className="sr-only">{words.map((w) => w.text).join(" ")}</span>
-      {words.map((w, i) => (
-        <React.Fragment key={i}>
-          <span className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]" aria-hidden="true">
-            <motion.span
-              className={`inline-block ${w.em ? `font-serif italic font-normal tracking-normal ${emClassName}` : ""}`}
-              initial={{ y: "110%" }}
-              animate={{ y: play ? 0 : "110%" }}
-              transition={{ duration: 0.9, ease: EASE, delay: delay + i * 0.04 }}
-            >
-              {w.text}
-            </motion.span>
-          </span>{" "}
-        </React.Fragment>
-      ))}
-    </p>
-  );
-};
-
 export const fadeUp = (delay: number, play = true) => ({
   initial: { opacity: 0, y: 16 },
   animate: play ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 },

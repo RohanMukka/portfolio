@@ -6,6 +6,7 @@
 //             frames asked for, no layouts (src/stage/clock.ts)
 //   waking    a wheel turn at rest draws again promptly
 //   covered   a case study open over the page: the stage draws nothing
+//   hero      the copy index.html shows before any script is the page's own
 //   axe       no WCAG 2.2 A/AA violations beyond the ones listed as known
 //
 // It counts things rather than timing them, so it holds on a CI machine
@@ -105,6 +106,15 @@ const run = async () => {
   await new Promise((r) => server.listen(PORT, r));
   const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: GL_FLAGS, protocolTimeout: 240000 });
   try {
+    // The hero's copy as index.html carries it for the first paint (read
+    // with scripts off), to compare with what the page renders.
+    const heroCopy = () => [...document.querySelectorAll("[data-hero-copy]")].map((el) => el.textContent.replace(/\s+/g, "")).join(" | "); // spacing between tags differs; the words mustn't
+    const bare = await browser.newPage();
+    await bare.setJavaScriptEnabled(false);
+    await bare.goto(`${ORIGIN}/`, { waitUntil: "load" });
+    const staticCopy = await bare.evaluate(heroCopy);
+    await bare.close();
+
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.evaluateOnNewDocument(instrument);
@@ -114,6 +124,8 @@ const run = async () => {
     // `?full` keeps the 3D stage on a machine without a graphics card.
     await page.goto(`${ORIGIN}/?full`, { waitUntil: "load" });
     await page.waitForFunction(() => !document.querySelector("#hero > .absolute.inset-0.z-20"), { timeout: 90000 });
+    const liveCopy = await page.evaluate(heroCopy);
+    check("hero copy in index.html matches the page", staticCopy.length > 0 && staticCopy === liveCopy, staticCopy === liveCopy ? `${staticCopy.length} characters, before any script` : `index.html: "${staticCopy}" / page: "${liveCopy}"`);
     const drew = await page.evaluate(() => window.__draws.length > 0);
     check("stage draws after the intro", drew, drew ? "the 3D stage is running" : "no WebGL draws at all; is WebGL available?");
 

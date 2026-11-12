@@ -302,6 +302,55 @@ after every step.
     (audit gap 11) also shows on phones at 412 px wide (0.087, the same on
     the build from before this step). Lighthouse catches it or not
     depending on when the fonts land.
+- **Audit #5, gap 5 (the first 10 seconds)** is built (2026-11-12) and
+  waits for the owner's review; not committed.
+  - **The hero's copy is HTML from the first paint.** `index.html` carries
+    the top row, the claim, the sub-line and the four links inside `#root`,
+    with the same classes `Hero.tsx` uses, so they are on screen and
+    clickable before any script arrives; React renders the same markup in
+    the same place and takes over (measured: the copy doesn't move a pixel).
+    They no longer animate in. Change the two files together; `npm run perf`
+    has a check that their words match ("hero copy in index.html matches the
+    page"). The copy sits above the intro's plates (`z-[25]`), which open
+    behind it.
+  - **The intro's first frame** (the line and the counter) is in that same
+    static markup, at the middle of the space the name takes, which is
+    where `HeroIntro` measures its seam: identical to a tenth of a pixel
+    at six window sizes. The old fixed `#boot` overlay and its fade are
+    gone. The counter moved from the bottom-right corner (now the links')
+    to under the line's right end.
+  - **The page never locks.** Smooth scrolling starts at mount
+    (`App.tsx`); the intro plays in the hero whether or not you scroll.
+  - **The intro waits less.** Its 1.2 s minimum counts from the page's
+    start, not from when the script arrived; it no longer waits for the
+    window's load event; and it gives the 3D stage 1.5 s (`STAGE_MS`),
+    then opens on the page's own name and lets the points take over
+    (`handOffName` in `scene.ts`, unchanged).
+  - **Fonts.** Each family has a stand-in (`index.css`: a system font
+    resized with `size-adjust` and metric overrides to the measured width
+    of the real one). The first paint uses only the stand-ins; `index.tsx`'s
+    first line adds `.fonts` to `<html>` and the real fonts load then
+    (`--face-*`), so no font competes with the main script. Asking for the
+    fonts from the first paint was tried and measured worse (Lighthouse
+    phone 79 against 83; interactive 0.5 s later on slow 4G).
+  - **The particle name on phones** uses finer points that sit tighter on
+    the letters (`nameShape` in `particles.ts`, `uMobile`; 5,400 points
+    instead of 4,500).
+  - The Resume link's label now starts with its visible text ("Resume
+    (downloads the PDF)"); axe flagged the old one once the link was
+    visible from the start.
+  - Measured on a build. Layout shift: desktop 0.15 → 0.005, phone 0.09 →
+    0.005. Slow 4G phone with a 4× slower CPU: copy on screen 0.6 s (the
+    largest paint was 7.3 s), interactive 2.1 s, name in points 3.2 s,
+    scroll free from the start (it unlocked at 6.1 s). Lighthouse phone
+    79 → 83, desktop 97 → 98. All 15 budgets pass.
+  - **Not reached:** the audit hoped for a phone score near 90. Lighthouse
+    takes the name's letters as the page's largest paint, and the name
+    appears when the intro opens (3.8 s simulated). Getting under 2.5 s
+    means showing the name before the intro, which changes the intro; that
+    is the owner's call.
+  - **Not done:** slimming framer-motion (`LazyMotion`). It is used in 22
+    files; it's a step of its own.
 
 ## Upgrade plan: one step at a time
 

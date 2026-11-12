@@ -6,7 +6,7 @@ import FullWidthName from './hero/FullWidthName';
 import HeroIntro, { INTRO_OPEN, type IntroPhase } from './hero/HeroIntro';
 import LiteStream from './hero/LiteStream';
 import { isSoftwareRendering } from '../lib/rendering';
-import { Magnetic, RevealWords, fadeUp } from './hero/shared';
+import { Magnetic, fadeUp } from './hero/shared';
 import { openStage } from '../stage/store';
 import { RESUME_FILE, RESUME_URL } from '../lib/resume';
 import { EMAIL, GITHUB_URL, LINKEDIN_URL, copyEmail } from '../lib/contact';
@@ -60,7 +60,14 @@ const Corner = ({ className }: { className: string }) => (
 // page loads, then plates slide apart from it while the stream unfolds out
 // of that same line and the name pulls into focus. Scrolling away, the copy
 // lifts off ahead of the name while the stream pulls into About's timeline.
-const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
+//
+// The copy (the top row, the claim and the four links) doesn't wait for any
+// of that: index.html carries the same markup inside #root, so it is on
+// screen and clickable from the first paint, and React takes it over in
+// place. It sits above the intro's plates, which open behind it. Change the
+// copy or its classes here and in index.html together (npm run perf checks
+// that the two still say the same thing).
+const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: p } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
@@ -92,10 +99,7 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
     }
   }, []);
 
-  const opened = useCallback(() => {
-    setPhase('open');
-    onIntroDone();
-  }, [onIntroDone]);
+  const opened = useCallback(() => setPhase('open'), []);
 
   return (
     <section
@@ -117,11 +121,8 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
           <Corner className="bottom-4 md:bottom-6 right-4 md:right-7 border-b border-r" />
         </motion.div>
 
-        <motion.div style={{ opacity: topFade }} className="relative z-[3] px-6 md:px-14 pt-8 md:pt-12">
-          <motion.div
-            className="hud grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-primary-secondary"
-            {...fadeUp(0.15, entered)}
-          >
+        <motion.div style={{ opacity: topFade }} className="relative z-[25] px-6 md:px-14 pt-8 md:pt-12">
+          <div data-hero-copy className="hud grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 text-primary-secondary">
             {/* Phones: role and availability share the first row, the degree
                 gets its own (it doesn't fit half a phone's width). */}
             <span>AI / ML engineer</span>
@@ -129,7 +130,7 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
             <span className="text-right">
               <span className="text-accent">●</span> Available for work
             </span>
-          </motion.div>
+          </div>
         </motion.div>
 
         <div className="relative z-[1] flex-1 flex flex-col items-center justify-center px-5 md:px-14">
@@ -147,25 +148,21 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
 
         <motion.div
           style={{ opacity: fade, y: copyY }}
-          className="relative z-[3] px-6 md:px-14 pb-10 md:pb-14 flex flex-col md:flex-row md:items-end justify-between gap-6"
+          data-hero-copy
+          className="relative z-[25] px-6 md:px-14 pb-10 md:pb-14 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div className="max-w-[640px]">
-            <RevealWords
-              play={entered}
-              className="font-display font-semibold text-primary-text text-[clamp(1.5rem,2.4vw,2.25rem)] leading-[1.05] tracking-[-0.035em]"
-              parts={['I build', { em: 'AI systems' }, 'that can prove they work.']}
-            />
-            <motion.p
-              className="mt-4 max-w-[560px] text-sm md:text-base text-primary-secondary leading-relaxed"
-              {...fadeUp(0.3, entered)}
-            >
+            <p className="font-display font-semibold text-primary-text text-[clamp(1.5rem,2.4vw,2.25rem)] leading-[1.05] tracking-[-0.035em]">
+              I build <em className="font-serif italic font-normal tracking-normal text-accent">AI systems</em> that can prove they work.
+            </p>
+            <p className="mt-4 max-w-[560px] text-sm md:text-base text-primary-secondary leading-relaxed">
               Retrieval that checks its own answers, models that can't ship under the bar, benchmarks audited for leaks
               before they're trusted.
-            </motion.p>
+            </p>
           </div>
           {/* The four things a recruiter comes for, one click each. */}
-          <motion.div className="flex flex-wrap md:justify-end gap-x-8 gap-y-2" {...fadeUp(0.35, entered)}>
-            <TextLink href={RESUME_URL} download={RESUME_FILE} icon="down" label="Download résumé (PDF)">Resume</TextLink>
+          <div className="flex flex-wrap md:justify-end gap-x-8 gap-y-2">
+            <TextLink href={RESUME_URL} download={RESUME_FILE} icon="down" label="Resume (downloads the PDF)">Resume</TextLink>
             <TextLink href={GITHUB_URL} external>GitHub</TextLink>
             <TextLink
               href={`mailto:${EMAIL}`}
@@ -177,7 +174,7 @@ const Hero = ({ onIntroDone }: { onIntroDone: () => void }) => {
             </TextLink>
             <TextLink href={LINKEDIN_URL} external>LinkedIn</TextLink>
             <span className="sr-only" aria-live="polite">{copied ? 'Email address copied' : ''}</span>
-          </motion.div>
+          </div>
         </motion.div>
 
         <motion.div
