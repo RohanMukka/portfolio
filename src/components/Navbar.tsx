@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { ArrowDown, Moon, Pause, Play, Sun } from "lucide-react";
+import { ArrowDown, Pause, Play } from "lucide-react";
 import { useActiveSection } from "../lib/useActiveSection";
 import { useMediaQuery } from "../lib/useMediaQuery";
 import { useModal } from "../lib/useModal";
 import { setMotionPaused, useMotionPaused } from "../lib/motion";
-import { currentTheme, setTheme, type Theme } from "../lib/theme";
 import { setPageScrollPaused } from "../lib/smoothScroll";
 import { MD } from "../lib/breakpoints";
 import { RESUME_FILE, RESUME_URL } from "../lib/resume";
+import ThemeButton from "./ThemeButton";
 
 const LINKS = [
   { name: "About", id: "architecture" },
@@ -19,27 +19,6 @@ const LINKS = [
 ];
 
 const pad = (n: number) => String(n).padStart(2, "0");
-
-const ThemeButton = ({ theme, onToggle }: { theme: Theme; onToggle: () => void }) => (
-  <button
-    type="button"
-    onClick={onToggle}
-    aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-    className="relative grid place-items-center w-9 h-9 rounded-full border border-primary-text/15 text-primary-text hover:border-accent hover:text-accent transition-colors"
-  >
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.span
-        key={theme}
-        initial={{ rotate: -90, opacity: 0 }}
-        animate={{ rotate: 0, opacity: 1 }}
-        exit={{ rotate: 90, opacity: 0 }}
-        transition={{ duration: 0.25 }}
-      >
-        {theme === "dark" ? <Moon size={15} /> : <Sun size={15} />}
-      </motion.span>
-    </AnimatePresence>
-  </button>
-);
 
 // Pauses the page's ambient motion, or plays it again (see lib/motion.ts).
 // A toggle: the name stays the same and aria-pressed says which way it's set.
@@ -68,7 +47,6 @@ const MotionButton = () => {
 // closes it.
 const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [theme, setThemeState] = useState<Theme>(currentTheme);
   const active = useActiveSection(LINKS.map((l) => l.id), 100);
   const activeIndex = LINKS.findIndex((l) => l.id === active);
   const shown = isScrolled || mobileOpen;
@@ -80,12 +58,6 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
 
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setThemeState(next);
-    setTheme(next);
-  };
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -139,13 +111,13 @@ const Navbar = ({ isScrolled = false }: { isScrolled?: boolean }) => {
               })}
               <div className="flex items-center gap-2">
                 <MotionButton />
-                <ThemeButton theme={theme} onToggle={toggleTheme} />
+                <ThemeButton />
               </div>
             </div>
 
             <div className="flex md:hidden items-center gap-2">
               <MotionButton />
-              <ThemeButton theme={theme} onToggle={toggleTheme} />
+              <ThemeButton />
               <button
                 type="button"
                 onClick={() => setMobileOpen((o) => !o)}

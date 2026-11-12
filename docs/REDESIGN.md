@@ -255,8 +255,8 @@ after every step.
   words). Thirteen ranked gaps; the top ones are that `main` is 44 commits
   behind, the footer, the résumé PDF, thin proof and the first 10 seconds.
   The owner approved its first proposal, the footer (below).
-- **Audit #5, gap 2 (footer)** is built (2026-11-12) and waits for the
-  owner's review and a pick; nothing is committed yet.
+- **Audit #5, gap 2 (footer)** is done and approved by the owner
+  (2026-11-12): committed as `a4a1edc`, pushed to the branch.
   - `Footer.tsx` went from 588 lines to about 200: the role label, seven
     text links (GitHub, LinkedIn, Devpost, LeetCode, Monkeytype, Source,
     Resume as a download), the copyright, one line on how the page is built
@@ -302,8 +302,8 @@ after every step.
     (audit gap 11) also shows on phones at 412 px wide (0.087, the same on
     the build from before this step). Lighthouse catches it or not
     depending on when the fonts land.
-- **Audit #5, gap 5 (the first 10 seconds)** is built (2026-11-12) and
-  waits for the owner's review; not committed.
+- **Audit #5, gap 5 (the first 10 seconds)** is done and approved by the
+  owner (2026-11-12): committed as `fe6bfac`, pushed to the branch.
   - **The hero's copy is HTML from the first paint.** `index.html` carries
     the top row, the claim, the sub-line and the four links inside `#root`,
     with the same classes `Hero.tsx` uses, so they are on screen and
@@ -351,6 +351,62 @@ after every step.
     is the owner's call.
   - **Not done:** slimming framer-motion (`LazyMotion`). It is used in 22
     files; it's a step of its own.
+- **Audit #5, gap 4 (proof), first project: ReviewGuard** is done and
+  approved by the owner (2026-11-12), committed and pushed to the branch
+  with two small asks of the owner's:
+  - **Case studies have a theme button** in their header, beside "Case
+    study 01 / 08" (they cover the navbar, so its button was out of reach).
+    The button is now one component, `components/ThemeButton.tsx`, used
+    there and in the navbar; both read the theme from the page through
+    `useTheme()` in `lib/theme.ts` (which the footer cards use too), so
+    they always agree. `components/ThemeToggle.tsx` and its CSS were
+    already unused before this; they're among audit gap 8's dead files.
+  - **"Emotion Recog" is "Emotion Recognition"** in More work (and in this
+    repo's README). Its row wraps to two lines, like Patient Assistant DB.
+  - ReviewGuard's case study has a **Results** section ("Find the leaks
+    yourself.") between its numbers and Architecture. The visitor picks
+    what the model sees (review text, behavior, graph edges, and the two
+    leaks: timestamp, business fake rate), the split (reviewer- or
+    business-disjoint) and where business profiles come from (training rows
+    only, or every review with no labels). The score counts to what the
+    repo measured for exactly that setup, with each of the five folds
+    ticked on a 0.5–1.0 scale and a ring for the same inputs on the other
+    split. Leaks turn red and say "Leak"; a setup the repo never ran says
+    "Not run" and why. Six numbered stories set the controls for the
+    visitor and tell the argument in order: the usual split, unseen
+    businesses, profiles a platform has, add the text (fusion loses on
+    5 of 5 folds), add the graph (two degree counts recover most of the
+    GNN's gain), the timestamp.
+  - Under it, the table of all seven models (AUC, average precision,
+    Macro-F1, fake-class recall, mean ± s.d.) follows the chosen split and
+    profiles, highlights the model in the readout, and links its source
+    file in the repo at the pinned commit.
+  - **Numbers are generated, not typed.** `scripts/proof/reviewguard.mjs`
+    reads the repo's `results/metrics/*.json` at commit `b76e328` and
+    writes `src/data/proof/reviewguard.json` (rounded to three places, as
+    the repo's paper tables print them; checked equal to those tables).
+    The README states only a dozen of these numbers, so the source is the
+    metrics files its tables are generated from, not the README. Captions
+    compute their numbers from the data. How each leak was scored was read
+    from the repo's code: the timestamp on one random 80/20 split, the fake
+    rate against every review's label; the notes say so.
+  - It is its own chunk (`ReviewGuardProof`, 7.2 KB gzipped), loaded only
+    when that case study opens (`PROOF` in `CaseStudy.tsx`, keyed by slug:
+    the place for the next project's). `Rise` and `Label` moved to
+    `work/shared.tsx` so the chunk can use them. New colour token `--leak`
+    (`#b42318` on paper, 5.8:1; `#f87171` on dark, 7.2:1).
+  - On phones the readout comes before the controls, right under the
+    stories, so a tap shows its result without scrolling; the table
+    scrolls sideways inside its own focusable box. No page-wide sideways
+    scroll at 375 px.
+  - `npm run perf` now budgets the chunk (9 KB) and runs its "case study
+    open, at rest" checks on ReviewGuard with a story clicked (was
+    NexusRAG). All 16 budgets pass; axe is clean in both themes, including
+    with each leak selected.
+  - Left as it was: the case study's numbers row and its decisions 3 and 4
+    state some of the same numbers the stories reach. The stories show
+    them moving; the decisions say why. Worth trimming if the owner finds
+    it repetitive.
 
 ## Upgrade plan: one step at a time
 

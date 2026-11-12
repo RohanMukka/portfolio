@@ -33,6 +33,7 @@ const BUNDLES = [
   { name: "main script", match: /^index-.*\.js$/, maxKb: 170 },
   { name: "3D stage script", match: /^scene-.*\.js$/, maxKb: 140 },
   { name: "stylesheet", match: /^index-.*\.css$/, maxKb: 14 },
+  { name: "ReviewGuard results script", match: /^ReviewGuardProof-.*\.js$/, maxKb: 9 },
 ];
 // Known WCAG violations to tolerate (none: any violation fails).
 const KNOWN_AXE = new Set();
@@ -169,8 +170,14 @@ const run = async () => {
     const first = await page.evaluate(() => window.__draws[0] ?? null);
     check("a wheel turn wakes the stage", first !== null, first !== null ? `first draw ${Math.round(first - sent)} ms after the wheel` : "no draw within 1 s");
 
-    await page.goto(`${ORIGIN}/?full#/work/nexusrag`, { waitUntil: "load" });
-    await page.waitForFunction(() => document.querySelector('[role="dialog"]'), { timeout: 60000 });
+    // ReviewGuard's has the most on it: the results a visitor works through.
+    await page.goto(`${ORIGIN}/?full#/work/reviewguard`, { waitUntil: "load" });
+    await page.waitForFunction(() => document.querySelector("#reviewguard-results"), { timeout: 60000 });
+    await page.evaluate(() => {
+      const results = document.querySelector("#reviewguard-results");
+      results.scrollIntoView();
+      [...results.closest("section").querySelectorAll("ol button")].at(-1).click();
+    });
     await sleep(3000);
     await atRest("case study open");
 

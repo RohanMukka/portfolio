@@ -102,6 +102,7 @@
   --color-primary-secondary: var(--text-secondary);
   --color-primary-tertiary: var(--text-tertiary);
   --color-accent: var(--accent);
+  --color-leak: var(--leak);
   --color-glass-border: var(--glass-border);
   --color-surface-subtle: var(--surface-subtle);
   --font-display: var(--face-display);
@@ -125,6 +126,7 @@
     --accent: #c45c26;
     --accent-rgb: 196, 92, 38;
     --accent-dim: rgba(196, 92, 38, 0.15);
+    --leak: #b42318; /* a result that can't be trusted: 5.8:1 on the paper */
     --card-fill: linear-gradient(180deg, rgba(253, 252, 249, 0.95) 0%, rgba(251, 250, 246, 0.74) 100%);
     --card-edge: rgba(255, 255, 255, 0.95);
     --card-shadow: 0 1px 2px rgba(0, 35, 102, 0.05), 0 18px 48px -16px rgba(0, 35, 102, 0.16);
@@ -144,6 +146,7 @@
     --accent: #f97316;
     --accent-rgb: 249, 115, 22;
     --accent-dim: rgba(249, 115, 22, 0.2);
+    --leak: #f87171; /* 7.2:1 on the dark background */
     --card-fill: linear-gradient(180deg, rgba(30, 41, 59, 0.78) 0%, rgba(15, 23, 42, 0.9) 100%);
     --card-edge: rgba(255, 255, 255, 0.08);
     --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 56px -20px rgba(0, 0, 0, 0.7);

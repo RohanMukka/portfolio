@@ -32,7 +32,7 @@ Mastery across Web, Machine Learning, and Systems:
 - **Spend Smart** – Real-time personal finance visualization built with Firebase.
 - **Diagnostic AI** – Hybrid ML system for high-precision diagnostic insights using Python.
 - **FeeAutomation** – Enterprise automation tool for auditing and processing transactions.
-- **Emotion Recog** – Deep learning classification of EEG signals for human emotion recognition.
+- **Emotion Recognition** – Deep learning classification of EEG signals for human emotion recognition.
 
 *Detailed links to all 10+ major repositories are available in the "Work" section of the live site.*
 

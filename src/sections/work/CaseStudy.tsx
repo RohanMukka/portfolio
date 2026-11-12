@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
@@ -10,7 +10,8 @@ import { NODE_COUNT } from "../../stage/piece";
 import { canDive, setCovered, setDive, setFocus, stageState } from "../../stage/store";
 import ProjectVisual, { factFor } from "./ProjectVisual";
 import InUse from "./InUse";
-import { EASE, pad, ProjectLinks } from "./shared";
+import ThemeButton from "../../components/ThemeButton";
+import { EASE, Label, pad, ProjectLinks, Rise } from "./shared";
 
 // Case studies open over the page at #/work/<slug>, so they can be linked to
 // and the back button closes them. A hash needs no server rewrites.
@@ -25,26 +26,11 @@ export const openCaseStudy = (title: string) => {
   window.location.hash = `/work/${caseStudies[title].slug}`;
 };
 
-type RiseProps = { children: React.ReactNode; delay?: number; className?: string; as?: "div" | "li" };
-
-const Rise: React.FC<RiseProps> = ({ children, delay = 0, className = "", as = "div" }) => {
-  const Tag = as === "li" ? motion.li : motion.div;
-  return (
-    <Tag
-      className={className}
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-      transition={{ duration: 0.8, ease: EASE, delay }}
-    >
-      {children}
-    </Tag>
-  );
+// Case studies with results a visitor can work through, each in its own
+// chunk that loads only when its page opens.
+const PROOF: Record<string, React.LazyExoticComponent<React.FC>> = {
+  reviewguard: lazy(() => import("./proof/ReviewGuardProof")),
 };
-
-const Label = ({ children }: { children: React.ReactNode }) => (
-  <p className="mb-8 text-xs font-bold uppercase tracking-[0.3em] text-accent">{children}</p>
-);
 
 // Lets the 3D stage draw again and pulls the camera back out of its node,
 // which stops glowing.
@@ -128,6 +114,7 @@ const CaseStudy = () => {
   useModal(isOpen, scroller, close);
 
   const project = found && projects.find((p) => p.title === found.title);
+  const Proof = found ? PROOF[found.study.slug] : undefined;
   const at = found ? ORDER.indexOf(found.title) : -1;
   const nextTitle = ORDER[(at + 1) % ORDER.length];
 
@@ -165,9 +152,13 @@ const CaseStudy = () => {
               >
                 <ArrowLeft size={18} /> All work
               </button>
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary-secondary tabular-nums">
-                Case study {pad(at + 1)} / {pad(ORDER.length)}
-              </span>
+              <div className="flex items-center gap-4 md:gap-6">
+                <span className="text-xs font-bold uppercase tracking-[0.25em] text-primary-secondary tabular-nums">
+                  Case study {pad(at + 1)} / {pad(ORDER.length)}
+                </span>
+                {/* The case study covers the navbar, so it carries its own. */}
+                <ThemeButton />
+              </div>
             </div>
           </div>
 
@@ -219,6 +210,12 @@ const CaseStudy = () => {
                 </Rise>
               ))}
             </section>
+
+            {Proof && (
+              <Suspense fallback={<div className="min-h-[60rem]" />}>
+                <Proof />
+              </Suspense>
+            )}
 
             {project.media && (
               <section className="pt-20 md:pt-32">

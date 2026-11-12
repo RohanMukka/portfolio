@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 export type Theme = "light" | "dark";
 
 // The site opens dark. The key is new with the dark-first design, so a choice
@@ -18,3 +20,13 @@ export const setTheme = (theme: Theme) => {
     // storage blocked: the choice lasts until the page closes
   }
 };
+
+// The theme as React state, read from the page itself, so every theme
+// button (the navbar's, a case study's) and anything themed stays in step
+// whichever one was pressed.
+const watchTheme = (fn: () => void) => {
+  const seen = new MutationObserver(fn);
+  seen.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => seen.disconnect();
+};
+export const useTheme = () => useSyncExternalStore(watchTheme, currentTheme);

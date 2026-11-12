@@ -92,7 +92,7 @@ export const projects: Project[] = [
     color: '#3178c6'
   },
   {
-    title: 'Emotion Recog',
+    title: 'Emotion Recognition',
     tagline: 'Four Emotions from EEG',
     description: 'Classifies four emotions from EEG (GAMEEMO: 28 subjects, 14 channels at 128 Hz) by fusing a random forest on band power with a CNN on the raw signal: about 90% accurate.',
     tags: ['Python', 'CNN', 'Random Forest', 'MNE'],

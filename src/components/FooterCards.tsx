@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useSyncExternalStore } from "react";
+import React, { useEffect, useState } from "react";
 import { GitHubCalendar } from "react-github-calendar";
-import { currentTheme } from "../lib/theme";
+import { useTheme } from "../lib/theme";
 
 // The live cards behind the footer's GitHub, LeetCode and Monkeytype links.
 // This file (and the calendar library with it) is fetched the first time a
@@ -8,13 +8,6 @@ import { currentTheme } from "../lib/theme";
 // only then, so none of it costs anything on page load.
 
 export type CardKind = "github" | "leetcode" | "monkeytype";
-
-const watchTheme = (fn: () => void) => {
-  const seen = new MutationObserver(fn);
-  seen.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  return () => seen.disconnect();
-};
-const useTheme = () => useSyncExternalStore(watchTheme, currentTheme);
 
 const Shell = ({ title, from, children }: { title: string; from: string; children: React.ReactNode }) => (
   <div className="p-4 rounded-2xl bg-bg-elevated border border-glass-border shadow-2xl">
