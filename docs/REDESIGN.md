@@ -400,6 +400,20 @@ after every step.
     blocked request. All 18 budgets pass. A one-off walk of all eight case
     studies (one plays a video), X-Ray and the whole page, desktop and
     phone, found nothing blocked and no errors.
+  - **Without a GPU** (checked before the merge, 2026-11-12, at 1366×768
+    with Chrome's GPU off): with software WebGL the site already went lite
+    and scrolled at 60 fps. With **no WebGL at all** (what recent Chrome
+    does on many machines without a usable GPU) it didn't go lite, the 3D
+    failed quietly and the GPU-only effects ran on the CPU: about 8 fps.
+    Fixed in `lib/rendering.ts`: no fast WebGL, software or none, means
+    lite mode. Both setups now scroll at 60 fps with no errors; a machine
+    with a GPU still gets the 3D. Still true without a GPU: the right half
+    of About and the Work tour and the Skills stack are empty where the 3D
+    would be (calm, not broken; stills of each scene would fill them).
+    Software WebGL also has one 1.1 s task at startup (not chased).
+    To look yourself: Chrome with `--disable-gpu --disable-webgl
+    --disable-webgl2 --user-data-dir=<a throwaway folder>`, or `?lite` in
+    the address on any machine.
   - **Not verified on Vercel itself:** the branch's preview deploys are
     behind Vercel's login (they redirect), so their headers couldn't be read
     from here. Check them on the live site right after the merge

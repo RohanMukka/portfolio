@@ -6,10 +6,12 @@ const release = (gl: WebGLRenderingContext | null) => gl?.getExtension("WEBGL_lo
 const detect = (): boolean => {
   try {
     const fast = probe({ failIfMajorPerformanceCaveat: true });
+    // No fast WebGL: either a slow (software) one or none at all. Both mean
+    // the CPU paints the page, and both get lite mode; with no WebGL at all
+    // the full page scrolled at about 8 fps on a laptop without a GPU.
     if (!fast) {
-      const any = probe();
-      release(any);
-      return !!any;
+      release(probe());
+      return true;
     }
     const info = fast.getExtension("WEBGL_debug_renderer_info");
     const renderer = info ? String(fast.getParameter(info.UNMASKED_RENDERER_WEBGL)) : "";
@@ -37,7 +39,8 @@ const forced = (): boolean | undefined => {
 let softwareRendering: boolean | undefined;
 
 // True when the browser is drawing without a graphics card (software
-// rendering, e.g. hardware acceleration switched off or a missing driver),
+// rendering, e.g. hardware acceleration switched off or a missing driver,
+// or no WebGL at all),
 // where the page's heavier effects stutter; the page then runs in lite mode
 // (see index.tsx). A WebGL context that refuses to start under
 // `failIfMajorPerformanceCaveat` is the browser's own signal for that; the
