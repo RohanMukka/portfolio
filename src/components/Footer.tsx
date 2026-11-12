@@ -1,586 +1,177 @@
-import {
-  Github,
-  Linkedin,
-  Mail,
-  ExternalLink,
-  Send,
-  Activity,
-  CheckCircle2,
-  Terminal,
-} from "lucide-react";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import { siLeetcode, siMonkeytype, siDevpost } from "simple-icons";
-import { GitHubCalendar } from "react-github-calendar";
-import { RevealLines } from "./SectionHeader";
+import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
+import type { CardKind } from "./FooterCards";
+import { RESUME_FILE, RESUME_URL } from "../lib/resume";
+import { GITHUB_URL, LINKEDIN_URL } from "../lib/contact";
+import { DEVPOST } from "../sections/about/content";
+import { scrollToTop, scrollToY } from "../lib/smoothScroll";
+import { setXRayOpen } from "../lib/xray";
 import { useMotionPaused } from "../lib/motion";
+import { cachedViews, loadViews } from "../lib/views";
 
-import { RESUME_URL } from "../lib/resume";
+// The live cards (and the calendar library they bring) load on first hover.
+const FooterCard = lazy(() => import("./FooterCards"));
 
-const SITEMAP = [
-  { name: "About", href: "#architecture" },
-  { name: "Work", href: "#projects" },
-  { name: "Skills", href: "#skills" },
-  { name: "Credentials", href: "#credentials" },
-  { name: "Contact", href: "#contact" },
+// Where else to find the work, in words (recruiters scan text, not icons).
+// The page's own sections aren't listed again: the navbar is still on screen.
+const LINKS: { name: string; href: string; card?: CardKind }[] = [
+  { name: "GitHub", href: GITHUB_URL, card: "github" },
+  { name: "LinkedIn", href: LINKEDIN_URL },
+  { name: "Devpost", href: DEVPOST },
+  { name: "LeetCode", href: "https://leetcode.com/u/rohan_mukka/", card: "leetcode" },
+  { name: "Monkeytype", href: "https://monkeytype.com/profile/kunnu", card: "monkeytype" },
+  { name: "Source", href: "https://github.com/RohanMukka/portfolio" },
 ];
 
-// The name set edge to edge along the bottom of the page, its letters rising
-// in as the end of the page scrolls into view. Decorative: the copyright line
-// carries the name for screen readers.
-const Wordmark = () => {
-  const ref = useRef<HTMLParagraphElement>(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start end", "end end"] });
+const LINK = "group inline-flex items-center gap-1.5 py-2 text-sm font-medium text-primary-text hover:text-accent transition-colors";
+const ARROW = "text-primary-tertiary group-hover:text-accent transition-all duration-300";
+
+// A profile link. One with a card shows it just above the link, centred on
+// it (kept on screen near the page's edges), while a mouse is over the link
+// or the keyboard is on it. Nothing of the card is fetched until the first
+// time that happens, and never for a finger: a tap follows the link.
+const CARD_WIDTH = 450;
+const ProfileLink = ({ name, href, card }: (typeof LINKS)[number]) => {
+  const [wanted, setWanted] = useState(false);
+  const [left, setLeft] = useState(0);
+  const want = (li: HTMLLIElement) => {
+    const { left: x, width } = li.getBoundingClientRect();
+    const centred = x + width / 2 - CARD_WIDTH / 2;
+    setLeft(Math.max(16, Math.min(centred, window.innerWidth - CARD_WIDTH - 16)) - x);
+    setWanted(true);
+  };
   return (
-    <div className="mt-16 md:mt-24 px-4 md:px-6 overflow-hidden" aria-hidden="true">
-      <p
-        ref={ref}
-        className="font-display font-extrabold leading-[0.8] tracking-[-0.055em] whitespace-nowrap text-primary-text text-[calc((100vw-2rem)*0.165)] md:text-[calc((100vw-3rem)*0.165)]"
-      >
-        <RevealLines title="Rohan Mukka" progress={p} />
-      </p>
-    </div>
+    <li
+      className="group/card relative"
+      onPointerEnter={card ? (e) => e.pointerType === "mouse" && want(e.currentTarget) : undefined}
+      onFocus={card ? (e) => want(e.currentTarget) : undefined}
+    >
+      <a href={href} target="_blank" rel="noopener noreferrer" className={LINK}>
+        {name}
+        <ArrowUpRight size={14} className={`${ARROW} group-hover:translate-x-0.5 group-hover:-translate-y-0.5`} aria-hidden="true" />
+      </a>
+      {card && wanted && (
+        <div style={{ left, width: CARD_WIDTH }} className="hidden md:block absolute bottom-full z-50 pb-2 pointer-events-none opacity-0 invisible translate-y-2 transition-all duration-300 group-hover/card:opacity-100 group-hover/card:visible group-hover/card:translate-y-0 group-focus-within/card:opacity-100 group-focus-within/card:visible group-focus-within/card:translate-y-0">
+          <Suspense fallback={null}>
+            <FooterCard kind={card} />
+          </Suspense>
+        </div>
+      )}
+    </li>
+  );
+};
+
+// The page's view count, as a command to run: press it and it prints.
+// Hidden until the count is known (it's never guessed).
+const Views = () => {
+  const [count, setCount] = useState(cachedViews);
+  const [shown, setShown] = useState(false);
+  const box = useRef<HTMLButtonElement>(null);
+  // The printed line makes the box taller; if that pushes it under the
+  // bottom of the screen, the page follows it down.
+  const follow = () => {
+    const under = (box.current?.getBoundingClientRect().bottom ?? 0) + 24 - window.innerHeight;
+    if (shown && under > 0) scrollToY(Math.min(window.scrollY + under, document.documentElement.scrollHeight - window.innerHeight));
+  };
+  // The cursors stop blinking while the visitor has paused motion.
+  const still = useMotionPaused();
+  useEffect(() => {
+    loadViews().then((n) => n !== null && setCount(n));
+  }, []);
+  if (count === null) return null;
+
+  const cursor = (
+    <motion.span
+      animate={{ opacity: still ? 1 : [1, 0, 1] }}
+      transition={still ? { duration: 0.2 } : { repeat: Infinity, duration: 0.8 }}
+      className="inline-block w-2 h-3.5 bg-green-500"
+      aria-hidden="true"
+    />
+  );
+  return (
+    <button
+      ref={box}
+      type="button"
+      onClick={() => setShown((on) => !on)}
+      aria-expanded={shown}
+      aria-label={shown ? `${count.toLocaleString()} page views. Hide` : "Show this page's view count"}
+      className="group block w-56 p-4 text-left font-mono text-xs rounded-lg border border-glass-border hover:border-accent/50 transition-colors"
+    >
+      <span className="flex items-center gap-2">
+        <span className="text-accent">~/site</span>
+        <span className="text-primary-text">$</span>
+        <span className="text-primary-secondary group-hover:text-primary-text transition-colors">./get_views</span>
+        {!shown && cursor}
+      </span>
+      <AnimatePresence initial={false}>
+        {shown && (
+          <motion.span
+            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+            animate={{ opacity: 1, height: "auto", marginTop: 12 }}
+            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            onAnimationComplete={follow}
+            className="flex items-center gap-2 overflow-hidden"
+          >
+            <span className="text-accent font-bold">{">"}</span>
+            <span className="font-bold text-primary-text tracking-wider tabular-nums">{count.toLocaleString()}</span>
+            <span className="text-primary-secondary tracking-widest text-[10px] uppercase">views</span>
+            {cursor}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </button>
   );
 };
 
 const Footer = () => {
-  const [visitorCount, setVisitorCount] = useState<number | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-  const [monkeyStats, setMonkeyStats] = useState<any>(null);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterStatus, setNewsletterStatus] = useState<
-    "idle" | "sending" | "success"
-  >("idle");
-  const [viewsRevealed, setViewsRevealed] = useState(false);
-  // The terminal's cursors stop blinking while the visitor has paused motion.
-  const still = useMotionPaused();
-
-  useEffect(() => {
-    // Visitor Count logic
-    const hasVisited = localStorage.getItem("portfolioVisited");
-    const cachedCount = localStorage.getItem("portfolioCount");
-
-    // Show the cached count immediately if we have it, so the UI doesn't disappear on refresh
-    if (cachedCount) {
-      setVisitorCount(parseInt(cachedCount, 10));
-    }
-
-    // A first visit increments the counter; a return visit only reads it.
-    fetch("/api/views", { method: hasVisited ? "GET" : "POST" })
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (typeof data?.count !== "number") {
-          throw new Error("Malformed counter response");
-        }
-        setVisitorCount(data.count);
-        localStorage.setItem("portfolioVisited", "true");
-        localStorage.setItem("portfolioCount", data.count.toString());
-      })
-      .catch((err) => {
-        // Any cached value is already on screen from above, so leave it there.
-        // With no cache the counter stays hidden, which is preferable to the
-        // previous behaviour of inventing a plausible-looking number.
-        console.error("Failed to load visitor count", err);
-      });
-
-    // MonkeyType Stats fetch. The ApeKey stays on the server (api/monkeytype.ts).
-    fetch("/api/monkeytype")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.pb && data?.stats) setMonkeyStats(data);
-      })
-      .catch((err) => console.error("Monkeytype fetch error:", err));
-
-    // Theme observer logic
-    const currentTheme =
-      (document.documentElement.getAttribute("data-theme") as
-        | "light"
-        | "dark") || "dark";
-    setTheme(currentTheme);
-
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === "data-theme") {
-          const newTheme = document.documentElement.getAttribute(
-            "data-theme",
-          ) as "light" | "dark";
-          setTheme(newTheme);
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <footer className="relative pt-20 md:pt-28 pb-4 md:pb-6">
-
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-          {/* Brand & Mission */}
-          <div className="md:col-span-4 space-y-6">
-            <div className="flex flex-col gap-1">
-              <span className="text-2xl font-display font-bold text-primary-text tracking-tight">
-                Rohan Mukka
-              </span>
-              <span className="hud text-primary-tertiary">
-                AI / ML engineer
-              </span>
-            </div>
-            <div className="flex gap-4">
-              {/* LeetCode */}
-              <div className="relative group/lc">
-                <a
-                  href="https://leetcode.com/u/rohan_mukka/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1"
-                  aria-label="LeetCode"
-                >
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="20"
-                    height="20"
-                  >
-                    <path d={siLeetcode.path} />
-                  </svg>
-                </a>
-                {/* LeetCode Hover Stats */}
-                <div className="absolute bottom-full left-0 mb-4 opacity-0 invisible group-hover/lc:opacity-100 group-hover/lc:visible transition-all duration-300 z-50 pointer-events-none w-[90vw] max-w-[450px]">
-                  <div className="p-2 rounded-2xl bg-bg-elevated border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/lc:translate-y-0 transition-transform duration-300">
-                    <img
-                      src={`https://leetcard.jacoblin.cool/rohan_mukka?theme=${theme === "dark" ? "dark" : "light"}&font=Syne&ext=activity`}
-                      alt="LeetCode Stats"
-                      className="w-full rounded-xl"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* GitHub */}
-              <div className="relative group/gh">
-                <a
-                  href="https://github.com/rohanmukka"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1"
-                  aria-label="GitHub"
-                >
-                  <Github size={20} />
-                </a>
-                {/* GitHub Hover Stats */}
-                <div className="absolute bottom-full left-0 mb-4 opacity-0 invisible group-hover/gh:opacity-100 group-hover/gh:visible transition-all duration-300 z-50 pointer-events-none w-[90vw] max-w-[450px]">
-                  <div className="p-2 rounded-2xl bg-bg-elevated border border-glass-border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/gh:translate-y-0 transition-transform duration-300 flex flex-col gap-2">
-                    <img
-                      src={`https://github-readme-stats.vercel.app/api?username=rohanmukka&show_icons=true&theme=${theme === "dark" ? "transparent" : "default"}&hide_border=true&title_color=00B8FF&text_color=${theme === "dark" ? "a3a3a3" : "333333"}&icon_color=8b5cf6`}
-                      alt="GitHub Stats"
-                      className={`w-full rounded-xl ${theme === "dark" ? "bg-[#0d1117]" : "bg-transparent"}`}
-                    />
-                    <div
-                      className={`flex justify-center rounded-xl p-3 ${theme === "dark" ? "bg-[#0d1117] text-[#a3a3a3]" : "bg-transparent text-[#333333]"}`}
-                    >
-                      <GitHubCalendar
-                        username="rohanmukka"
-                        colorScheme={theme}
-                        theme={{
-                          light: ["#ebedf0", "#00B8FF"],
-                          dark: ["#161b22", "#00B8FF"],
-                        }}
-                        fontSize={11}
-                        blockSize={5}
-                        blockMargin={2}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* LinkedIn */}
-              <a
-                href="https://linkedin.com/in/rohanmukka"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={20} />
-              </a>
-              {/* Devpost */}
-              <a
-                href="https://devpost.com/rohan-mukka-1"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1"
-                aria-label="Devpost"
-              >
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  width="20"
-                  height="20"
-                >
-                  <path d={siDevpost.path} />
-                </svg>
-              </a>
-              {/* MonkeyType */}
-              <div className="relative group/mt">
-                <a
-                  href="https://monkeytype.com/profile/kunnu"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-2.5 rounded-xl bg-bg-elevated/50 border border-glass-border hover:border-accent/50 hover:bg-accent/5 hover:text-accent transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1"
-                  aria-label="MonkeyType"
-                >
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="20"
-                    height="20"
-                  >
-                    <path d={siMonkeytype.path} />
-                  </svg>
-                </a>
-                {/* MonkeyType Hover Stats */}
-                <div className="absolute bottom-full left-0 mb-4 opacity-0 invisible group-hover/mt:opacity-100 group-hover/mt:visible transition-all duration-300 z-50 pointer-events-none w-[90vw] md:w-[350px]">
-                  {monkeyStats && (
-                    <div
-                      className={`p-5 rounded-2xl border shadow-2xl transform origin-bottom-left translate-y-2 group-hover/mt:translate-y-0 transition-transform duration-300 flex flex-col gap-4 font-sans ${theme === "dark" ? "bg-[#0d1117]/95 border-glass-border" : "bg-white/95 border-gray-200"}`}
-                    >
-                      <div
-                        className={`flex items-center gap-3 border-b pb-3 ${theme === "dark" ? "border-white/10" : "border-gray-100"}`}
-                      >
-                        <div className="w-10 h-10 rounded-full bg-[#e2b714]/20 flex items-center justify-center text-[#e2b714]">
-                          <svg
-                            aria-hidden="true"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            width="20"
-                            height="20"
-                          >
-                            <path d={siMonkeytype.path} />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-[#e2b714] font-bold text-lg leading-tight uppercase tracking-wider">
-                            Monkeytype
-                          </p>
-                          <p
-                            className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
-                          >
-                            Top Performance
-                          </p>
-                        </div>
-                        <div className="ml-auto text-right">
-                          <div
-                            className={`text-3xl font-black ${theme === "dark" ? "text-white" : "text-gray-800"}`}
-                          >
-                            {Math.round(monkeyStats.pb["15"]?.[0]?.wpm || 0)}{" "}
-                            <span
-                              className={`text-sm font-normal ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}
-                            >
-                              WPM
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-2">
-                        {[15, 30, 60].map((time) => {
-                          const stat = monkeyStats.pb[time.toString()]?.[0];
-                          return stat ? (
-                            <div
-                              key={time}
-                              className={`rounded-xl p-3 flex flex-col items-center border ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-gray-50 border-gray-100"}`}
-                            >
-                              <span
-                                className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
-                              >
-                                {time}s
-                              </span>
-                              <span className="text-xl font-bold text-[#e2b714]">
-                                {Math.round(stat.wpm)}
-                              </span>
-                              <span
-                                className={`text-[10px] ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`}
-                              >
-                                {Math.round(stat.acc)}% acc
-                              </span>
-                            </div>
-                          ) : null;
-                        })}
-                      </div>
-
-                      <div
-                        className={`flex justify-between items-center rounded-xl p-3 border ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-gray-50 border-gray-100"}`}
-                      >
-                        <div className="flex flex-col">
-                          <span
-                            className={`text-[10px] font-bold uppercase tracking-wider ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
-                          >
-                            Tests Started
-                          </span>
-                          <span
-                            className={`text-sm font-bold ${theme === "dark" ? "text-white" : "text-gray-800"}`}
-                          >
-                            {(monkeyStats.stats.startedTests ?? 0).toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex flex-col text-right">
-                          <span
-                            className={`text-[10px] font-bold uppercase tracking-wider ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
-                          >
-                            Tests Completed
-                          </span>
-                          <span
-                            className={`text-sm font-bold ${theme === "dark" ? "text-white" : "text-gray-800"}`}
-                          >
-                            {(monkeyStats.stats.completedTests ?? 0).toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Sitemaps */}
-          <div className="md:col-span-2 space-y-6">
-            <h3 className="hud text-primary-tertiary">
-              Sitemap
-            </h3>
-            <ul className="space-y-3">
-              {SITEMAP.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    className="text-primary-secondary hover:text-accent transition-colors text-sm font-medium"
-                  >
-                    {item.name}
-                  </a>
-                </li>
+    <footer id="footer" className="relative pt-16 md:pt-24 pb-8 md:pb-10">
+      <div className="px-6 md:px-14">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-10 pb-6 md:pb-8 border-b border-primary-text/10">
+          <p className="hud text-primary-tertiary">AI / ML engineer</p>
+          <nav aria-label="Profiles and files">
+            <ul className="flex flex-wrap gap-x-7 md:gap-x-8 gap-y-1">
+              {LINKS.map((link) => (
+                <React.Fragment key={link.name}>
+                  <ProfileLink {...link} />
+                </React.Fragment>
               ))}
+              <li>
+                <a href={RESUME_URL} download={RESUME_FILE} className={LINK}>
+                  Resume
+                  <ArrowDown size={14} className={`${ARROW} group-hover:translate-y-0.5`} aria-hidden="true" />
+                </a>
+              </li>
             </ul>
-          </div>
-
-          {/* Resources */}
-          <div className="md:col-span-2 space-y-6">
-            <h3 className="hud text-primary-tertiary">
-              External
-            </h3>
-            <ul className="space-y-3">
-              {[
-                { name: "Devpost", href: "https://devpost.com/rohan-mukka-1" },
-                { name: "CV/Resume", href: RESUME_URL },
-                {
-                  name: "Source Code",
-                  href: "https://github.com/RohanMukka/portfolio",
-                },
-              ].map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-primary-secondary hover:text-accent transition-colors text-sm font-medium"
-                  >
-                    {item.name}
-                    <ExternalLink size={12} className="opacity-50" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div className="md:col-span-4 space-y-6">
-            <h3 className="hud text-primary-tertiary">
-              Stay Updated
-            </h3>
-            <p className="text-sm text-primary-secondary leading-relaxed">
-              Subscribe to my monthly newsletter for insights on web engineering
-              and AI.
-            </p>
-            <div className="relative h-[42px]">
-              <AnimatePresence mode="wait">
-                {newsletterStatus === "success" ? (
-                  <motion.div
-                    key="success"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="flex items-center gap-2 text-green-500 h-full px-2 font-medium"
-                  >
-                    <CheckCircle2 size={20} />
-                    <span className="text-sm">Thanks for subscribing!</span>
-                  </motion.div>
-                ) : (
-                  <motion.form
-                    key="form"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 20 }}
-                    className="flex gap-2 h-full"
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      setNewsletterStatus("sending");
-                      try {
-                        const res = await fetch(
-                          "https://formsubmit.co/ajax/rohanmukka07@gmail.com",
-                          {
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                              Accept: "application/json",
-                            },
-                            body: JSON.stringify({
-                              _subject: "New Newsletter Subscriber!",
-                              email: newsletterEmail,
-                              _template: "table",
-                            }),
-                          },
-                        );
-                        if (res.ok) {
-                          setNewsletterStatus("success");
-                          setNewsletterEmail("");
-                          setTimeout(() => setNewsletterStatus("idle"), 3000);
-                        } else {
-                          setNewsletterStatus("idle");
-                        }
-                      } catch {
-                        setNewsletterStatus("idle");
-                      }
-                    }}
-                  >
-                    <input
-                      type="email"
-                      required
-                      value={newsletterEmail}
-                      onChange={(e) => setNewsletterEmail(e.target.value)}
-                      placeholder="email@example.com"
-                      className="flex-grow bg-bg-elevated/50 border-2 border-glass-border rounded-xl px-4 py-2 text-sm text-primary-text outline-none focus:border-accent/50 transition-all placeholder:text-text-tertiary"
-                    />
-                    <button
-                      type="submit"
-                      aria-label="Subscribe"
-                      disabled={newsletterStatus === "sending"}
-                      className="p-2 rounded-xl bg-accent text-white hover:bg-accent/90 transition-all disabled:opacity-50 min-w-[42px] flex justify-center items-center"
-                    >
-                      {newsletterStatus === "sending" ? (
-                        <div className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      ) : (
-                        <Send size={18} />
-                      )}
-                    </button>
-                  </motion.form>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
+          </nav>
         </div>
 
-        {/* Legal & Copyright */}
-        <div className="pt-8 border-t border-glass-border grid grid-cols-1 md:grid-cols-3 gap-6 items-center text-xs text-primary-secondary font-medium relative z-10 w-full">
-          {/* Left - Copyright */}
-          <div className="flex justify-center md:justify-start text-center md:text-left">
-            <span>
-              © {new Date().getFullYear()} Rohan Mukka. Built with React, three.js
-              and Framer Motion.
-            </span>
+        <div className="pt-5 md:pt-6 grid grid-cols-1 md:grid-cols-3 items-center gap-4 md:gap-10 text-xs text-primary-secondary">
+          <div className="space-y-1.5">
+            <p>© {new Date().getFullYear()} Rohan Mukka</p>
+            <p>
+              Built with React and three.js. The 3D draws only while something changes.{" "}
+              <button
+                type="button"
+                onClick={() => setXRayOpen(true)}
+                className="font-medium text-primary-text underline underline-offset-4 decoration-primary-text/30 hover:text-accent hover:decoration-accent transition-colors"
+              >
+                Open X-Ray
+              </button>
+            </p>
           </div>
-
-          {/* Center - view counter */}
-          <div className="flex justify-center flex-1">
-            {visitorCount !== null && (
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                {/* Terminal Hacker View Counter */}
-                <div
-                  className="group font-mono text-xs cursor-pointer outline-none"
-                  onClick={() => setViewsRevealed((v) => !v)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setViewsRevealed((v) => !v);
-                    }
-                  }}
-                  role="button"
-                  aria-expanded={viewsRevealed}
-                  tabIndex={0}
-                  title={viewsRevealed ? "Click or press Enter to hide" : "Click or press Enter to run"}
-                >
-                  <div className="flex flex-col bg-transparent border border-glass-border rounded-lg overflow-hidden w-56 hover:border-accent/50 transition-colors">
-                    <div className="p-4 text-green-500 flex flex-col">
-                      <div className="flex items-center gap-2 opacity-80">
-                        <span className="text-accent">~/auth</span>
-                        <span className="text-primary-text">$</span>
-                        <span className="text-primary-secondary group-hover:text-green-500 transition-colors">
-                          ./get_views
-                        </span>
-                        <motion.div
-                          animate={{ opacity: viewsRevealed ? 0 : still ? 1 : [1, 0, 1] }}
-                          transition={
-                            viewsRevealed || still
-                              ? { duration: 0.2 }
-                              : { repeat: Infinity, duration: 0.8 }
-                          }
-                          className="w-2 h-3.5 bg-green-500 ml-0.5"
-                        />
-                      </div>
-                      <AnimatePresence initial={false}>
-                        {viewsRevealed && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                            animate={{
-                              opacity: 1,
-                              height: "auto",
-                              marginTop: 12,
-                            }}
-                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                            className="flex items-center gap-2 overflow-hidden"
-                          >
-                            <span className="text-accent font-bold">{">"}</span>
-                            <span className="font-bold text-primary-text tracking-wider">
-                              {visitorCount}
-                            </span>
-                            <span className="text-primary-secondary ml-1 tracking-widest text-[10px] uppercase">
-                              Views
-                            </span>
-                            <motion.div
-                              animate={{ opacity: still ? 1 : [1, 0, 1] }}
-                              transition={still ? { duration: 0.2 } : { repeat: Infinity, duration: 0.8 }}
-                              className="w-2 h-3.5 bg-green-500 ml-1"
-                            />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+          <div className="md:justify-self-center">
+            <Views />
           </div>
-
-          {/* Right - Links (Removed for minimalist approach) */}
-          <div className="hidden md:block"></div>
+          <button type="button" onClick={scrollToTop} className="group justify-self-start md:justify-self-end inline-flex items-center gap-1.5 py-2 font-medium text-primary-text hover:text-accent transition-colors">
+            Back to top
+            <ArrowUp size={13} className={`${ARROW} group-hover:-translate-y-0.5`} aria-hidden="true" />
+          </button>
         </div>
       </div>
 
-      <Wordmark />
     </footer>
   );
 };

@@ -242,6 +242,69 @@ after every step.
     down, so there's no demo link; it says "built for" the hackathon,
     not that it placed.
 
+- **Fifth audit (2026-11-12):** `docs/AUDIT-2026-11-12.md`. The owner opened
+  everything to challenge ("nothing is protected") and asked for a measured
+  audit, a comparison with current award-level sites, ranked gaps and one
+  proposed step. Measured: Lighthouse phone 74 / 100 / 96 / 100 (LCP 4.7 s),
+  desktop 95; 60 fps on a laptop GPU, 50 to 53 fps in Skills and Work with
+  the CPU slowed 4×; scroll locked 3.3 s on desktop and 6 to 11 s on slow
+  phones; desktop layout shift 0.15 from the font swap (Lighthouse misses
+  it); every project number matches its README. The branch already beats
+  the award 3D sites measured on speed and accessibility; it trails them on
+  art direction and trails engineers' sites on proof (case studies are 242
+  words). Thirteen ranked gaps; the top ones are that `main` is 44 commits
+  behind, the footer, the résumé PDF, thin proof and the first 10 seconds.
+  The owner approved its first proposal, the footer (below).
+- **Audit #5, gap 2 (footer)** is built (2026-11-12) and waits for the
+  owner's review and a pick; nothing is committed yet.
+  - `Footer.tsx` went from 588 lines to about 200: the role label, seven
+    text links (GitHub, LinkedIn, Devpost, LeetCode, Monkeytype, Source,
+    Resume as a download), the copyright, one line on how the page is built
+    with an "Open X-Ray" button, the views counter and "Back to top". Gone:
+    the newsletter (there was no newsletter) and the sitemap column (the
+    navbar is on screen).
+  - **The owner wants the stat cards and the views counter kept** (said
+    2026-11-12, after a first version removed them: "no one reads all the
+    X-Ray view"). They are back, without their costs:
+    `components/FooterCards.tsx` is a lazy 8 KB chunk fetched the first time
+    a mouse or the keyboard reaches the GitHub, LeetCode or Monkeytype link
+    (never for a tap, which follows the link), and each card asks its source
+    only then. Each card opens just above its own link, centred on it and
+    kept on screen near the edges (the owner asked for that; a first version
+    pinned them to the row's right edge). GitHub shows the contribution calendar in the brand colours
+    (the `github-readme-stats` image is gone: that public service answers
+    503); LeetCode is the leetcard image; Monkeytype reads the public
+    profile endpoint, which needs no key.
+  - The views counter is the same "./get_views" command to press, now a
+    real button (`Views` in `Footer.tsx`, `lib/views.ts`): a first visit
+    adds one, later visits read it, and a production build opened on
+    localhost doesn't call `/api` at all (the dev server proxies the live
+    count). When the printed line pushes the box under the bottom of the
+    screen, the page scrolls down after it.
+  - `api/monkeytype.ts` is deleted (no key is needed any more); the owner
+    can remove `MONKEYTYPE_APE_KEY` from Vercel. Packages removed:
+    `react-activity-calendar` as a direct dependency, `@tabler/icons-react`
+    (unused) and `simple-icons` (the footer was its last import; the skill
+    logos are already files in `public/icons`).
+  - The floating Resume and Back-to-top buttons leave while the footer is
+    on screen (`atFooter` in `App.tsx`), where the footer's own Resume and Back to top are.
+  - **The big name along the bottom is gone** (the owner compared both and
+    chose the footer without it, 2026-11-12); the review switch is removed.
+  - Measured on a build: main script 160.4 → 151.6 KB gzip, CSS 12.6 →
+    12.2 KB; no console errors and no outside requests on load (the three
+    card sources are contacted only on hover); all 14 budgets pass. Before
+    the cards came back, Lighthouse read phone 74 → 79 (LCP 4.7 → 3.9 s),
+    desktop 95 → 97, best practices 96 → 100; it wasn't re-run after.
+  - Open question from the owner: whether the hero's "M.S. CS, Oklahoma ·
+    4.0" should stay now the degree is finished. Advice given: keep it and
+    add the year so it reads as completed; waiting on the owner.
+  - Noticed: About says "400+ algorithm problems"; the LeetCode card now
+    shows 514 solved.
+  - Seen while measuring, not caused by this: the font-swap layout shift
+    (audit gap 11) also shows on phones at 412 px wide (0.087, the same on
+    the build from before this step). Lighthouse catches it or not
+    depending on when the fonts land.
+
 ## Upgrade plan: one step at a time
 
 The owner wants these done **one at a time**, shown in the local preview

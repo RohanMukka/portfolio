@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 const LIVE_SITE = 'https://portfolio-rohan03.vercel.app';
 
 // /api/views is a Vercel function, so `vite dev` can't run it and the footer
-// counter stays hidden locally. In dev, answer it with the live count instead.
+// counter would stay hidden locally. In dev, answer it with the live count instead.
 // Always a GET, so local visits never bump the real counter.
 const devViewsCounter = (): Plugin => ({
   name: 'dev-views-counter',

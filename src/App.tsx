@@ -24,6 +24,7 @@ const App = () => {
   const [introDone, setIntroDone] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [pastHero, setPastHero] = useState(false);
+  const [atFooter, setAtFooter] = useState(false);
 
   const finishIntro = useCallback(() => setIntroDone(true), []);
   const xray = useXRayOpen();
@@ -47,6 +48,16 @@ const App = () => {
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // The footer has its own Resume and Back to top, right where the floating
+  // buttons sit: they step aside while any of the footer is on screen.
+  useEffect(() => {
+    const footer = document.getElementById("footer");
+    if (!footer) return;
+    const seen = new IntersectionObserver(([entry]) => setAtFooter(entry.isIntersecting));
+    seen.observe(footer);
+    return () => seen.disconnect();
   }, []);
 
   // Hold the page still while the intro plays, then start smooth scrolling.
@@ -76,10 +87,10 @@ const App = () => {
           then they're inert too, so Tab can't land on an invisible button.
           Phones don't get them: there they'd sit on top of the page's own
           buttons and links; the navbar's name goes back to the top and the
-          phone menu carries the Resume link. */}
+          phone menu carries the Resume link. They leave again at the footer. */}
       <div
-        inert={!pastHero}
-        className={`fixed bottom-10 right-10 z-[60] hidden md:flex flex-col gap-4 items-center transition-all duration-500 ${pastHero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'}`}
+        inert={!pastHero || atFooter}
+        className={`fixed bottom-10 right-10 z-[60] hidden md:flex flex-col gap-4 items-center transition-all duration-500 ${pastHero && !atFooter ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'}`}
       >
         <BackToTop />
         <ResumeButton isCompact={isScrolled} />

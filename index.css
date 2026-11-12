@@ -438,8 +438,3 @@ html[data-motion="paused"] .scroll-cue {
 [data-theme='dark'] .bg-accent.text-white {
   color: #0a0a0d;
 }
-/* The footer's views terminal dims its prompt line; on paper that drops it
-   under 4.5:1. */
-:root:not([data-theme='dark']) footer .opacity-80 {
-  opacity: 1;
-}
