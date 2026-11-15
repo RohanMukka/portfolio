@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 
 // Whether X-Ray (src/xray) is open: from `?xray` in the address, the X key
-// (outside text fields), or About's "Measure this page" link.
+// (outside text fields), or the footer's "Open X-Ray" button.
 const listeners = new Set<() => void>();
 let open = new URLSearchParams(location.search).has("xray");
 

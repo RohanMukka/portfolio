@@ -19,13 +19,12 @@ import {
 import type { Theme } from "../lib/theme";
 import { NOISE, PALETTE } from "./glsl";
 import { placePositions, placeRotations, toWorld } from "./world";
-import { LAYER_COUNT, NODE_COUNT, SAFE_ZONES, STOP_COUNT, perChapter, type Frame, type Piece } from "./piece";
+import { LAYER_COUNT, NODE_COUNT, SAFE_ZONES, perChapter, type Frame, type Piece } from "./piece";
 
 // "Data becomes a system": tens of thousands of points that tell the page's
 // story one shape per chapter.
 //   0 hero      the name drawn in points, a stream of raw data behind it
-//   1 about     the stream pulls taut into a timeline, one bright stop per
-//               chapter of the About story, sliding along as it's told
+//   1 about     a faint haze far behind the words, drifting
 //   2 work      a network: one node per featured project, data flowing down
 //               the edges; the hovered project's node flares
 //   3 skills    a stack of layers (the rings) wired together by data buses
@@ -74,7 +73,6 @@ const vertexShader = /* glsl */ `
   uniform float uTo;
   uniform float uMix;
   uniform float uIntro;
-  uniform float uAbout;
   uniform float uHalfW;
   uniform float uHalfH;
   uniform float uMobile;
@@ -92,7 +90,6 @@ const vertexShader = /* glsl */ `
   uniform mat3 uNetRot;
   uniform vec3 uNetCenter;
   uniform vec3 uRing;
-  uniform vec3 uStops[5];
   uniform vec3 uPlaces[6];
   uniform mat3 uPlaceRots[6];
   uniform float uChapter;
@@ -114,12 +111,9 @@ const vertexShader = /* glsl */ `
   attribute float aGhost;
 
   // Ghosts are drawn away from the place you're at, so they can't follow
-  // the page's anchors (About's panels, Contact's heading); they stand in
-  // a resting layout instead.
+  // the page's anchors (Contact's heading); they stand in a resting layout
+  // instead.
   bool gGhost = false;
-  vec3 stopAt(int k) {
-    return gGhost ? vec3((float(k) - 2.0) * 3.2, -0.3, 0.0) : uStops[k];
-  }
   vec3 ringAt() {
     return gGhost ? vec3(0.0, 0.0, 3.2) : uRing;
   }
@@ -190,35 +184,6 @@ const vertexShader = /* glsl */ `
     o.glow = 0.25 + 0.75 * pow(1.0 - s.y, 1.5);
     o.hue = u * 1.15 - 0.08 + (t.x - 0.5) * 0.2;
     o.size = 0.75 + t.y * 0.55;
-    return o;
-  }
-
-  // 1 · about: a timeline through five stops, one beside each panel of the
-  // story (the stops ride on the panels as they slide); the panel being read
-  // has the brightest, warmest stop.
-  Shape timeline(vec4 s, vec4 t) {
-    Shape o;
-    if (s.w < 0.55) {
-      int k = int(floor(s.x * 5.0));
-      float here = 1.0 - clamp(abs(uAbout - float(k)), 0.0, 1.0);
-      o.pos = stopAt(k) + sphereDir(t.xy) * (0.45 + here * 0.3) * pow(s.y, 2.2);
-      o.glow = 0.4 + 0.6 * (1.0 - s.y) + here * 0.5;
-      o.hue = mix(0.1 + t.z * 0.15, 0.95, here);
-      o.size = 0.9 + here * 0.6;
-    } else {
-      // The line runs through every stop and on past both ends.
-      float k = fract(s.y + uTime * 0.01) * 6.0 - 1.0;
-      float seg = clamp(floor(k), 0.0, 3.0);
-      int i = int(seg);
-      o.pos = mix(stopAt(i), stopAt(i + 1), k - seg);
-      o.pos += vec3(0.0, sin(k * 2.0 + uTime * 0.5) * 0.08, sin(k * 1.7 + uTime * 0.3) * 0.5);
-      o.pos += (t.xyz - 0.5) * vec3(0.0, 0.05, 0.05);
-      // Pulses run along it toward the stops still to come.
-      float pulse = pow(0.5 + 0.5 * sin(k * 9.0 - uTime * 2.2), 12.0);
-      o.glow = 0.45 + pulse * 0.6;
-      o.hue = mix(0.08 + t.w * 0.15, 0.7, pulse);
-      o.size = 0.7 + pulse * 0.4;
-    }
     return o;
   }
 
@@ -358,12 +323,32 @@ const vertexShader = /* glsl */ `
     return o;
   }
 
+  // 1 · about: no shape at all. The points scatter into a faint, deep haze
+  // far behind the text and drift slowly, so About reads as words over a
+  // quiet sky. (It was a timeline, a line through five glowing stops; the
+  // owner found it looked like a nerve.)
+  Shape haze(vec4 s, vec4 t) {
+    Shape o;
+    float depth = mix(-1.5, -9.0, pow(s.z, 0.8));
+    float spread = 1.0 - depth * 0.12;
+    o.pos = vec3(
+      (s.x - 0.5) * uHalfW * 2.6 * spread,
+      (s.y - 0.5) * uHalfH * 2.6 * spread,
+      depth
+    );
+    o.pos += vec3(sin(uTime * 0.05 + t.x * TAU), cos(uTime * 0.04 + t.y * TAU), 0.0) * 0.25;
+    o.glow = 0.1 + 0.22 * pow(t.z, 3.0);
+    o.hue = t.w * 0.9;
+    o.size = 0.45 + 0.3 * t.x;
+    return o;
+  }
+
   Shape formation(float k, vec4 s, vec4 t) {
     if (k < 0.5) {
       if (uNameCount > 0.5 && s.w < 0.6) return nameShape(s, t);
       return stream(s, t);
     }
-    if (k < 1.5) return timeline(s, t);
+    if (k < 1.5) return haze(s, t);
     if (k < 2.5) return network(s, t);
     if (k < 3.5) return stack(s, t);
     if (k < 4.5) return crystal(s, t);
@@ -512,7 +497,6 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     uTo: { value: 1 },
     uMix: { value: 0 },
     uIntro: { value: 0 },
-    uAbout: { value: 0 },
     uHalfW: { value: 1 },
     uHalfH: { value: 1 },
     uMobile: { value: opts.mobile ? 1 : 0 },
@@ -530,7 +514,6 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
     uNetRot: { value: new Matrix3() },
     uNetCenter: { value: new Vector3() },
     uRing: { value: new Vector3(0, 0, 3) },
-    uStops: { value: Array.from({ length: STOP_COUNT }, () => new Vector3()) },
     uPlaces: { value: placePositions },
     uPlaceRots: { value: placeRotations },
     uChapter: { value: 0 },
@@ -615,8 +598,6 @@ export const createParticles = (opts: { mobile: boolean; theme: Theme }): Piece 
       uniforms.uLayers.value = f.layers;
       uniforms.uPress.value = f.pointer.press;
       uniforms.uIntro.value = f.intro;
-      uniforms.uAbout.value = f.aboutAt;
-      f.stops.forEach((s, i) => uniforms.uStops.value[i].set(s.x, s.y, 0));
       uniforms.uHalfW.value = f.halfW;
       uniforms.uHalfH.value = f.halfH;
       uniforms.uViewH.value = f.viewH;

@@ -37,12 +37,6 @@ export type Frame = {
   tanHalf: number;
   /** Centre and radius (world units, z = 0) of the ring framing Contact's heading. */
   ring: { x: number; y: number; r: number };
-  /** About's timeline: where each panel's stop sits (world units, z = 0),
-      which panel is being read (0 → 4, fractional while sliding), and the
-      point between stops that follows the reading. */
-  stops: { x: number; y: number }[];
-  aboutAt: number;
-  stop: { x: number; y: number };
   /** How far the camera has dived into a node as its case study opens (0 → 1). */
   dive: number;
   /** How far the camera has left Work's rest view for its project tour (0 → 1). */
@@ -58,8 +52,6 @@ export type Frame = {
   /** 0 at a place, rising to 1 halfway between two: how much the camera is travelling. */
   travel: number;
 };
-
-export const STOP_COUNT = 5;
 
 /** How many blocks of text at once the swarm keeps clear of (see Frame.safe). */
 export const SAFE_ZONES = 8;

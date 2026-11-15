@@ -10,7 +10,7 @@ after every step.
   the live site (https://portfolio-rohan03.vercel.app, deployed by Vercel
   from `main`) and stays untouched until the owner approves a merge.
 - The page is one 3D story: a fixed WebGL stage behind every section where
-  ~24k particles take a new shape per section (data stream → About timeline
+  ~24k particles take a new shape per section (data stream → About haze
   → project network → Skills layer stack → Credentials crystal → ring around
   Contact's "Let's talk."). Dark theme by default; light theme kept.
 - Steps 1 (cinematic lens), 2 (camera flight), 3 (scroll-pinned scenes),
@@ -464,6 +464,46 @@ after every step.
     them moving; the decisions say why. Worth trimming if the owner finds
     it repetitive.
 
+- **Sixth audit (2026-11-15, in chat, not saved as a file):** the owner said
+  About disappoints and the site feels below the mark. Findings: one look
+  (violet-to-orange particles on the dot floor) in every section, almost
+  no real images, every section the same label / huge heading / paragraph,
+  ~22 screens for ~1,100 words; About is résumé lines on a track that never
+  holds still (1,100 px panels on a 1,440 px screen, the next one cut off),
+  5,000 px for 174 words, panel 4 restating the hero; Skills still the old
+  full-stack list; "Production-grade" and "my inbox is always open" remain.
+- **About rebuilt as "Short path" (2026-11-15)**, approved by the owner,
+  committed and pushed to the branch. The owner was shown two mock-ups
+  (A: the sideways track held still one chapter at a time; B: Short path),
+  disliked both while About's 3D timeline was still there ("the middle
+  particles like a nerve": the glowing line with pulses through five bright
+  stops), and chose B once that was gone.
+  - **Layout** (`sections/about/AboutPath.tsx`): nothing pins. The portrait,
+    a first-person intro and the five chapters' "when · where" list hold on
+    the left; the chapters scroll past on the right like a normal page. The
+    chapter nearest the middle of the screen is at full strength and lit in
+    the list; the others dim to the quietest text colour (by colour, not
+    opacity, so axe stays clean). Phones and tablets get a stack
+    (`AboutStack.tsx`). The sideways track (`AboutSideways.tsx`) is deleted.
+    Desktop: About is 2,426 px (was 5,004) and Work starts at 3,326 px (was
+    5,904).
+  - **Copy** (`about/chapters.ts`, facts only from the résumé and
+    `projects.ts`): title "Six years, *two countries*." (was "Journey"); the
+    intro; chapters Where it started (CVR, 9.1, the diagnostic system), First
+    real work (Internpe), The move (Oklahoma, IPMS, BEneFIT), **Research**
+    (SemEval 2026 Task 9 with Kamal Poshala and Kushi Reddy Kankar; the EEG
+    model) in place of "How I work", which restated the hero, and Outside
+    code ("a few hackathons" is now "hackathons"). The networking / Java
+    full stack certifications line is gone. X-Ray's "Measure this page"
+    link went with "How I work"; the footer's "Open X-Ray" and the X key
+    still open it.
+  - **3D:** About's shape is now `haze()` in `particles.ts`: the points
+    scatter into a faint, deep dust field behind the text and drift slowly.
+    The timeline shape, its stops (`data-stop`, `STOP_COUNT`, `uStops`,
+    `uAbout`, `frame.stops/stop/aboutAt`, `placeStops`) are deleted.
+  - **The owner still wants a line in their own words** on why they do this
+    work; the intro states only facts until then.
+
 ## Upgrade plan: one step at a time
 
 The owner wants these done **one at a time**, shown in the local preview
@@ -493,7 +533,8 @@ and approved before the next starts.
      layer as each layer's tool lights up (React → Interfaces, Node.js →
      Services, Docker → Infrastructure, TensorFlow → Models; thresholds set
      in `Skills.tsx`, read by the stage through `stageState.layerAt`).
-   - About already pinned and travelled its timeline; unchanged.
+   - About already pinned and travelled its timeline; unchanged. (Since
+     2026-11-15 About no longer pins: see "About rebuilt as Short path".)
 4. ✅ **Playable particles**:
    - The hero name is drawn by the particles (`src/stage/name.ts`): each
      word of the page's heading (`data-hero-name`) is redrawn on a canvas
@@ -579,8 +620,7 @@ and approved before the next starts.
   place's own frame (rest view on +z, 10 units away) and carried to it.
 - `src/stage/timeline.ts`: sections carry `data-chapter="hero|about|work|
   skills|credentials|contact"`; the stage reads scroll progress from them.
-  About's panels carry `data-stop` (timeline stops ride on them); Contact's
-  heading carries `data-ring` (the ring follows it).
+  Contact's heading carries `data-ring` (the ring follows it).
 - `src/stage/Labels.tsx`: HUD tags on Work's nodes and Skills' layers.
   `src/stage/store.ts`: hover focus, intro timing, label events (no three.js).
 - Lite mode (`src/lib/rendering.ts`): machines without a graphics card get no

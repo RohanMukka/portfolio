@@ -25,7 +25,7 @@ import { BACKDROP } from "./glsl";
 import { createParticles } from "./particles";
 import { createLens } from "./post";
 import { sampleName } from "./name";
-import { LAYER_COUNT, NODE_COUNT, SAFE_ZONES, STOP_COUNT, type Frame, type Piece } from "./piece";
+import { LAYER_COUNT, NODE_COUNT, SAFE_ZONES, type Frame, type Piece } from "./piece";
 import { emitStageLabels, onStageWake, stageState, stageStats, type LabelSet, type ScreenPoint } from "./store";
 import { CHAPTERS, createTimeline, type TimelineReading } from "./timeline";
 import { cameraAt, FLOOR_Y, PLACE_COUNT, placePositions, placeRotations, VIEW_DISTANCE } from "./world";
@@ -333,9 +333,6 @@ export const createStage = (
     viewH: 1,
     tanHalf,
     ring: { x: 0, y: 0, r: 3 },
-    stops: Array.from({ length: STOP_COUNT }, (_, i) => ({ x: (i - 1) * 6, y: 0 })),
-    aboutAt: 0,
-    stop: { x: 0, y: 0 },
     tour: 0,
     dive: 0,
     focusDist: VIEW_DISTANCE,
@@ -359,23 +356,6 @@ export const createStage = (
     frame.ring.x = (r.left + r.width / 2 - width / 2) * toWorld;
     frame.ring.y = -(r.top + r.height / 2 - height / 2) * toWorld;
     frame.ring.r = Math.max(r.width * 0.5 * 1.08, r.height * 1.1) * toWorld;
-  };
-
-  // About's panels each carry a data-stop marker; the timeline's stops ride
-  // on them as the panels slide.
-  let stopEls: Element[] = [];
-  const placeStops = () => {
-    if (!stopEls[0]?.isConnected) stopEls = Array.from(document.querySelectorAll("[data-stop]"));
-    const toWorld = (2 * frame.halfH) / height;
-    stopEls.slice(0, STOP_COUNT).forEach((el, i) => {
-      const r = el.getBoundingClientRect();
-      frame.stops[i].x = (r.left - width / 2) * toWorld;
-      frame.stops[i].y = -(r.top - height / 2) * toWorld;
-    });
-    const i = Math.min(STOP_COUNT - 2, Math.floor(frame.aboutAt));
-    const f = frame.aboutAt - i;
-    frame.stop.x = frame.stops[i].x + (frame.stops[i + 1].x - frame.stops[i].x) * f;
-    frame.stop.y = frame.stops[i].y + (frame.stops[i + 1].y - frame.stops[i].y) * f;
   };
 
   // Blocks of the page's text (data-stage-safe) that the swarm fades behind:
@@ -567,9 +547,6 @@ export const createStage = (
 
     frame.intro = stageState.openedAt ? Math.min(1, (now - stageState.openedAt) / INTRO_MS) : 0;
     changing ||= frame.intro > 0 && frame.intro < 1;
-    // AboutSideways slides its panels over 4% → 96% of the pinned scroll.
-    frame.aboutAt = Math.min(1, Math.max(0, (frame.progress[1] - 0.04) / 0.92)) * (STOP_COUNT - 1);
-    if (frame.chapter > 0.05 && frame.chapter < 2.5) placeStops();
     if (frame.chapter > 3.5) placeRing();
     // Each Skills layer locks into place as its stretch of the scene scrolls by.
     frame.travel = Math.sin(Math.PI * (frame.chapter % 1));
